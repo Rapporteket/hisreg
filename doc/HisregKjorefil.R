@@ -38,3 +38,13 @@ hisregFigGjsnPrePostShus(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, da
                          enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
 
 
+#####################################
+
+RegData <- read.table('C:/SVN/jasper/hisreg/data/AlleVarNum2016-09-13 08-44-59.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+RegData_label <- read.table('C:/SVN/jasper/hisreg/data/AlleVar2016-09-13 08-44-59.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+Followups <- read.table('C:/SVN/jasper/hisreg/data/FollowupsNum2016-09-13 08-44-59.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+Followups_label <- read.table('C:/SVN/jasper/hisreg/data/Followups2016-09-13 08-44-59.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+
+ForlopsData <- read.table('C:/SVN/jasper/hisreg/data/ForlopsOversikt2016-09-13 08-44-58.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+
+
