@@ -12,7 +12,7 @@
 #'
 hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID,
                                     minald=0, maxald=120, erMann=99, outfile='', forlop1 = 99, forlop2 = 99,
-                                    enhetsUtvalg=1, preprosess=F, hentData=F)
+                                    enhetsUtvalg=1, preprosess=F, hentData=F, gr_var='SykehusNavn')
 
 {
 
@@ -25,6 +25,8 @@ hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', da
   if (preprosess){
     RegData <- hisregPreprosess(RegData=RegData)
   }
+
+  RegData$Gr_var <- RegData[, gr_var]
 
   # Denne figurtypen krever at oppfølginger finnes
   RegData <- RegData[RegData$OppflgRegStatus >= 1, ]
@@ -41,9 +43,9 @@ hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', da
 
   # Definerer pre -og postvariabler, fjerner registreringer som mangler én eller begge
   PrePostVar <- switch(valgtVar,
-                       DLQI_PrePost = c('pre_dlqisum', 'c6_dlqisum'),
-                       HS_PrePost = c('pre_hsscoresum', 'c6_hsscoresum'),
-                       Vas_PrePost = c('pre_vasscore', 'c6_vasscore'))
+                       DLQI_PrePost = c('pre_dlqisum', 'c_dlqisum'),
+                       HS_PrePost = c('pre_hsscoresum', 'c_hsscoresum'),
+                       Vas_PrePost = c('pre_vasscore', 'c_vasscore'))
 
 
   #   PrePostVar <- switch(valgtVar,
@@ -61,31 +63,38 @@ hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', da
   utvalgTxt <- hisregUtvalg$utvalgTxt
 
   PrePost <- aggregate(RegData[, c('VarPre', "VarPost")],
-                       by=list(RegData$SykehusNavn), mean, na.rm = TRUE)
+                       by=list(RegData$Gr_var), mean, na.rm = TRUE)
   PrePostSD <- aggregate(RegData[, c('VarPre', "VarPost")],
-                       by=list(RegData$SykehusNavn), sd, na.rm = TRUE)
+                       by=list(RegData$Gr_var), sd, na.rm = TRUE)
   PlotMatrise <- as.matrix(t(PrePost[,-1]))
   PlotMatrise <- cbind(PlotMatrise, colMeans(RegData[, c('VarPre', "VarPost")]))
   PrePostSD <- as.matrix(t(PrePostSD[,-1]))
   PrePostSD <- cbind(PrePostSD, apply(RegData[, c('VarPre', "VarPost")], 2, sd, na.rm = TRUE))
-  Ngr <- table(as.character(RegData$SykehusNavn))  ######## Må forsikre at rekkefølgen av sykehus blir lik som i PlotMatrise
+  Ngr <- table(as.character(RegData$Gr_var))  ######## Må forsikre at rekkefølgen av sykehus blir lik som i PlotMatrise
   Ngr <- c(Ngr, sum(Ngr))
   sammenlign <- 1
 
-  utelat <- which(Ngr <10)
-  if (length(utelat>0)){
-    PlotMatrise <- PlotMatrise[,-utelat]
-    PrePostSD <- PrePostSD[,-utelat]
-    Ngr <- Ngr[-utelat]
-  }
+  terskel <- 10
+#
+#   Hvis man vil utelate kategori fra figur pga. fpr få reg.:
+
+#   utelat <- which(Ngr < terskel)
+#   if (length(utelat>0)){
+#     PlotMatrise <- PlotMatrise[,-utelat]
+#     PrePostSD <- PrePostSD[,-utelat]
+#     Ngr <- Ngr[-utelat]
+#   }
   KINed <- PlotMatrise - 1.96*PrePostSD/t(matrix(c(Ngr, Ngr), ncol = 2, nrow = length(Ngr)))
   KIOpp <- PlotMatrise + 1.96*PrePostSD/t(matrix(c(Ngr, Ngr), ncol = 2, nrow = length(Ngr)))
+
+  KINed[ , Ngr < terskel] <- 0
+  KIOpp[ , Ngr < terskel] <- 0
   ############## Lag figur  ###############################
 
-  grtxt <- c(names(Ngr)[1:(length(Ngr)-1)], 'Nasjonalt')
-  if (length(utelat>0)){
-    grtxt <- c('Haukeland' ,'SUS', 'St. Olavs', 'UNN', 'Nasjonalt')[-utelat]
-  }
+  grtxt <- c(names(Ngr)[1:(length(Ngr)-1)], 'Totalt')
+#   if (length(utelat>0)){
+#     grtxt <- c('Haukeland' ,'SUS', 'St. Olavs', 'UNN', 'Nasjonalt')[-utelat]
+#   }
   # grtxt <- c('Haukeland' ,'SUS', 'St. Olavs', 'UNN', 'Nasjonalt')[-utelat]
 
   tittel <- switch(valgtVar,
@@ -109,9 +118,9 @@ hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', da
   vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.7))
   par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1+length(tittel)-1)))	#Har alltid datoutvalg med
 
-  PlotMatrise[ , Ngr < 5] <- 0
+  PlotMatrise[ , Ngr < terskel] <- 0
   grtxt2 <-  paste0('(N=', Ngr, ')')
-  grtxt2[Ngr<5] <- '(N<5)'
+  grtxt2[Ngr<terskel] <- paste0('(N<', terskel, ')')
 
   farger <- FigTypUt$farger
   ymax <- max(PlotMatrise, na.rm=T)*1.25
@@ -131,7 +140,7 @@ hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', da
 
   inkl_konf <- 1
   if (inkl_konf == 1){
-    arrows(x0=pos, y0=KINed, x1=pos, y1=KIOpp, code=0, angle=90, lwd=2, length=0.1, col=farger[3]) # konfidensintervall
+    arrows(x0=pos, y0=KINed, x1=pos, y1=KIOpp, code=3, angle=90, lwd=1, length=0.03, col=farger[3]) # konfidensintervall
   }
 
 

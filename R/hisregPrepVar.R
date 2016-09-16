@@ -11,6 +11,7 @@
 #' @export
 #'
 hisregPrepVar <- function(RegData, valgtVar)
+
 {
   retn= 'V'; tittel <- ''; AntVar <- NA; NVar <- NA;
   cexgr <- 1.0; grtxt <- ''; grtxt2 <- ''; subtxt <- '';
@@ -18,8 +19,9 @@ hisregPrepVar <- function(RegData, valgtVar)
 
   if (valgtVar=='PasientAlder') {
     RegData$Variabel <- RegData[, valgtVar]
-#     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
-#     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
+    RegData <- RegData[!is.na(RegData$Variabel), ]
+    #     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
+    #     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Aldersfordeling i registeret'
     gr <- c(0, seq(10, 80, 10), 120)
     RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
@@ -36,6 +38,21 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
     grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], '50+')
     subtxt <- 'Aldersgrupper'
+    retn <- 'H'
+  }
+
+  if (valgtVar=='SykehusNavn') {
+    RegData$Variabel <- RegData[, valgtVar]
+    RegData$VariabelGr <- RegData$Variabel
+    grtxt <- levels(RegData$VariabelGr)
+    #     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
+    #     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
+    tittel <- 'Andel registrert av deltagende avdelinger'
+    # gr <- c(1:5, 9)
+    #     grtxt <- c('Grunnskole 7-10 år', 'Yrkesfaglig videregående, yrkesskoler, \neller realskole', 'Allmennfaglig videregående skole \neller gymnas',
+    #                'Høgskole eller universitetet \n(mindre enn 4 år)', 'Høgskole eller universitet \n(mer enn, eller 4 år)', 'Ukjent')
+    #     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    # subtxt <- 'Utdanningsnivå'
     retn <- 'H'
   }
 
@@ -81,7 +98,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   if (valgtVar=='i_type') {
     RegData$Variabel <- RegData[, valgtVar]
     RegData$Variabel[RegData$Variabel %in% 5:6] <- 4  # Intill videre skal 'Ingen intervention bestemt av lege',
-                                                      #'Ingen intervention bestemt av pasient' og 'Ikke møtt' slås sammen
+    #'Ingen intervention bestemt av pasient' og 'Ikke møtt' slås sammen
     tittel <- 'Type intervensjon'
     gr <- c(1:4)
     grtxt <- c('Kirurgisk intervensjon', 'Medisinsk intervensjon', 'Kirurgisk og medisinsk \nintervensjon',
@@ -128,7 +145,7 @@ hisregPrepVar <- function(RegData, valgtVar)
 
   if (valgtVar=='TidlBeh') {
     SamletPrPID <- aggregate(RegData[, c("p_surgery", "p_antibiotics")], by=list(RegData$PasientID),
-                                            function(x){if (1 %in% x) {y<-1} else {if (2 %in% x) {y<-0} else {y<-NA}}})
+                             function(x){if (1 %in% x) {y<-1} else {if (2 %in% x) {y<-0} else {y<-NA}}})
     SamletPrPID <- SamletPrPID[,-1]
     SamletPrPID$begge <- rowSums(SamletPrPID[, c("p_surgery", "p_antibiotics")])
     SamletPrPID$begge[SamletPrPID$begge==1] <- 0
@@ -153,8 +170,8 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='Hurley_PrePost') {
-#     RegData$VarPre <- cut(RegData$VarPre, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = F)
-#     RegData$VarPost <- cut(RegData$VarPost, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = F)
+    #     RegData$VarPre <- cut(RegData$VarPre, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = F)
+    #     RegData$VarPost <- cut(RegData$VarPost, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = F)
     tittel <- c('Hurley-score før og etter behandling')
     grtxt <- c('Stadium I', 'Stadium II', 'Stadium III')
     # grtxt2 <- c('DLQI<10', '10<DLQI<20', 'DLQI>20')

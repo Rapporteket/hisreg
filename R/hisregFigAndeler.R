@@ -220,18 +220,6 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
   }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 
