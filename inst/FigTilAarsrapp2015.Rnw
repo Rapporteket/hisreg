@@ -1,0 +1,110 @@
+\documentclass[norsk,a4paper]{article} % ,twoside
+\usepackage[norsk]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{subfig}
+\usepackage{pdfpages}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{amssymb}
+\usepackage[a4paper]{geometry}
+
+\title{Figurer og tabeller for årsrapport NoRGast 2015}
+\author{NoRGast}
+
+\renewcommand\thempfootnote{\fnsymbol{mpfootnote}}
+\def\labelitemi{$\bullet$}
+\def\labelitemii{--}
+\def\labelitemiii{$\ast$}
+\def\labelitemiv{$\cdot$}
+
+%setter grå skrift fremfort sort
+\usepackage{xcolor}
+\usepackage{graphicx}
+\pagestyle{myheadings}
+% \definecolor{SKDE}{rgb}{0,0.32,0.61}
+\definecolor{lysblaa}{rgb}{0.27,0.51,0.71}
+% \definecolor{moerkblaa}{rgb}{0.0,0.0,0.47}
+% \definecolor{lysgraa}{rgb}{0.8,0.8,0.8}
+% \definecolor{middelsgraa}{rgb}{0.5,0.5,0.5}
+\definecolor{moerkgraa}{rgb}{0.25,0.25,0.25}
+\color{moerkgraa}
+% \color{lysblaa}
+
+<<'initOpts',include=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')
+@
+
+\begin{document}
+
+<<LastData, include=FALSE, cache=FALSE>>=
+rm(list=ls())
+library(hisreg)
+
+# Les inn data
+RegData <- read.table('C:/SVN/jasper/hisreg/data/AlleVarNum2016-09-15 10-46-23.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+# RegData_label <- read.table('C:/SVN/jasper/hisreg/data/AlleVar2016-09-15 10-46-22.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+Followups <- read.table('C:/SVN/jasper/hisreg/data/FollowupsNum2016-09-15 10-46-24.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+# Followups_label <- read.table('C:/SVN/jasper/hisreg/data/Followups2016-09-15 10-46-23.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+ForlopsData <- read.table('C:/SVN/jasper/hisreg/data/ForlopsOversikt2016-09-15 10-46-24.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+
+########## Må avklare hvordan oppfølginger skal joines i framtida. For dataen til Årsrapport 2015 finnes maks én oppfølging pr forløp.
+########## Jeg velger derfor å bruke en enkel LEFT JOIN og skiller ikke mellom 3 og 6 mnd oppfølging.
+
+RegData <- merge(RegData, ForlopsData, by.x = 'm_mceid', by.y = 'ForlopsID')
+RegData <- merge(RegData, Followups, by.x = 'm_mceid', by.y = 'c_mceid', all.x=T)
+RegData <- hisregPreprosess(RegData)
+RegData <- RegData[which(RegData$Aar == 2015), ]
+
+
+datoFra='2015-01-01'
+datoTil='2015-12-31'
+reshID <- 601031
+minald=0
+maxald=120
+erMann=99
+outfile=''  #'DLQI_PrePost.pdf'
+forlop1 = 99
+forlop2 = 99
+enhetsUtvalg=0
+preprosess=F
+hentData=F
+# gr_var <- 'Intervensjon'
+
+tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
+@
+
+\maketitle
+\clearpage
+
+<<'Tabell:RegistrerendeAvd', results='asis', echo=FALSE, eval=T, warning=FALSE>>=
+Tabell <- table(as.character(RegData$SykehusNavnLang), RegData$Op_grAarsrapp)
+Tabell[Tabell < 10] <- '<10'
+
+print(xtable::xtable(Tabell, digits=0, align=c('l', rep('r', ncol(Tabell))),
+                     caption='Registreringer av operasjonsgrupper i NoRGast. Dette er fordelingen av de obligatoriske inngrepene (se registerbeskrivelsen).
+Panc= annen pankreaskirurgi (ikke whipple). Galle = galleveisreseksjoner (ikke cholecystektomier). I tillegg til at OUS ikke har fått etablert korrekt registrering er det nok en underrapportering også fra St. Olav på flere av gruppene. Se dekningsgradsanalysen.',
+                     label='tab:RegistrenrendeAvd'),
+      include.rownames=TRUE,
+      include.colnames=TRUE) #,
+#       add.to.row = list(pos=list(nrow(Tabell)-1),
+#                         command=c('\\midrule\n')))
+@
+
+
+
+<<'Sykehusfig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
+outfile <- 'RegAvd.pdf'
+FigAndeler(RegData, valgtVar='Sykehusnavn', op_gruppe=0, outfile=outfile, reshID=reshID, enhetsUtvalg=0)
+@
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{RegAvd.pdf}
+\caption{Registrerende avdelinger i NoRGast 2015. Totaloversikten representerer både de obligatoriske inngrepene og de valgfrie. OUS hadde bare så vidt startet i 2015 og de innrapporterte pasientene representerer dessverre ikke en uselektert kohort. Ved årsrapportens sammenskrivning i september 2016 er det 15 sykehus som leverer data til registeret og ytterligere fem sykehus har bekreftet snarlig oppstart. Målet er at alle sykehus som gjør formell reseksjonskirurgi skal rapportere alle obligatoriske (se registerbeskrivelsen) inngrep til registeret med optimal datakvalitet.}
+\end{figure}
+
+
+
+
+\end{document}
