@@ -8,7 +8,7 @@ ForlopData <- read.table('C:/SVN/jasper/hisreg/data/ForlopsOversikt2016-08-15 12
 
 RegData <- merge(RegData, ForlopData, by.x = "m_mceid", by.y = "ForlopsID")
 
-valgtVar <- 'DLQI_PrePost'
+valgtVar <- 'TidlBeh'
 datoFra='2000-01-01'
 datoTil='2050-01-01'
 reshID <- 601031
