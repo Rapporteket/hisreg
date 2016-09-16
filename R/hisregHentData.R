@@ -1,6 +1,6 @@
 #' Provide global dataframe for NoRGast
 #'
-#' Provides NoRGast data from staging
+#' Provides Hisreg data from staging
 #'
 #' @inheritParams hisregFigAndeler
 #'

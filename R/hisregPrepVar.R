@@ -98,7 +98,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   if (valgtVar=='i_type') {
     RegData$Variabel <- RegData[, valgtVar]
     RegData$Variabel[RegData$Variabel %in% 5:6] <- 4  # Intill videre skal 'Ingen intervention bestemt av lege',
-    #'Ingen intervention bestemt av pasient' og 'Ikke møtt' slås sammen
+    # "Ingen intervention bestemt av pasient" og 'Ikke møtt' slås sammen
     tittel <- 'Type intervensjon'
     gr <- c(1:4)
     grtxt <- c('Kirurgisk intervensjon', 'Medisinsk intervensjon', 'Kirurgisk og medisinsk \nintervensjon',

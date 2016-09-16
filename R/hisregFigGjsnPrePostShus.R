@@ -5,6 +5,7 @@
 #' Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 #'
 #' @inheritParams hisregFigAndeler
+#' @param gr_var Velg grupperingsvariabel
 #'
 #' @return Søylediagram med gjennomsnitt før og etter intervensjon fordelt på sykehus
 #'
@@ -21,7 +22,6 @@ hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', da
     RegData <- hisregHentRegData()
   }
 
-  # Hvis RegData ikke har blitt preprosessert
   if (preprosess){
     RegData <- hisregPreprosess(RegData=RegData)
   }
