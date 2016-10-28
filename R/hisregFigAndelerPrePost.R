@@ -27,7 +27,7 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
   }
 
   # Denne figurtypen krever at oppfølginger finnes
-  RegData <- RegData[RegData$OppflgRegStatus >= 1, ]
+  RegData <- RegData[which(RegData$OppflgRegStatus >= 1), ]
 
   # Hvis man ikke skal sammenligne, får man ut resultat for eget sykehus
   if (enhetsUtvalg == 2) {RegData <- RegData[which(RegData$AvdRESH == reshID), ]}
@@ -49,7 +49,12 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
 
   RegData$VarPre <- RegData[ ,PrePostVar[1]]
   RegData$VarPost <- RegData[ ,PrePostVar[2]]
-  RegData <- RegData[!is.na(RegData$VarPre) & !is.na(RegData$VarPost), ]
+  RegData <- RegData[which(!is.na(RegData$VarPre) & !is.na(RegData$VarPost)), ]
+
+  ## Forbered variabler for fremstilling i figur
+  PlotParams <- hisregPrepVar(RegData=RegData, valgtVar=valgtVar)
+  RegData <- PlotParams$RegData
+  PlotParams$RegData <- NA
 
   ## Gjør utvalg basert på brukervalg (LibUtvalg)
   hisregUtvalg <- hisregUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald,
@@ -62,26 +67,25 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
   ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
   Nrest <- 0
 
-  ## Forbered variabler for fremstilling i figur
-  PlotParams <- hisregPrepVar(RegData=RegData, valgtVar=valgtVar)
-  RegData <- PlotParams$RegData
-  PlotParams$RegData <- NA
-
-
-
   #Andeler$Hoved <- round(table(RegData$VariabelGr)/length(RegData$VariabelGr)*100,2)
-  AntHovedPre <- table(RegData$VarPre[ind$Hoved]) #table(cut(RegData$VarPre, gr, right=F)) #cut sikrer at har med alle kategorier
-  AntHovedPost <- table(RegData$VarPost[ind$Hoved])
-  NHoved <- sum(AntHovedPre)	#length(indHoved)
-  Nrest <- 0
-  AndelerPP$Hoved <- cbind(AntHovedPre, AntHovedPost)/NHoved*100
 
   if (enhetsUtvalg==1) {
+    AntHovedPre <- table(RegData$VarPre[ind$Hoved]) #table(cut(RegData$VarPre, gr, right=F)) #cut sikrer at har med alle kategorier
+    AntHovedPost <- table(RegData$VarPost[ind$Hoved])
+    NHoved <- sum(AntHovedPre)	#length(indHoved)
+    Nrest <- 0
+    AndelerPP$Hoved <- cbind(AntHovedPre, AntHovedPost)/NHoved*100
     AntRestPre <- table(RegData$VarPre[ind$Rest]) #table(cut(RegData$VarPre, gr, right=F)) #cut sikrer at har med alle kategorier
     AntRestPost <- table(RegData$VarPost[ind$Rest])
     Nrest <- length(ind$Rest)
     AndelerPP$Rest <- cbind(AntRestPre, AntRestPost)/Nrest*100
     smltxt <- 'Landet forøvrig'
+  } else {
+    AntHovedPre <- table(RegData$VarPre) #table(cut(RegData$VarPre, gr, right=F)) #cut sikrer at har med alle kategorier
+    AntHovedPost <- table(RegData$VarPost)
+    NHoved <- sum(AntHovedPre)	#length(indHoved)
+    Nrest <- 0
+    AndelerPP$Hoved <- cbind(AntHovedPre, AntHovedPost)/NHoved*100
   }
 
 
@@ -92,7 +96,7 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
 
 
   #Hvis for få observasjoner..
-  if (NHoved < 10 | (enhetsUtvalg==1 & Nrest<10)) {
+  if (NHoved < 1 | (enhetsUtvalg==1 & Nrest<1)) {
     farger <- FigTypUt$farger
     plot.new()
     title(main=paste('variabel: ', valgtVar, sep=''))

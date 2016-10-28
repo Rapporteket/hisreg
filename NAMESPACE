@@ -3,6 +3,8 @@
 export(hisregFigAndeler)
 export(hisregFigAndelerGrVar)
 export(hisregFigAndelerPrePost)
+export(hisregFigGjsnGrVar)
+export(hisregFigGjsnPrePostGrVar)
 export(hisregFigGjsnPrePostShus)
 export(hisregHentRegData)
 export(hisregPrepVar)

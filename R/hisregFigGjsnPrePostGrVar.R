@@ -11,7 +11,7 @@
 #'
 #' @export
 #'
-hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID,
+hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID,
                                     minald=0, maxald=120, erMann=99, outfile='', forlop1 = 99, forlop2 = 99,
                                     enhetsUtvalg=1, preprosess=F, hentData=F, gr_var='SykehusNavn')
 
@@ -67,21 +67,26 @@ hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', da
                        by=list(RegData$Gr_var), mean, na.rm = TRUE)
   PrePostSD <- aggregate(RegData[, c('VarPre', "VarPost")],
                        by=list(RegData$Gr_var), sd, na.rm = TRUE)
+  # Ngr <- tapply(RegData[, c('VarPre')], RegData$Gr_var, function(x){length(x[!is.na(x)])})
+  Ngr <- aggregate(RegData[, c('VarPre')], by=list(RegData$Gr_var), length)
+  kategorier <- as.character(Ngr$Group.1)
+  Ngr <- as.matrix(t(Ngr[,-1]))
   PlotMatrise <- as.matrix(t(PrePost[,-1]))
   PlotMatrise <- cbind(PlotMatrise, colMeans(RegData[, c('VarPre', "VarPost")]))
   PrePostSD <- as.matrix(t(PrePostSD[,-1]))
   PrePostSD <- cbind(PrePostSD, apply(RegData[, c('VarPre', "VarPost")], 2, sd, na.rm = TRUE))
-  Ngr <- table(as.character(RegData$Gr_var))  ######## Må forsikre at rekkefølgen av sykehus blir lik som i PlotMatrise
-  Ngr <- c(Ngr, sum(Ngr))
+#   Ngr <- table(as.character(RegData$Gr_var))  ######## Må forsikre at rekkefølgen av sykehus blir lik som i PlotMatrise
+  Ngr <- c(Ngr, sum(Ngr, na.rm = TRUE))
+  names(Ngr) <- c(kategorier, 'Totalt')
   sammenlign <- 1
 
   terskel <- 5
 #
-#   Hvis man vil utelate kategori fra figur pga. fpr få reg.:
+#   Hvis man vil utelate kategori fra figur pga. for få reg.:
 
   if (gr_var=='SykehusNavn') {
     utelat <- which(Ngr < terskel)
-    if (length(utelat>0)){
+    if (length(utelat)>0){
       PlotMatrise <- PlotMatrise[,-utelat]
       PrePostSD <- PrePostSD[,-utelat]
       Ngr <- Ngr[-utelat]
@@ -102,10 +107,12 @@ hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', da
   # grtxt <- c('Haukeland' ,'SUS', 'St. Olavs', 'UNN', 'Nasjonalt')[-utelat]
 
   tittel <- switch(valgtVar,
-                   'DLQI_PrePost' = 'DLQI før og etter inngrep',
-                   'HS_PrePost' = 'HS score sum før og etter inngrep',
+                   'DLQI_PrePost' = 'DLQI før og etter intervensjon',
+                   'HS_PrePost' = 'HS score sum før og etter intervensjon',
                    'Vas_PrePost' = c('Hvor plaget er pasienten?', 'Visuell analog skala (VAS) fra 0-10')
   )
+
+  tittel <- c(tittel, 'med 95% konfidensintervall')
 
   ytekst <- 'Gjennomsnittsscore'
 #   ytekst <- switch(valgtVar,

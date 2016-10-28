@@ -43,7 +43,7 @@ til systemets default output device (som regel skjerm))}
 1 - Eksisjon lukket med sutur
 2 - Eksisjon med åpen granulering og sekunder tilheling
 3 - Eksisjon med påfølgende hudplantasjon
-4 - CO₂-laser
+4 - CO2-laser
 5 - Deroofing}
 
 \item{enhetsUtvalg}{Lag figur for

@@ -31,5 +31,8 @@ hisregPreprosess <- function(RegData)
   RegData$Intervensjon[RegData$ForlopsType1=="Kirurgisk og medisinsk intervensjon"] <- 3
   RegData$Intervensjon <- factor(RegData$Intervensjon, levels = 1:3, labels = c('Kirugisk', 'Medisinsk', 'Kir. og. med.'))
 
+
+
+
   return(invisible(RegData))
 }
