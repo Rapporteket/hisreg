@@ -12,11 +12,11 @@ hisregHentRegData <- function() {
   registryName <- "hisreg"
   dbType <- "mysql"
 
-  query <- paste0("SELECT
-
-                    FROM AlleVarNum INNER JOIN ForlopsOversikt
-                    ON AlleVarNum.ForlopsID = ForlopsOversikt.ForlopsID
-                    INNER JOIN AlleVar ON AlleVarNum.ForlopsID = AlleVar.ForlopsID")
+  query <- paste0("SELECT *
+                  FROM AlleVarNum INNER JOIN ForlopsOversikt
+                  ON AlleVarNum.m_mceid = ForlopsOversikt.ForlopsID
+                  INNER JOIN AlleVar ON AlleVarNum.m_mceid = AlleVar.m_mceid
+                  LEFT JOIN FollowupsNum ON AlleVarNum.m_mceid = FollowupsNum.c_mceid")
 
   RegData <- rapbase::LoadRegData(registryName, query, dbType)
 
