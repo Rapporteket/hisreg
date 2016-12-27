@@ -42,7 +42,7 @@ hisregHentRegData <- function() {
                   AlleVar.i_type AS i_type_label,
                   ForlopsOversikt.ForlopsID,
                   ForlopsOversikt.AvdRESH,
-                  ForlopsOversikt.Hoveddato,
+                  ForlopsOversikt.HovedDato,
                   ForlopsOversikt.PasientAlder,
                   ForlopsOversikt.BasisRegStatus,
                   ForlopsOversikt.OppflgRegStatus,
