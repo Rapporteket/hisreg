@@ -52,7 +52,6 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
   ## Hvis spørring skjer fra R på server. ######################
   if(hentData){
     RegData <- hisregHentRegData()
-    print(names(RegData))
   }
 
   # Hvis RegData ikke har blitt preprosessert
