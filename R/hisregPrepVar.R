@@ -265,14 +265,40 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='Hurley_PrePost') {
-    #     RegData$VarPre <- cut(RegData$VarPre, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = F)
-    #     RegData$VarPost <- cut(RegData$VarPost, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = F)
+
     RegData$VarPre <- as.factor(RegData$VarPre)
     RegData$VarPost <- as.factor(RegData$VarPost)
     tittel <- c('Hurley-score før og etter behandling')
     grtxt <- c('Stadium I', 'Stadium II', 'Stadium III')
     subtxt <- 'Hurley-score'
     cexgr <- 0.8
+  }
+
+  if (valgtVar=='pre_hurley_score') {
+    RegData$Variabel <- RegData[, valgtVar]
+    gr <- 1:5
+    RegData <- RegData[which(RegData$Variabel %in% gr), ]
+    RegData <- RegData[order(RegData$HovedDato, decreasing = F), ]
+    RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
+    tittel <- c('Hurley-score ved inklusjon')
+    grtxt <- as.character(gr)
+    RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    subtxt <- 'Hurley-score'
+  }
+
+  if (valgtVar=='pre_bmi') {
+    RegData$Variabel <- RegData[, valgtVar]
+    RegData <- RegData[!is.na(RegData$Variabel), ]
+    RegData <- RegData[order(RegData$HovedDato, decreasing = T), ]
+    RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
+    gr <- c(0,16,17,17.5,18.5,25,30,35,40,50)
+    RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
+
+    tittel <- c('BMI', paste0('Median: ', median(RegData$Variabel, na.rm = T), ' Gj.snitt: ', round(mean(RegData$Variabel, na.rm = T), 1)))
+    subtxt <- expression(BMI (kg/m^2))
+    grtxt <- c('Alvorlig undervekt\n (<16)','Undervekt\n (16-17)','Mild undervekt\n (17-17.5)','Normal\n (18.5-25)','Overvekt\n (25-30)',
+               'Moderat fedme,\n klasse I (30-35)','Fedme, klasse II\n (35-40)','Fedme, klasse III\n (40-50)')
+    retn <- 'H'
   }
 
 
