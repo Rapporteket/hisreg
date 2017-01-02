@@ -276,7 +276,7 @@ hisregPrepVar <- function(RegData, valgtVar)
 
   if (valgtVar=='pre_hurley_score') {
     RegData$Variabel <- RegData[, valgtVar]
-    gr <- 1:5
+    gr <- 1:3
     RegData <- RegData[which(RegData$Variabel %in% gr), ]
     RegData <- RegData[order(RegData$HovedDato, decreasing = F), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
