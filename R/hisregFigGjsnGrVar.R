@@ -11,7 +11,7 @@
 
 hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID,
                              minald=0, maxald=120, erMann=99, outfile='', forlop1 = 99, forlop2 = 99,
-                             enhetsUtvalg=1, preprosess=F, hentData=F, gr_var='SykehusNavn', fjern_sjeldne = 0)
+                             preprosess=F, hentData=F, gr_var='SykehusNavn', fjern_sjeldne = 0)
 
 {
 
@@ -23,16 +23,6 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
   # Hvis RegData ikke har blitt preprosessert
   if (preprosess){
     RegData <- hisregPreprosess(RegData=RegData)
-  }
-
-  # Hvis man ikke skal sammenligne, får man ut resultat for eget sykehus
-  if (enhetsUtvalg == 2) {RegData <- RegData[which(RegData$AvdRESH == reshID), ]}
-
-  # Sykehustekst avhengig av bruker og brukervalg
-  if (enhetsUtvalg==0) {
-    shtxt <- 'Hele landet'
-  } else {
-    shtxt <- as.character(RegData$SykehusNavn[match(reshID, RegData$AvdRESH)])
   }
 
   RegData$Variabel <- RegData[, valgtVar]
