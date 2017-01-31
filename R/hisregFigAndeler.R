@@ -142,7 +142,7 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
   FigTypUt <- figtype(outfile=outfile, fargepalett=hisregUtvalg$fargepalett, pointsizePDF=12)
 
   #Hvis for få observasjoner..
-  if (NHoved < 5 | (Nrest<5 & enhetsUtvalg==1)) {
+  if (NHoved < 1 | (Nrest<0 & enhetsUtvalg==1)) {
     farger <- FigTypUt$farger
     plot.new()
     # title(tittel)	#, line=-6)

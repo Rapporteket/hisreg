@@ -18,7 +18,7 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
 
   ## Hvis spørring skjer fra R på server. ######################
   if(hentData){
-    RegData <- hisregHentRegData() ## Funksjonen må lages
+    RegData <- hisregHentRegData()
   }
 
   # Hvis RegData ikke har blitt preprosessert
@@ -68,6 +68,8 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
   Nrest <- 0
 
   #Andeler$Hoved <- round(table(RegData$VariabelGr)/length(RegData$VariabelGr)*100,2)
+
+  ##### Må gjøres robust mot situasjoner hvor det mangler tellinger i en gruppering
 
   if (enhetsUtvalg==1) {
     AntHovedPre <- table(RegData$VarPre[ind$Hoved]) #table(cut(RegData$VarPre, gr, right=F)) #cut sikrer at har med alle kategorier

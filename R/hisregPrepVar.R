@@ -255,8 +255,10 @@ hisregPrepVar <- function(RegData, valgtVar)
 #   }
 
   if (valgtVar=='DLQI_PrePost') {
-    RegData$VarPre <- cut(RegData$VarPre, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = F)
-    RegData$VarPost <- cut(RegData$VarPost, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = F)
+    RegData$VarPre <- cut(RegData$VarPre, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = 1:3)
+    RegData$VarPost <- cut(RegData$VarPost, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = 1:3)
+    # RegData$VarPre <- cut(RegData$VarPre, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = F)
+    # RegData$VarPost <- cut(RegData$VarPost, breaks=c(0,10,20,30), include.lowest=TRUE, right=FALSE, labels = F)
     tittel <- c('DLQI alvorlighetsgrad før og etter intervensjon')
     grtxt <- c('Mild', 'Moderat', 'Alvorlig')
     grtxt2 <- c('DLQI<10', '10<=DLQI<20', 'DLQI>=20')
