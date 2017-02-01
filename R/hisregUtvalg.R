@@ -32,7 +32,7 @@ hisregUtvalg <- function(RegData, datoFra, datoTil, minald, maxald, erMann, forl
                    if ((minald>0) | (maxald<120)) {
                      paste('Pasienter fra ', min(RegData$PasientAlder, na.rm=T), ' til ', max(RegData$PasientAlder, na.rm=T), ' år', sep='')},
                    if (erMann %in% 0:1) {paste('Kjønn: ', c('Kvinner', 'Menn')[erMann+1], sep='')},
-                   if (forlop1 %in% c(1:4)) {paste0('Forl\370pstype 1: ', RegData$ForlopsType1[match(forlop1, RegData$ForlopsType1Num)])},
+                   if (forlop1 %in% c(1:4)) {paste0('Intervensjon: ', RegData$ForlopsType1[match(forlop1, RegData$ForlopsType1Num)])},
                    if (forlop2 %in% c(1:5)) {paste0('Forl\370pstype 2: ', RegData$ForlopsType2[match(forlop2, RegData$ForlopsType2Num)])}
     )
   } else {

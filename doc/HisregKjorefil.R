@@ -6,7 +6,7 @@ RegData <- read.table('C:/SVN/jasper/hisreg/data/AlleVarNum2017-01-23 11-06-17.t
 RegData <- RegData[, c('m_mceid', 'p_age_abscess', 'p_education', 'p_surgery', 'p_antibiotics', 'pre_smoking', 'pre_work', 'pre_bmi', 'pre_dlqisum',
                        'pre_hsscoresum', 'pre_vasscore', 'pre_hurley_score', 'i_type', 'i_surgery_type', 'i_biological_treatment',
                        'i_antibiotic_therapy', 'i_antiinflammatory_treatment', 'i_analgesics', 'i_localized_med_treatment', 'i_aksille',
-                       'i_lyske', 'i_pubis', 'i_genitalt', 'i_peritalt', 'i_glutealt', 'i_mammae', 'i_other_location')]
+                       'i_lyske', 'i_pubis', 'i_genitalt', 'i_peritalt', 'i_glutealt', 'i_mammae', 'i_other_location', 'r_resh_id', 'm_pid')]
 Followups <- read.table('C:/SVN/jasper/hisreg/data/FollowupsNum2017-01-23 11-06-18.txt', header=TRUE, sep=";", encoding = 'UFT-8')
 Followups <- Followups[, c('c_mceid', 'c_do_month', 'c_infection', 'c_delayed_wound_healing', 'c_stricturer', 'c_nervedamage', 'c_bloodpoisoning',
                            'c_bleeding', 'c_other_complications', 'c_dlqisum', 'c_hsscoresum', 'c_vasscore', 'c_hurley_score')]
