@@ -10,7 +10,7 @@
 #'
 #' @export
 #'
-hisregFigAndelerPrePost <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID,
+hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID,
                                     minald=0, maxald=120, erMann=99, outfile='', forlop1 = 99, forlop2 = 99,
                                     enhetsUtvalg=1, preprosess=F, hentData=F)
 
@@ -27,7 +27,7 @@ hisregFigAndelerPrePost <- function(RegData, valgtVar, datoFra='2000-01-01', dat
   }
 
   # Denne figurtypen krever at oppfølginger finnes
-  RegData <- RegData[RegData$OppflgRegStatus >= 1, ]
+  RegData <- RegData[which(RegData$OppflgRegStatus >= 1), ]
 
   # Hvis man ikke skal sammenligne, får man ut resultat for eget sykehus
   if (enhetsUtvalg == 2) {RegData <- RegData[which(RegData$AvdRESH == reshID), ]}
@@ -41,15 +41,20 @@ hisregFigAndelerPrePost <- function(RegData, valgtVar, datoFra='2000-01-01', dat
 
   # Definerer pre -og postvariabler, fjerner registreringer som mangler én eller begge
   PrePostVar <- switch(valgtVar,
-                       DLQI_PrePost = c('pre_dlqisum', 'c6_dlqisum'),
-                       Hurley_PrePost = c('pre_hurley_score', 'c6_hurley_score'))
+                       DLQI_PrePost = c('pre_dlqisum', 'c_dlqisum'),
+                       Hurley_PrePost = c('pre_hurley_score', 'c_hurley_score'))
   #   PrePostVar <- switch(valgtVar,
   #                        DLQI_PrePost = c('DLQI alvorlighetsgrad', 'før og etter behandling'),
   #                        Hurley_PrePost = c('Hurley score', 'før og etter behandling'))
 
   RegData$VarPre <- RegData[ ,PrePostVar[1]]
   RegData$VarPost <- RegData[ ,PrePostVar[2]]
-  RegData <- RegData[!is.na(RegData$VarPre) & !is.na(RegData$VarPost), ]
+  RegData <- RegData[which(!is.na(RegData$VarPre) & !is.na(RegData$VarPost)), ]
+
+  ## Forbered variabler for fremstilling i figur
+  PlotParams <- hisregPrepVar(RegData=RegData, valgtVar=valgtVar)
+  RegData <- PlotParams$RegData
+  PlotParams$RegData <- NA
 
   ## Gjør utvalg basert på brukervalg (LibUtvalg)
   hisregUtvalg <- hisregUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald,
@@ -62,37 +67,38 @@ hisregFigAndelerPrePost <- function(RegData, valgtVar, datoFra='2000-01-01', dat
   ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
   Nrest <- 0
 
-  ## Forbered variabler for fremstilling i figur
-  PlotParams <- hisregPrepVar(RegData=RegData, valgtVar=valgtVar)
-  RegData <- PlotParams$RegData
-  PlotParams$RegData <- NA
-
-
-
   #Andeler$Hoved <- round(table(RegData$VariabelGr)/length(RegData$VariabelGr)*100,2)
-  AntHovedPre <- table(RegData$VarPre[ind$Hoved]) #table(cut(RegData$VarPre, gr, right=F)) #cut sikrer at har med alle kategorier
-  AntHovedPost <- table(RegData$VarPost[ind$Hoved])
-  NHoved <- sum(AntHovedPre)	#length(indHoved)
-  Nrest <- 0
-  AndelerPP$Hoved <- cbind(AntHovedPre, AntHovedPost)/NHoved*100
+
+  ##### Må gjøres robust mot situasjoner hvor det mangler tellinger i en gruppering
 
   if (enhetsUtvalg==1) {
+    AntHovedPre <- table(RegData$VarPre[ind$Hoved]) #table(cut(RegData$VarPre, gr, right=F)) #cut sikrer at har med alle kategorier
+    AntHovedPost <- table(RegData$VarPost[ind$Hoved])
+    NHoved <- sum(AntHovedPre)	#length(indHoved)
+    Nrest <- 0
+    AndelerPP$Hoved <- cbind(AntHovedPre, AntHovedPost)/NHoved*100
     AntRestPre <- table(RegData$VarPre[ind$Rest]) #table(cut(RegData$VarPre, gr, right=F)) #cut sikrer at har med alle kategorier
     AntRestPost <- table(RegData$VarPost[ind$Rest])
     Nrest <- length(ind$Rest)
     AndelerPP$Rest <- cbind(AntRestPre, AntRestPost)/Nrest*100
     smltxt <- 'Landet forøvrig'
+  } else {
+    AntHovedPre <- table(RegData$VarPre) #table(cut(RegData$VarPre, gr, right=F)) #cut sikrer at har med alle kategorier
+    AntHovedPost <- table(RegData$VarPost)
+    NHoved <- sum(AntHovedPre)	#length(indHoved)
+    Nrest <- 0
+    AndelerPP$Hoved <- cbind(AntHovedPre, AntHovedPost)/NHoved*100
   }
 
 
   #-----------Figur---------------------------------------
   tittel <- PlotParams$tittel; grtxt <- PlotParams$grtxt; grtxt2 <- PlotParams$grtxt2;
   subtxt <- PlotParams$subtxt; retn <- PlotParams$retn; cexgr <- PlotParams$cexgr;
-  FigTypUt <- figtype(outfile=outfile, fargepalett=hisregUtvalg$fargepalett)
+  FigTypUt <- figtype(outfile=outfile, fargepalett='BlaaOff')
 
 
   #Hvis for få observasjoner..
-  if (NHoved < 10 | (enhetsUtvalg==1 & Nrest<10)) {
+  if (NHoved < 1 | (enhetsUtvalg==1 & Nrest<1)) {
     farger <- FigTypUt$farger
     plot.new()
     title(main=paste('variabel: ', valgtVar, sep=''))
@@ -121,7 +127,7 @@ hisregFigAndelerPrePost <- function(RegData, valgtVar, datoFra='2000-01-01', dat
       ymax <- min(max(c(AndelerPP$Hoved, AndelerPP$Rest),na.rm=T)*1.25, 110)
       pos <- barplot(t(AndelerPP$Hoved), beside=TRUE, las=1, ylab="Andel pasienter (%)",
                      sub=subtxt, cex.axis=cexgr, cex.sub=cexgr,	cex.lab=cexgr, # ,	names.arg=grtxt, cex.names=cexgr,
-                     col=farger[c(2,1)], border='white', ylim=c(0, ymax), xaxt='n')
+                     col=farger[c(1,2)], border='white', ylim=c(0, ymax), xaxt='n')
       mtext(at=colMeans(pos), grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
       mtext(at=colMeans(pos), grtxt2, side=1, las=1, cex=cexgr, adj=0.5, line=1.5)
       if (enhetsUtvalg == 1) {
@@ -129,10 +135,10 @@ hisregFigAndelerPrePost <- function(RegData, valgtVar, datoFra='2000-01-01', dat
         legend('top', c(paste(c('Før, N=', 'Etter, N='), NHoved , sep=''),
                         paste(smltxt, ' N=', Nrest, sep='')), text.width = c(2,2,2),
                bty='n', pch=c(15,15,18), pt.cex=cexpt, #lty=c(NA,NA,NA),
-               col=farger[c(2,1,3)], border=farger[c(2,1,3)], ncol=3, cex=cexleg)
+               col=farger[c(1,2,3)], border=farger[c(1,2,3)], ncol=3, cex=cexleg)
       } else {
         legend('top', c('Før', 'Etter', paste('N=', NHoved , sep='')), bty='n',
-               fill=farger[c(2,1,NA)], border=NA, ncol=3, cex=cexleg)
+               fill=farger[c(1,2,NA)], border=NA, ncol=3, cex=cexleg)
       }
     }
 
