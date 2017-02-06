@@ -127,7 +127,7 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
       ymax <- min(max(c(AndelerPP$Hoved, AndelerPP$Rest),na.rm=T)*1.25, 110)
       pos <- barplot(t(AndelerPP$Hoved), beside=TRUE, las=1, ylab="Andel pasienter (%)",
                      sub=subtxt, cex.axis=cexgr, cex.sub=cexgr,	cex.lab=cexgr, # ,	names.arg=grtxt, cex.names=cexgr,
-                     col=farger[c(2,1)], border='white', ylim=c(0, ymax), xaxt='n')
+                     col=farger[c(1,2)], border='white', ylim=c(0, ymax), xaxt='n')
       mtext(at=colMeans(pos), grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
       mtext(at=colMeans(pos), grtxt2, side=1, las=1, cex=cexgr, adj=0.5, line=1.5)
       if (enhetsUtvalg == 1) {
@@ -135,10 +135,10 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
         legend('top', c(paste(c('Før, N=', 'Etter, N='), NHoved , sep=''),
                         paste(smltxt, ' N=', Nrest, sep='')), text.width = c(2,2,2),
                bty='n', pch=c(15,15,18), pt.cex=cexpt, #lty=c(NA,NA,NA),
-               col=farger[c(2,1,3)], border=farger[c(2,1,3)], ncol=3, cex=cexleg)
+               col=farger[c(1,2,3)], border=farger[c(2,1,3)], ncol=3, cex=cexleg)
       } else {
         legend('top', c('Før', 'Etter', paste('N=', NHoved , sep='')), bty='n',
-               fill=farger[c(2,1,NA)], border=NA, ncol=3, cex=cexleg)
+               fill=farger[c(1,2,NA)], border=NA, ncol=3, cex=cexleg)
       }
     }
 
