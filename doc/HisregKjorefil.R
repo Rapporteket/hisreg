@@ -31,7 +31,7 @@ enhetsUtvalg=1
 preprosess=F
 hentData=F
 outfile <- ''
-valgtVar <- 'Hurley_PrePost'
+valgtVar <- 'DLQI_PrePost'
 
 if (outfile == ''){x11()}
 hisregFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
@@ -45,8 +45,10 @@ hisregFigAndelerPrePost(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, dat
                         enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
 
 
-
-
+if (outfile == ''){x11()}
+hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                          minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                          preprosess=preprosess, hentData=hentData, gr_var='SykehusNavn')
 
 
 

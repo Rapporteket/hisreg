@@ -94,7 +94,7 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
   #-----------Figur---------------------------------------
   tittel <- PlotParams$tittel; grtxt <- PlotParams$grtxt; grtxt2 <- PlotParams$grtxt2;
   subtxt <- PlotParams$subtxt; retn <- PlotParams$retn; cexgr <- PlotParams$cexgr;
-  FigTypUt <- figtype(outfile=outfile, fargepalett=hisregUtvalg$fargepalett)
+  FigTypUt <- figtype(outfile=outfile, fargepalett='BlaaOff')
 
 
   #Hvis for få observasjoner..
@@ -135,7 +135,7 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
         legend('top', c(paste(c('Før, N=', 'Etter, N='), NHoved , sep=''),
                         paste(smltxt, ' N=', Nrest, sep='')), text.width = c(2,2,2),
                bty='n', pch=c(15,15,18), pt.cex=cexpt, #lty=c(NA,NA,NA),
-               col=farger[c(1,2,3)], border=farger[c(2,1,3)], ncol=3, cex=cexleg)
+               col=farger[c(1,2,3)], border=farger[c(1,2,3)], ncol=3, cex=cexleg)
       } else {
         legend('top', c('Før', 'Etter', paste('N=', NHoved , sep='')), bty='n',
                fill=farger[c(1,2,NA)], border=NA, ncol=3, cex=cexleg)
