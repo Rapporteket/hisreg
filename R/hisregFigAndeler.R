@@ -77,7 +77,6 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
 
   # Initialiserer nødvendige størrelser
   Andeler <- list(Hoved = 0, Rest =0)
-  ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
   Nrest <- 0
 
   if (valgtVar %in% c('TidlBeh', 'MedisinskBeh', 'KomplKir', 'KirurgiLokalisering')) {
@@ -90,6 +89,7 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
     ## Forbered variabler for fremstilling i figur
     PlotParams <- hisregPrepVar(RegData=RegData, valgtVar=valgtVar)
     RegData <- PlotParams$RegData
+    ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
     PlotParams$RegData <- NA
     if (enhetsUtvalg==1) {
       AntHoved <- table(RegData$VariabelGr[ind$Hoved])
@@ -116,6 +116,7 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
       medSml <- 0
     } else {						#Skal gjøre sammenlikning
       medSml <- 1
+      ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
 #       ind$Hoved <-which(as.numeric(RegData$AvdRESH)==reshID)
 #       ind$Rest <- which(as.numeric(RegData$AvdRESH) != reshID)
     }

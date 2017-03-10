@@ -17,11 +17,11 @@ hisregPrepVar <- function(RegData, valgtVar)
   cexgr <- 1.0; grtxt <- ''; grtxt2 <- ''; subtxt <- '';
 
 
-  if (valgtVar=='PasientAlder') {
+  if (valgtVar=='PasientAlder') { # per pasient
     RegData$Variabel <- RegData[, valgtVar]
     RegData <- RegData[!is.na(RegData$Variabel), ]
-    #     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
-    #     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
+    RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
+    RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Aldersfordeling i registeret'
     gr <- c(0, seq(10, 80, 10), 120)
     RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
@@ -31,7 +31,7 @@ hisregPrepVar <- function(RegData, valgtVar)
     retn <- 'H'
   }
 
-  if (valgtVar=='p_age_abscess') {
+  if (valgtVar=='p_age_abscess') {# per pasient
     RegData$Variabel <- RegData[, valgtVar]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
@@ -44,14 +44,14 @@ hisregPrepVar <- function(RegData, valgtVar)
     retn <- 'H'
   }
 
-  if (valgtVar=='ErMann') {
+  if (valgtVar=='ErMann') {# per pasient
     gr <- c(0,1)
     grtxt <- c('Kvinne', 'Mann')
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     RegData$Variabel <- as.character(RegData[, valgtVar])
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
-    tittel <- 'Kjønnsfordeling HISREG 2015'
+    tittel <- 'Kjønnsfordeling HISREG'
     retn <- 'H'
   }
 
