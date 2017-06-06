@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 5.6.2.final using JasperReports Library version 5.6.1  -->
-<!-- 2017-02-03T09:29:58 -->
+<!-- 2017-06-06T13:24:12 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hisregFigGjsnPrePostIntervensjon" language="groovy" pageWidth="595" pageHeight="595" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" scriptletClass="no.skde.report.hisreg.Hisreg" isIgnorePagination="true" uuid="9ca92060-e90f-4e3c-acec-23662a03f059">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -38,7 +38,7 @@
 		<defaultValueExpression><![CDATA[new String("hisreg")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rFunctionCallString" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("hisregFigGjsnPrePostGrVar(RegData=0, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, reshID=reshID, minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 99, forlop2 = 99, preprosess=T, hentData=T, gr_var='Intervensjon')")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("hisregFigGjsnPrePostGrVar(RegData=0, valgtVar=valgtVar, enhetsUtvalg=enhetsUtvalg, datoFra=datoFra, datoTil=datoTil, reshID=reshID, minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 99, forlop2 = 99, preprosess=T, hentData=T, gr_var='Intervensjon')")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="varName" class="java.lang.String">
 		<defaultValueExpression><![CDATA[new String("PasientAlder")]]></defaultValueExpression>
@@ -67,7 +67,7 @@
 		<defaultValueExpression><![CDATA[[""]]]></defaultValueExpression>
 	</parameter>
 	<parameter name="orgUnitSelection" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[new Integer(1)]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LoggedInUserRoles" class="java.util.Collection" nestedType="java.util.String" isForPrompting="false">
 		<parameterDescription><![CDATA[Current set of roles of logged in user. Useful for $X parameter]]></parameterDescription>
