@@ -111,6 +111,7 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
 #     RegDataLand <- RegData
 
     if (enhetsUtvalg %in% c(0,2)) {
+      ind <- NULL
       ind$Hoved <- 1:dim(RegData)[1]
       ind$Rest <- NULL
       medSml <- 0

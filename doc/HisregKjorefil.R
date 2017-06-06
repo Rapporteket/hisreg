@@ -28,7 +28,7 @@ maxald=120
 erMann=99
 forlop1 = 99
 forlop2 = 99
-enhetsUtvalg=1
+enhetsUtvalg=2
 preprosess=F
 hentData=F
 outfile <- ''
@@ -54,6 +54,10 @@ hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, d
                           preprosess=preprosess, hentData=hentData, gr_var='SykehusNavn')
 
 
+if (outfile == ''){x11()}
+hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
+                          minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                          preprosess=preprosess, hentData=hentData, gr_var='Intervensjon')
 
 
 

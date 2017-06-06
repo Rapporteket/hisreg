@@ -11,7 +11,7 @@
 #'
 #' @export
 #'
-hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID,
+hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID, enhetsUtvalg=0,
                                     minald=0, maxald=120, erMann=99, outfile='', forlop1 = 99, forlop2 = 99,
                                     preprosess=F, hentData=F, gr_var='SykehusNavn')
 
@@ -31,6 +31,13 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
 
   # Denne figurtypen krever at oppfølginger finnes
   RegData <- RegData[RegData$OppflgRegStatus >= 1, ]
+
+  # For gr_var='Intervensjon' er det aktuelt med enhetsUtvalg 0 (Hele landet) eller 2 (Egen avdeling)
+
+  if (enhetsUtvalg==2) {
+    RegData <- RegData[which(RegData$AvdRESH == reshID), ]
+    shtxt <- as.character(RegData$SykehusNavn[match(reshID, RegData$AvdRESH)])
+  }
 
   # # Hvis man ikke skal sammenligne, får man ut resultat for eget sykehus
   # if (enhetsUtvalg == 2) {RegData <- RegData[which(RegData$AvdRESH == reshID), ]}
@@ -62,6 +69,10 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
                                maxald=maxald, erMann=erMann, forlop1 = forlop1, forlop2 = forlop2)
   RegData <- hisregUtvalg$RegData
   utvalgTxt <- hisregUtvalg$utvalgTxt
+
+  if (enhetsUtvalg==2) {
+    utvalgTxt <- c(paste0('Avdeling: ', shtxt), utvalgTxt)
+  }
 
   PrePost <- aggregate(RegData[, c('VarPre', "VarPost")],
                        by=list(RegData$Gr_var), mean, na.rm = TRUE)
