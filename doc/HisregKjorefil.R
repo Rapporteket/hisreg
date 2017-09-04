@@ -3,15 +3,15 @@ library(hisreg)
 setwd('C:/GIT/hisreg/doc/')
 
 # Les inn data
-RegData <- read.table('C:/SVN/jasper/hisreg/data/AlleVarNum2017-03-09 15-42-51.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+RegData <- read.table('P:/MinData/hisreg/AlleVarNum2017-06-13 15-12-48.txt', header=TRUE, sep=";", encoding = 'UFT-8')
 RegData <- RegData[, c('m_mceid', 'p_age_abscess', 'p_education', 'p_surgery', 'p_antibiotics', 'pre_smoking', 'pre_work', 'pre_bmi', 'pre_dlqisum',
                        'pre_hsscoresum', 'pre_vasscore', 'pre_hurley_score', 'i_type', 'i_surgery_type', 'i_biological_treatment',
                        'i_antibiotic_therapy', 'i_antiinflammatory_treatment', 'i_analgesics', 'i_localized_med_treatment', 'i_aksille',
                        'i_lyske', 'i_pubis', 'i_genitalt', 'i_peritalt', 'i_glutealt', 'i_mammae', 'i_other_location', 'r_resh_id', 'm_pid')]
-Followups <- read.table('C:/SVN/jasper/hisreg/data/FollowupsNum2017-03-09 15-42-52.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+Followups <- read.table('P:/MinData/hisreg/FollowupsNum2017-06-13 15-12-51.txt', header=TRUE, sep=";", encoding = 'UFT-8')
 Followups <- Followups[, c('c_mceid', 'c_do_month', 'c_infection', 'c_delayed_wound_healing', 'c_stricturer', 'c_nervedamage', 'c_bloodpoisoning',
                            'c_bleeding', 'c_other_complications', 'c_dlqisum', 'c_hsscoresum', 'c_vasscore', 'c_hurley_score')]
-ForlopsData <- read.table('C:/SVN/jasper/hisreg/data/ForlopsOversikt2017-03-09 15-42-52.txt', header=TRUE, sep=";", encoding = 'UFT-8')
+ForlopsData <- read.table('P:/MinData/hisreg/ForlopsOversikt2017-06-13 15-12-51.txt', header=TRUE, sep=";", encoding = 'UFT-8')
 ForlopsData <- ForlopsData[, c('ForlopsID', 'AvdRESH', 'BasisRegStatus', 'HovedDato', 'PasientAlder', 'OppflgRegStatus', 'ForlopsType1', 'ForlopsType1Num',
                                'ForlopsType2', 'ForlopsType2Num', 'ErMann', 'SykehusNavn', 'PasientID')]
 
@@ -28,11 +28,11 @@ maxald=120
 erMann=99
 forlop1 = 99
 forlop2 = 99
-enhetsUtvalg=2
+enhetsUtvalg=0
 preprosess=F
 hentData=F
 outfile <- ''
-valgtVar <- 'DLQI_PrePost'
+valgtVar <- 'MedisinskBeh'
 
 if (outfile == ''){x11()}
 hisregFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
