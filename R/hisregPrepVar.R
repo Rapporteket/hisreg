@@ -139,10 +139,47 @@ hisregPrepVar <- function(RegData, valgtVar)
   if (valgtVar=='i_biological_treatment') {
     RegData <- RegData[which(RegData$i_type %in% c(2,3)), ]
     RegData$Variabel <- RegData[, valgtVar]
+    RegData <- RegData[which(RegData$Variabel != 1), ]
     # RegData$Variabel[is.na(RegData$Variabel)] <- 99
     tittel <- 'Biologiske legemidler'
-    gr <- c(4,5,6,1,3)
-    grtxt <- c('Infliximab', 'Adalimumab', 'Biosimilars', 'Nei', 'Andre')
+    gr <- c(4,5,6,3)
+    grtxt <- c('Infliximab', 'Adalimumab', 'Biosimilars', 'Andre')
+    RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    retn <- 'H'
+  }
+
+
+
+  if (valgtVar=='Antibiotisk') {
+    RegData <- RegData[which(RegData$i_antibiotic_therapy == 1), ]
+    N <- dim(RegData)[1]
+    tittel <- 'Type antibiotisk behandling'
+    AntVar <- colSums(RegData[, c("i_rifampicin_clindamycin", "i_tetracyclin_lymecyclin", "i_amoxicilin",
+                                  "i_sys_antibiotic_other")], na.rm = TRUE)
+    NVar<-rep(N, length(AntVar))
+    grtxt <- c("Rifampicin og Clindamycin", "Tetracyclin eller Lymecyclin", "Amoxicilin med clavulansyre",
+               "Andre")
+    retn <- 'H'
+  }
+
+  if (valgtVar=='LokalisertMedisinsk') {
+    RegData <- RegData[which(RegData$i_localized_med_treatment == 1), ]
+    N <- dim(RegData)[1]
+    tittel <- 'Type lokalisert medisinsk behandling'
+    AntVar <- colSums(RegData[, c("i_corticosteroid_injection", "i_acelacic_acid", "i_clindamycin", "i_resorcinol",
+                                  "i_medical_other")], na.rm = TRUE)
+    NVar<-rep(N, length(AntVar))
+    grtxt <- c("Intralesjonell kortikosteroidinjeksjon", "Acelacic acid", "Clindamycin", "Resorcinol 15%", "Andre")
+    retn <- 'H'
+  }
+
+  if (valgtVar=='i_antiinflammatory_treatment') {
+    RegData <- RegData[which(RegData$i_type %in% c(2,3)), ]
+    RegData$Variabel <- RegData[, valgtVar]
+    RegData <- RegData[which(RegData$Variabel != 1), ]
+    tittel <- 'Antiinflammatorisk behandling'
+    gr <- c(4,5,6,8,3)
+    grtxt <- c('Dapson', 'Prednisolon', 'Ciclosporin', 'Acitretin', 'Andre')
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
     retn <- 'H'
   }

@@ -42,7 +42,10 @@ RegData <- read.table('P:/MinData/hisreg/AlleVarNum2017-09-01 10-30-34.txt', hea
 RegData <- RegData[, c('m_mceid', 'p_age_abscess', 'p_education', 'p_surgery', 'p_antibiotics', 'pre_smoking', 'pre_work', 'pre_bmi', 'pre_dlqisum',
                        'pre_hsscoresum', 'pre_vasscore', 'pre_hurley_score', 'i_type', 'i_surgery_type', 'i_biological_treatment',
                        'i_antibiotic_therapy', 'i_antiinflammatory_treatment', 'i_analgesics', 'i_localized_med_treatment', 'i_aksille',
-                       'i_lyske', 'i_pubis', 'i_genitalt', 'i_peritalt', 'i_glutealt', 'i_mammae', 'i_other_location')]
+                       'i_lyske', 'i_pubis', 'i_genitalt', 'i_peritalt', 'i_glutealt', 'i_mammae', 'i_other_location',
+                       "i_rifampicin_clindamycin", "i_tetracyclin_lymecyclin", "i_amoxicilin", "i_sys_antibiotic_other",
+                       "i_corticosteroid_injection", "i_acelacic_acid", "i_clindamycin", "i_resorcinol",
+                                  "i_medical_other")]
 Followups <- read.table('P:/MinData/hisreg/FollowupsNum2017-09-01 10-30-36.txt', header=TRUE, sep=";", encoding = 'UFT-8')
 Followups <- Followups[, c('c_mceid', 'c_do_month', 'c_infection', 'c_delayed_wound_healing', 'c_stricturer', 'c_nervedamage', 'c_bloodpoisoning',
                            'c_bleeding', 'c_other_complications', 'c_dlqisum', 'c_hsscoresum', 'c_vasscore', 'c_hurley_score')]
@@ -676,22 +679,57 @@ hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=da
 \caption{Type medisinsk behandling}
 \end{figure}
 
+
 <<'NyeFig_pkt3', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
-
-shusnavn <- as.character(unique(RegData$SykehusNavn))
-reshID <- RegData$AvdRESH[match(shusnavn, RegData$SykehusNavn)]
-
-for (p in reshID) {
-outfile <- paste0('MedisinskBeh', p, '.pdf')
-hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=p,
+varname <- 'i_biological_treatment'
+outfile <- paste0('i_biological_treatment.pdf')
+hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                 enhetsUtvalg=2, preprosess=preprosess, hentData=hentData)
-}
+                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+
+varname <- 'Antibiotisk'
+outfile <- paste0('Antibiotisk.pdf')
+hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+
+varname <- 'i_antiinflammatory_treatment'
+outfile <- paste0('i_antiinflammatory_treatment.pdf')
+hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+
+varname <- 'LokalisertMedisinsk'
+outfile <- paste0('LokalisertMedisinsk.pdf')
+hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
 @
 
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{'i_biological_treatment.pdf'}
+\caption{Type biologisk behandling}
+\end{figure}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{'Antibiotisk.pdf'}
+\caption{Type antibiotisk behandling}
+\end{figure}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{'i_antiinflammatory_treatment.pdf'}
+\caption{Type antiinflammatorisk behandling}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{'LokalisertMedisinsk.pdf'}
+\caption{Type lokalisert medisinsk behandling}
+\end{figure}
 
 
 \end{document}
