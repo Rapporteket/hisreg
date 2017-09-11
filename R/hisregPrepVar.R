@@ -59,7 +59,7 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData$Variabel <- as.character(RegData[, valgtVar])
     RegData$VariabelGr <- factor(RegData$Variabel, levels = names(table(RegData$Variabel)[order(table(RegData$Variabel), decreasing = T)]))
     grtxt <- levels(RegData$VariabelGr)
-    tittel <- 'Andel registrert av deltagende avdelinger 2015'
+    tittel <- 'Andel registrert av deltagende avdelinger'
     retn <- 'H'
   }
 
@@ -69,7 +69,7 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData$Variabel <- as.character(RegData$SykehusNavn)
     RegData$VariabelGr <- factor(RegData$Variabel, levels = names(table(RegData$Variabel)[order(table(RegData$Variabel), decreasing = T)]))
     grtxt <- levels(RegData$VariabelGr)
-    tittel <- c('Andel unike pasienter registrert', 'av deltagende avdelinger 2015')
+    tittel <- c('Andel unike pasienter registrert', 'av deltagende avdelinger')
     retn <- 'H'
   }
 

@@ -45,7 +45,7 @@
 
 hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID,
                              minald=0, maxald=120, erMann=99, outfile='', forlop1 = 99, forlop2 = 99,
-                             enhetsUtvalg=1, preprosess=F, hentData=F)
+                             enhetsUtvalg=1, preprosess=F, hentData=F, incl_N=T)
 
 {
 
@@ -158,10 +158,11 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
     NutvTxt <- length(utvalgTxt)
     grtxtpst <- paste(rev(grtxt), ' (', rev(sprintf('%.1f', Andeler$Hoved)), '%)', sep='')
     # if (incl_pst) {grtxtpst <- paste(rev(grtxt), ' (', rev(sprintf('%.1f', Andeler$Hoved)), '%)', sep='')}
-    # if (incl_N) {grtxtpst <- paste(rev(grtxt), ' (n=', rev(sprintf('%.0f', Andeler$Hoved*NHoved/100)), ')', sep='')}
+    if (incl_N) {grtxtpst <- paste(rev(grtxt), ' (n=', rev(sprintf('%.0f', Andeler$Hoved*NHoved/100)), ')', sep='')}
     vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxtpst, units='figure', cex=cexgr)*0.8))
     par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))  #Har alltid datoutvalg med
     if (grtxt2 == '') {grtxt2 <- paste(sprintf('%.1f',Andeler$Hoved), '%', sep='')}
+    if (incl_N) {grtxt2 <- paste0('(n=', rev(sprintf('%.0f', Andeler$Hoved*NHoved/100)), ')')}
 
     fargeHoved <- farger[1]
     fargeRest <- farger[3]

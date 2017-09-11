@@ -18,11 +18,11 @@ hisregPreprosess <- function(RegData)
   RegData$SykehusNavnLang <- RegData$SykehusNavn
   RegData$SykehusNavn <- as.character(RegData$SykehusNavn)
   RegData$SykehusNavn[RegData$SykehusNavn == 'Haugesund Sanitetsforenings revmatismesykehus'] <- 'Haugesund rev.'
-  RegData$SykehusNavn[RegData$SykehusNavn == 'Helse Bergen HF'] <- 'Helse Bergen HF'
-  RegData$SykehusNavn[RegData$SykehusNavn == 'Helse Stavanger HF'] <- 'Helse Stavanger HF'
-  RegData$SykehusNavn[RegData$SykehusNavn == 'Oslo universitetssykehus HF'] <- 'OUS HF'
-  RegData$SykehusNavn[RegData$SykehusNavn == 'St. Olavs Hospital HF'] <- 'St. Olavs'
-  RegData$SykehusNavn[RegData$SykehusNavn == 'Universitetssykehuset Nord-Norge HF'] <- 'UNN HF'
+  RegData$SykehusNavn[RegData$SykehusNavn == 'Helse Bergen HF'] <- 'Haukeland Universitetssykehus'
+  RegData$SykehusNavn[RegData$SykehusNavn == 'Helse Stavanger HF'] <- 'Stavanger Universitetssykehus'
+  RegData$SykehusNavn[RegData$SykehusNavn == 'Oslo universitetssykehus HF'] <- 'Rikshospitalet'
+  RegData$SykehusNavn[RegData$SykehusNavn == 'St. Olavs Hospital HF'] <- 'St. Olavs Hospital'
+  RegData$SykehusNavn[RegData$SykehusNavn == 'Universitetssykehuset Nord-Norge HF'] <- 'UNN'
   RegData$SykehusNavn <- as.factor(RegData$SykehusNavn)
 
   RegData$Intervensjon <- NA

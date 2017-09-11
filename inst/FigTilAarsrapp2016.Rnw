@@ -83,7 +83,7 @@ tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
 <<'Tabell:RegistrerendeAvd', results='asis', echo=FALSE, eval=T, warning=FALSE>>=
 tmp <- RegData[order(RegData$HovedDato, decreasing = FALSE), ]
 tmp <- tmp[tmp$HovedDato <= as.POSIXlt(datoTil), ]
-Tabell1 <- addmargins(table(as.character(tmp$SykehusNavnLang), tmp$Aar, useNA = 'no'))
+Tabell1 <- addmargins(table(as.character(tmp$SykehusNavn), tmp$Aar, useNA = 'no'))
 
 print(xtable::xtable(Tabell1, digits=0, align=c('l', rep('r', ncol(Tabell1))),
                      caption='Antall forløp startet i angitte år.'),
@@ -94,7 +94,7 @@ print(xtable::xtable(Tabell1, digits=0, align=c('l', rep('r', ncol(Tabell1))),
 
 tmp <- tmp[match(unique(tmp$PasientID), tmp$PasientID), ]
 
-Tabell2 <- addmargins(table(as.character(tmp$SykehusNavnLang), tmp$Aar, useNA = 'no'))
+Tabell2 <- addmargins(table(as.character(tmp$SykehusNavn), tmp$Aar, useNA = 'no'))
 
 print(xtable::xtable(Tabell2, digits=0, align=c('l', rep('r', ncol(Tabell2))),
                      caption='Antall unike pasienter. Pasienter telles kun med inklusjonsåret.'),
@@ -679,28 +679,30 @@ hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=da
 \caption{Type medisinsk behandling}
 \end{figure}
 
+\clearpage
+
 
 <<'NyeFig_pkt3', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
 varname <- 'i_biological_treatment'
-outfile <- paste0('i_biological_treatment.pdf')
+outfile <- 'i_biological_treatment.pdf'
 hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                  enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
 
 varname <- 'Antibiotisk'
-outfile <- paste0('Antibiotisk.pdf')
+outfile <- 'Antibiotisk.pdf'
 hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                  enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
 
 varname <- 'i_antiinflammatory_treatment'
-outfile <- paste0('i_antiinflammatory_treatment.pdf')
+outfile <- 'i_antiinflammatory_treatment.pdf'
 hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                  enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
 
 varname <- 'LokalisertMedisinsk'
-outfile <- paste0('LokalisertMedisinsk.pdf')
+outfile <- 'LokalisertMedisinsk.pdf'
 hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                  enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
@@ -709,25 +711,25 @@ hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=da
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{'i_biological_treatment.pdf'}
+\includegraphics[width=\Sexpr{figstr}\textwidth]{i_biological_treatment.pdf}
 \caption{Type biologisk behandling}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{'Antibiotisk.pdf'}
+\includegraphics[width=\Sexpr{figstr}\textwidth]{Antibiotisk.pdf}
 \caption{Type antibiotisk behandling}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{'i_antiinflammatory_treatment.pdf'}
+\includegraphics[width=\Sexpr{figstr}\textwidth]{i_antiinflammatory_treatment.pdf}
 \caption{Type antiinflammatorisk behandling}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{'LokalisertMedisinsk.pdf'}
+\includegraphics[width=\Sexpr{figstr}\textwidth]{LokalisertMedisinsk.pdf}
 \caption{Type lokalisert medisinsk behandling}
 \end{figure}
 
