@@ -36,10 +36,13 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Alder ved første byll'
-    gr <- c(0, seq(5, 50, 5), 120)
+    gr <- c(0, seq(10, 80, 10), 120)
     RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
-    # grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], '50+')
-    grtxt <- c('<5', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-59', '>=50')
+    grtxt <- c('<10', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '>=80')
+    # gr <- c(0, seq(5, 50, 5), 120)
+    # RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
+    # # grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], '50+')
+    # grtxt <- c('<5', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-59', '>=50')
     subtxt <- 'Aldersgrupper'
     retn <- 'H'
   }
@@ -255,15 +258,22 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData$c_bleeding[RegData$c_bleeding == 3] <- NA
     RegData$c_other_complications[RegData$c_other_complications == 2] <- 0
     RegData$c_other_complications[RegData$c_other_complications == 3] <- NA
+    RegData$c_ingen_kompl <- NA
+    RegData$c_ingen_kompl[which(rowSums(RegData[, c("c_infection", "c_delayed_wound_healing", "c_stricturer",
+                                                    "c_nervedamage", 'c_bloodpoisoning', 'c_bleeding',
+                                                    'c_other_complications')], na.rm = TRUE)==0)] <- 1
+    RegData$c_ingen_kompl[which(rowSums(RegData[, c("c_infection", "c_delayed_wound_healing", "c_stricturer",
+                                                    "c_nervedamage", 'c_bloodpoisoning', 'c_bleeding',
+                                                    'c_other_complications')], na.rm = TRUE)>0)] <- 0
     tittel <- 'Komplikasjoner ved kirugisk behandling'
     AntVar <- colSums(RegData[, c("c_infection", "c_delayed_wound_healing",
                                   "c_stricturer", "c_nervedamage", 'c_bloodpoisoning',
-                                  'c_bleeding', 'c_other_complications')], na.rm = TRUE)
+                                  'c_bleeding', 'c_other_complications', 'c_ingen_kompl')], na.rm = TRUE)
     NVar<-apply(RegData[, c("c_infection", "c_delayed_wound_healing",
                             "c_stricturer", "c_nervedamage", 'c_bloodpoisoning',
-                            'c_bleeding', 'c_other_complications')], 2, function(x){length(which(!is.na(x)))})
+                            'c_bleeding', 'c_other_complications', 'c_ingen_kompl')], 2, function(x){length(which(!is.na(x)))})
     grtxt <- c('Infeksjon i\n operasjonssår', 'Forsinket \nsårtilheling', 'Strikturer', 'Nerveskader',
-               'Blodforgiftning\n (Sepsis)', 'Blødning', 'Andre \nkomplikasjoner')
+               'Blodforgiftning\n (Sepsis)', 'Blødning', 'Andre \nkomplikasjoner', 'Ingen komplikasjoner')
     retn <- 'H'
   }
 

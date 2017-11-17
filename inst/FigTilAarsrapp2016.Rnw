@@ -127,24 +127,24 @@ hisregFigAndeler(RegData=RegData, valgtVar='ErMann', datoFra=datoFra, datoTil=da
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{RegAvd.pdf}
-\caption{Registrerende avdelinger i Hisreg 2015.}
+\caption{Registrerende avdelinger i Hisreg 2016.}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{UnikePasienter.pdf}
-\caption{Registrerende avdelinger i Hisreg 2015.}
+\caption{Registrerende avdelinger i Hisreg 2016.}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{Kjoenn.pdf}
-\caption{Kjønnsfordeling i Hisreg 2015.}
+\caption{Kjønnsfordeling i Hisreg 2016.}
 \end{figure}
 
 
 <<'Andelsfig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
-datoFra <- '2011-01-01'
+# datoFra <- '2011-01-01'
 varname1 <- c('p_age_abscess', 'p_education', 'TidlBeh')
 
 for (p in varname1) {
@@ -153,7 +153,7 @@ hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                  enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
 }
-datoFra <- '2016-01-01'
+# datoFra <- '2016-01-01'
 varname2 <- c('PasientAlder', 'pre_smoking', 'pre_work','i_type', 'i_surgery_type',
              'MedisinskBeh', 'i_biological_treatment')
 
@@ -178,8 +178,24 @@ hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                  enhetsUtvalg=2, preprosess=preprosess, hentData=hentData)
 }
-
-
+for (p in varname3) {
+outfile <- paste0(p, 'SUS.pdf')
+hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=105489,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=2, preprosess=preprosess, hentData=hentData)
+}
+for (p in varname3) {
+outfile <- paste0(p, 'Haukeland.pdf')
+hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=102980,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=2, preprosess=preprosess, hentData=hentData)
+}
+for (p in varname3) {
+outfile <- paste0(p, 'Rikshosp.pdf')
+hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=700395,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=2, preprosess=preprosess, hentData=hentData)
+}
 
 @
 
@@ -261,6 +277,27 @@ hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil,
 
 \begin{figure}[ht]
 \centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname3[1], 'SUS.pdf')}}
+\caption{Type intervensjon}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname3[2], 'SUS.pdf')}}
+\caption{Type kirurgi}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname3[3], 'SUS.pdf')}}
+\caption{Type medisinsk behandling}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[ht]
+\centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname3[1], 'StOlav.pdf')}}
 \caption{Type intervensjon}
 \end{figure}
@@ -278,6 +315,43 @@ hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil,
 \caption{Type medisinsk behandling}
 \end{figure}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname3[1], 'Haukeland.pdf')}}
+\caption{Type intervensjon}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname3[2], 'Haukeland.pdf')}}
+\caption{Type kirurgi}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname3[3], 'Haukeland.pdf')}}
+\caption{Type medisinsk behandling}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname3[1], 'Rikshosp.pdf')}}
+\caption{Type intervensjon}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname3[2], 'Rikshosp.pdf')}}
+\caption{Type kirurgi}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname3[3], 'Rikshosp.pdf')}}
+\caption{Type medisinsk behandling}
+\end{figure}
 
 % \begin{figure}[ht]
 % \centering
