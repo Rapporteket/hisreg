@@ -27,3 +27,11 @@ figTilAarsrapp2016.R
 tmp_andelStabelGrVar.R
 DataHisreg11102017.csv
 DataHisreg11102017.zip
+AlleVar.csv
+AlleVarNum.csv
+Followups.csv
+FollowupsNum.csv
+ForlopsOversikt.csv
+Utleveringer.R
+hisregRikshospitalet.zip
+prod_vs_test.R
