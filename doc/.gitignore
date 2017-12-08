@@ -13,3 +13,25 @@ VariablerTilQuery.txt
 hisregQuery.sql
 komplKirurgi.pdf
 Hisreg.java
+AlleVar.csv
+AlleVarNum.csv
+DataHisreg11102017.csv
+DataHisreg11102017.zip
+DataHisreg23032017.csv
+DataHisreg23032017.zip
+Followups.csv
+FollowupsNum.csv
+ForlopsOversikt.csv
+Utleveringer.R
+Variabelliste HISREG_juni2016.docx
+Variabler_hisreg
+Variabler_hisreg.csv
+bugs.R
+datoTull.Rmd
+dekningsgrad.Rmd
+dekningsgrad.html
+figTilAarsrapp2016.R
+hisregRikshospitalet.zip
+prod_vs_test.R
+tmp_andelStabelGrVar.R
+views.sql
