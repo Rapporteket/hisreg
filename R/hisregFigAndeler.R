@@ -45,7 +45,7 @@
 
 hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID,
                              minald=0, maxald=120, erMann=99, outfile='', forlop1 = 99, forlop2 = 99,
-                             enhetsUtvalg=1, preprosess=F, hentData=F)
+                             enhetsUtvalg=1, preprosess=F, hentData=F, incl_N=T)
 
 {
 
@@ -77,10 +77,9 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
 
   # Initialiserer nødvendige størrelser
   Andeler <- list(Hoved = 0, Rest =0)
-  ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
   Nrest <- 0
 
-  if (valgtVar %in% c('TidlBeh', 'MedisinskBeh', 'KomplKir', 'KirurgiLokalisering')) {
+  if (valgtVar %in% c('TidlBeh', 'MedisinskBeh', 'KomplKir', 'KirurgiLokalisering', 'Antibiotisk', 'LokalisertMedisinsk')) {
     flerevar <- 1
   } else {
     flerevar <- 0
@@ -90,6 +89,7 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
     ## Forbered variabler for fremstilling i figur
     PlotParams <- hisregPrepVar(RegData=RegData, valgtVar=valgtVar)
     RegData <- PlotParams$RegData
+    ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
     PlotParams$RegData <- NA
     if (enhetsUtvalg==1) {
       ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
@@ -112,11 +112,13 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
 #     RegDataLand <- RegData
 
     if (enhetsUtvalg %in% c(0,2)) {
+      ind <- NULL
       ind$Hoved <- 1:dim(RegData)[1]
       ind$Rest <- NULL
       medSml <- 0
     } else {						#Skal gjøre sammenlikning
       medSml <- 1
+      ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
 #       ind$Hoved <-which(as.numeric(RegData$AvdRESH)==reshID)
 #       ind$Rest <- which(as.numeric(RegData$AvdRESH) != reshID)
     }
@@ -157,10 +159,11 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
     NutvTxt <- length(utvalgTxt)
     grtxtpst <- paste(rev(grtxt), ' (', rev(sprintf('%.1f', Andeler$Hoved)), '%)', sep='')
     # if (incl_pst) {grtxtpst <- paste(rev(grtxt), ' (', rev(sprintf('%.1f', Andeler$Hoved)), '%)', sep='')}
-    # if (incl_N) {grtxtpst <- paste(rev(grtxt), ' (n=', rev(sprintf('%.0f', Andeler$Hoved*NHoved/100)), ')', sep='')}
+    if (incl_N) {grtxtpst <- paste(rev(grtxt), ' (n=', rev(sprintf('%.0f', Andeler$Hoved*NHoved/100)), ')', sep='')}
     vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxtpst, units='figure', cex=cexgr)*0.8))
     par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))  #Har alltid datoutvalg med
     if (grtxt2 == '') {grtxt2 <- paste(sprintf('%.1f',Andeler$Hoved), '%', sep='')}
+    if (incl_N) {grtxt2 <- paste0('(n=', rev(sprintf('%.0f', Andeler$Hoved*NHoved/100)), ')')}
 
     fargeHoved <- farger[1]
     fargeRest <- farger[3]

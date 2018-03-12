@@ -17,11 +17,11 @@ hisregPrepVar <- function(RegData, valgtVar)
   cexgr <- 1.0; grtxt <- ''; grtxt2 <- ''; subtxt <- '';
 
 
-  if (valgtVar=='PasientAlder') {
+  if (valgtVar=='PasientAlder') { # per pasient
     RegData$Variabel <- RegData[, valgtVar]
     RegData <- RegData[!is.na(RegData$Variabel), ]
-    #     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
-    #     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
+    RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
+    RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Aldersfordeling i registeret'
     gr <- c(0, seq(10, 80, 10), 120)
     RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
@@ -31,27 +31,30 @@ hisregPrepVar <- function(RegData, valgtVar)
     retn <- 'H'
   }
 
-  if (valgtVar=='p_age_abscess') {
+  if (valgtVar=='p_age_abscess') {# per pasient
     RegData$Variabel <- RegData[, valgtVar]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Alder ved første byll'
-    gr <- c(0, seq(5, 50, 5), 120)
+    gr <- c(0, seq(10, 80, 10), 120)
     RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
-    # grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], '50+')
-    grtxt <- c('<5', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-59', '>=50')
+    grtxt <- c('<10', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '>=80')
+    # gr <- c(0, seq(5, 50, 5), 120)
+    # RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
+    # # grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], '50+')
+    # grtxt <- c('<5', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-59', '>=50')
     subtxt <- 'Aldersgrupper'
     retn <- 'H'
   }
 
-  if (valgtVar=='ErMann') {
+  if (valgtVar=='ErMann') {# per pasient
     gr <- c(0,1)
     grtxt <- c('Kvinne', 'Mann')
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     RegData$Variabel <- as.character(RegData[, valgtVar])
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
-    tittel <- 'Kjønnsfordeling HISREG 2015'
+    tittel <- 'Kjønnsfordeling HISREG'
     retn <- 'H'
   }
 
@@ -59,7 +62,7 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData$Variabel <- as.character(RegData[, valgtVar])
     RegData$VariabelGr <- factor(RegData$Variabel, levels = names(table(RegData$Variabel)[order(table(RegData$Variabel), decreasing = T)]))
     grtxt <- levels(RegData$VariabelGr)
-    tittel <- 'Andel registrert av deltagende avdelinger 2015'
+    tittel <- 'Andel registrert av deltagende avdelinger'
     retn <- 'H'
   }
 
@@ -69,7 +72,7 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData$Variabel <- as.character(RegData$SykehusNavn)
     RegData$VariabelGr <- factor(RegData$Variabel, levels = names(table(RegData$Variabel)[order(table(RegData$Variabel), decreasing = T)]))
     grtxt <- levels(RegData$VariabelGr)
-    tittel <- c('Andel unike pasienter registrert', 'av deltagende avdelinger 2015')
+    tittel <- c('Andel unike pasienter registrert', 'av deltagende avdelinger')
     retn <- 'H'
   }
 
@@ -139,10 +142,47 @@ hisregPrepVar <- function(RegData, valgtVar)
   if (valgtVar=='i_biological_treatment') {
     RegData <- RegData[which(RegData$i_type %in% c(2,3)), ]
     RegData$Variabel <- RegData[, valgtVar]
+    RegData <- RegData[which(RegData$Variabel != 1), ]
     # RegData$Variabel[is.na(RegData$Variabel)] <- 99
     tittel <- 'Biologiske legemidler'
-    gr <- c(4,5,6,1,3)
-    grtxt <- c('Infliximab', 'Adalimumab', 'Biosimilars', 'Nei', 'Andre')
+    gr <- c(4,5,6,3)
+    grtxt <- c('Infliximab', 'Adalimumab', 'Biosimilars', 'Andre')
+    RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    retn <- 'H'
+  }
+
+
+
+  if (valgtVar=='Antibiotisk') {
+    RegData <- RegData[which(RegData$i_antibiotic_therapy == 1), ]
+    N <- dim(RegData)[1]
+    tittel <- 'Type antibiotisk behandling'
+    AntVar <- colSums(RegData[, c("i_rifampicin_clindamycin", "i_tetracyclin_lymecyclin", "i_amoxicilin",
+                                  "i_sys_antibiotic_other")], na.rm = TRUE)
+    NVar<-rep(N, length(AntVar))
+    grtxt <- c("Rifampicin og Clindamycin", "Tetracyclin eller Lymecyclin", "Amoxicilin med clavulansyre",
+               "Andre")
+    retn <- 'H'
+  }
+
+  if (valgtVar=='LokalisertMedisinsk') {
+    RegData <- RegData[which(RegData$i_localized_med_treatment == 1), ]
+    N <- dim(RegData)[1]
+    tittel <- 'Type lokalisert medisinsk behandling'
+    AntVar <- colSums(RegData[, c("i_corticosteroid_injection", "i_acelacic_acid", "i_clindamycin", "i_resorcinol",
+                                  "i_medical_other")], na.rm = TRUE)
+    NVar<-rep(N, length(AntVar))
+    grtxt <- c("Intralesjonell kortikosteroidinjeksjon", "Acelacic acid", "Clindamycin", "Resorcinol 15%", "Andre")
+    retn <- 'H'
+  }
+
+  if (valgtVar=='i_antiinflammatory_treatment') {
+    RegData <- RegData[which(RegData$i_type %in% c(2,3)), ]
+    RegData$Variabel <- RegData[, valgtVar]
+    RegData <- RegData[which(RegData$Variabel != 1), ]
+    tittel <- 'Antiinflammatorisk behandling'
+    gr <- c(4,5,6,8,3)
+    grtxt <- c('Dapson', 'Prednisolon', 'Ciclosporin', 'Acitretin', 'Andre')
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
     retn <- 'H'
   }
@@ -218,15 +258,22 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData$c_bleeding[RegData$c_bleeding == 3] <- NA
     RegData$c_other_complications[RegData$c_other_complications == 2] <- 0
     RegData$c_other_complications[RegData$c_other_complications == 3] <- NA
+    RegData$c_ingen_kompl <- NA
+    RegData$c_ingen_kompl[which(rowSums(RegData[, c("c_infection", "c_delayed_wound_healing", "c_stricturer",
+                                                    "c_nervedamage", 'c_bloodpoisoning', 'c_bleeding',
+                                                    'c_other_complications')], na.rm = TRUE)==0)] <- 1
+    RegData$c_ingen_kompl[which(rowSums(RegData[, c("c_infection", "c_delayed_wound_healing", "c_stricturer",
+                                                    "c_nervedamage", 'c_bloodpoisoning', 'c_bleeding',
+                                                    'c_other_complications')], na.rm = TRUE)>0)] <- 0
     tittel <- 'Komplikasjoner ved kirugisk behandling'
     AntVar <- colSums(RegData[, c("c_infection", "c_delayed_wound_healing",
                                   "c_stricturer", "c_nervedamage", 'c_bloodpoisoning',
-                                  'c_bleeding', 'c_other_complications')], na.rm = TRUE)
+                                  'c_bleeding', 'c_other_complications', 'c_ingen_kompl')], na.rm = TRUE)
     NVar<-apply(RegData[, c("c_infection", "c_delayed_wound_healing",
                             "c_stricturer", "c_nervedamage", 'c_bloodpoisoning',
-                            'c_bleeding', 'c_other_complications')], 2, function(x){length(which(!is.na(x)))})
+                            'c_bleeding', 'c_other_complications', 'c_ingen_kompl')], 2, function(x){length(which(!is.na(x)))})
     grtxt <- c('Infeksjon i\n operasjonssår', 'Forsinket \nsårtilheling', 'Strikturer', 'Nerveskader',
-               'Blodforgiftning\n (Sepsis)', 'Blødning', 'Andre \nkomplikasjoner')
+               'Blodforgiftning\n (Sepsis)', 'Blødning', 'Andre \nkomplikasjoner', 'Ingen komplikasjoner')
     retn <- 'H'
   }
 
