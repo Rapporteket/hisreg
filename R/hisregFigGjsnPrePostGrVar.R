@@ -74,6 +74,19 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
     utvalgTxt <- c(paste0('Avdeling: ', shtxt), utvalgTxt)
   }
 
+  if (dim(RegData)[1] < 5) {
+    ########## Plot feilmelding
+    # farger <- FigTypUt$farger
+    plot.new()
+    # title(tittel)	#, line=-6)
+    legend('topleft',utvalgTxt, bty='n', cex=0.9)
+    # legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
+    text(0.5, 0.6, 'Færre enn 5 registreringer', cex=1.2)
+    if ( outfile != '') {dev.off()}
+  } else {
+
+
+
   PrePost <- aggregate(RegData[, c('VarPre', "VarPost")],
                        by=list(RegData$Gr_var), mean, na.rm = TRUE)
   PrePostSD <- aggregate(RegData[, c('VarPre', "VarPost")],
@@ -169,7 +182,7 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
   par('fig'=c(0, 1, 0, 1))
   if ( outfile != '') {dev.off()}
 
-
+  }
 
 
 

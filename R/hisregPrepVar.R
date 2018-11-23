@@ -125,6 +125,7 @@ hisregPrepVar <- function(RegData, valgtVar)
     grtxt <- c('Kirurgisk intervensjon', 'Medisinsk intervensjon', 'Kirurgisk og medisinsk \nintervensjon',
                'Ingen intervensjon')
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    RegData$Gr <- RegData$SykehusNavn
     retn <- 'H'
   }
 
@@ -136,6 +137,7 @@ hisregPrepVar <- function(RegData, valgtVar)
     grtxt <- c('Eksisjon lukket \nmed sutur', 'Eksisjon med \nåpen granulering og \nsekundær tilheling',
                'Eksisjon med påfølgende \nhudplantasjon', 'CO2-laser', 'Deroofing')
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    RegData$Gr <- RegData$SykehusNavn
     retn <- 'H'
   }
 
