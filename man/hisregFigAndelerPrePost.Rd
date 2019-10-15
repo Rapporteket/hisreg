@@ -5,9 +5,9 @@
 \title{Søylediagram som fordeling av valgt variabel, målt både før og etter intervensjon}
 \usage{
 hisregFigAndelerPrePost(RegData = 0, valgtVar, datoFra = "2000-01-01",
-  datoTil = "2050-01-01", reshID, minald = 0, maxald = 120, erMann = 99,
-  outfile = "", forlop1 = 99, forlop2 = 99, enhetsUtvalg = 1,
-  preprosess = F, hentData = F)
+  datoTil = "2050-01-01", reshID, minald = 0, maxald = 120,
+  erMann = 99, outfile = "", forlop1 = 99, forlop2 = 99,
+  enhetsUtvalg = 1, preprosess = F, hentData = F)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -68,4 +68,3 @@ Funksjon som genererer en figur med som viser endring i en variabels fordeling f
 \details{
 Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 }
-

@@ -13,4 +13,3 @@ hisregPreprosess(RegData)
 Denne funksjonen gjør en del nøvendig preprosessering for at Hisreg sitt datasett
 kan brukes i rapporter
 }
-

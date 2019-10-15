@@ -81,8 +81,10 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
     Gjsn <- tapply(RegData$Variabel, RegData[ ,gr_var], mean, na.rm=T)
     SE <- tapply(RegData$Variabel, RegData[ ,gr_var], sd, na.rm=T)/sqrt(Ngr)
     if (fjern_sjeldne == 1) {
-      Gjsn <- Gjsn[-indGrUt]
-      SE <- SE[-indGrUt]
+      if (indGrUt !=0) {
+        Gjsn <- Gjsn[-indGrUt]
+        SE <- SE[-indGrUt]
+      }
     } else {
       Gjsn[indGrUt] <- dummy0
       SE[indGrUt] <- 0
@@ -95,8 +97,10 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
     KIHele <- MidtHele + sd(RegData$Variabel)/sqrt(N)*c(-2,2)
 
     if (fjern_sjeldne == 1) {
-      Ngr <- Ngr[-indGrUt]
-      Ngrtxt <- Ngrtxt[-indGrUt]
+      if (indGrUt !=0) {
+        Ngr <- Ngr[-indGrUt]
+        Ngrtxt <- Ngrtxt[-indGrUt]
+      }
     }
     GrNavnSort <- paste(names(Ngr)[sortInd], Ngrtxt[sortInd], sep='')
     AntGr <- length(which(Ngr >= Ngrense))	#length(which(Midt>0))
@@ -133,7 +137,7 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
                      xlim=c(0,xmax), ylim=c(0.05, 1.25)*length(Ngr), font.main=1, xlab='', las=1, cex.names=cexGrNavn)
     }
 
-    indGrUtPlot <- AntGr+(1:length(indGrUt))
+    # indGrUtPlot <- AntGr+(1:length(indGrUt))
     posKI <- pos[1:AntGr]
     ybunn <- 0
     # ytopp <- max(posKI)*1.03	 #min(posKI)

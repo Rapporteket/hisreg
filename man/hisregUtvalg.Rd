@@ -45,4 +45,3 @@ UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur o
 Denne funksjonen gjør utvalg av dataene og returnerer det filtrerte datasettet, utvalgsteksten
 og fargepaletten for bruk i figuren
 }
-

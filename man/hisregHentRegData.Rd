@@ -12,4 +12,3 @@ RegData data frame
 \description{
 Provides Hisreg data from staging
 }
-
