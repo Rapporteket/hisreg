@@ -16,7 +16,8 @@ Imports:
     xtable,
     plotrix,
     rapFigurer (>= 0.1.0),
-    magrittr
+    magrittr,
+    DT
 Suggests:
     knitr,
     rmarkdown
