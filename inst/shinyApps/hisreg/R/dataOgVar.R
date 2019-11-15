@@ -19,9 +19,9 @@ if (onServer) {
   RegData <- hisregHentRegData()
   SkjemaOversikt <- rapbase::LoadRegData(
     registryName = "hisreg",
-    dbType <- "mysql",
+    dbType = "mysql",
     query = "SELECT *
-             FROM SkjemaOversikt;"
+             FROM SkjemaOversikt"
   )
 } else {
 
