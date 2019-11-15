@@ -25,7 +25,7 @@ ForlopsData <- read.table("V:/hisreg/ForlopsOversikt2019-10-10 10-15-43.txt",
 RegData <- read.table("V:/hisreg/AlleVarNum2019-10-10 10-15-40.txt",
                       header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-skjemaoversikt <- read.table("V:/hisreg/SkjemaOversikt2019-10-10 10-15-44.txt",
+Skjemaoversikt <- read.table("V:/hisreg/SkjemaOversikt2019-10-10 10-15-44.txt",
                              header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
 RegDataLabel <- read.table("V:/hisreg/AlleVar2019-10-10 10-15-37.txt",

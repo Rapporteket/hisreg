@@ -134,7 +134,7 @@ tabell <- function(input, output, session) {
       )
      } else if (req(input$tab) == "skjema") {
       as.data.frame.matrix(
-        hisregSkjemaTabell(skjemaoversikt,
+        hisregSkjemaTabell(Skjemaoversikt,
                           tidFra = min(req(input$dato)),
                           tidTil = max(req(input$dato)),
                           status = req(input$status),
