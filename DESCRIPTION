@@ -17,7 +17,11 @@ Imports:
     plotrix,
     rapFigurer (>= 0.1.0),
     magrittr,
-    DT
+    DT,
+    kableExtra,
+    htmltools,
+    shinyalert,
+    shinyjs
 Suggests:
     knitr,
     rmarkdown
