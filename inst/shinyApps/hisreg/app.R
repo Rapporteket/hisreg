@@ -9,10 +9,34 @@ library(htmltools)
 library(rapbase)
 library(ggthemes)
 
-source("www/dataOgVar.R", encoding = "UTF-8")
-source("www/modFordelinger.R", encoding = "UTF-8")
-source("www/modGjennomsnitt.R", encoding = "UTF-8")
-source("www/ModTabeller.R", encoding = "UTF-8")
+system.file(
+  "shinyApps/hisreg/R/dataOgVar.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
+system.file(
+  "shinyApps/hisreg/R/modFordelinger.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
+system.file(
+  "shinyApps/hisreg/R/modGjennomsnitt.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
+system.file(
+  "shinyApps/hisreg/R/ModTabeller.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
+
+#
+# system.file("shinyApps/hisreg/R/dataOgVar.R",
+#             package = "hisreg") %>%
+#   source(encoding = "UTF-8")
+# source("www/modFordelinger.R", encoding = "UTF-8")
+# source("www/modGjennomsnitt.R", encoding = "UTF-8")
+# source("www/ModTabeller.R", encoding = "UTF-8")
 
 #------------App UI----------------
 
