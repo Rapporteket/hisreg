@@ -17,6 +17,12 @@ context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
 onServer <- context == "TEST" | context == "QA" | context == "PRODUCTION"
 if (onServer) {
   RegData <- hisregHentRegData()
+  SkjemaOversikt <- rapbase::LoadRegData(
+    registryName = "hisreg",
+    dbType <- "mysql",
+    query = "SELECT *
+             FROM SkjemaOversikt;"
+  )
 } else {
 
 ForlopsData <- read.table("V:/hisreg/ForlopsOversikt2019-10-10 10-15-43.txt",
@@ -107,6 +113,8 @@ RegData <- RegData[RegData$AvdRESH != 999002, ]
 RegData$SykehusNavn <- as.factor(as.character(RegData$SykehusNavn))
 RegDataAll$SykehusNavn <- as.factor(as.character(RegDataAll$SykehusNavn))
 RegData$HovedDato <- as.POSIXct.POSIXlt(RegData$HovedDato)
+
+
 
 #------------------Variabel valg-------------------------------------
 
