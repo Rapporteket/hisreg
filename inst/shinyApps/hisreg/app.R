@@ -78,12 +78,11 @@ ui <- shiny::tagList(
 #----------------App server------------------------
 
 server <-  function(input, output, session) {
-  reshID <- shiny::reactive({
-    ifelse(onServer, as.numeric(rapbase::getShinyUserReshId(session,
-      testCase = TRUE)), 601031)
+  reshID <- reactive({
+    ifelse(onServer,as.numeric(rapbase::getUserReshId(session)),101719)
   })
   userRole <- reactive({
-    ifelse(onServer, rapbase::getShinyUserRole(session, testCase = TRUE), "SC")
+    ifelse(onServer, rapbase::getUserRole(session), 'SC')
   })
 
   shiny::callModule(modFordelinger, "mod1", rID = reshID())
