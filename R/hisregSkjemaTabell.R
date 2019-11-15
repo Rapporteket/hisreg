@@ -43,7 +43,7 @@ hisregSkjemaTabell <- function(df,
                                    "Kontroll 21 mnd",
                                    "Kontroll 24 mnd" )
 
-  stats::addmargins(table(skjemaData[["SykehusNavn"]],
+  stats::addmargins(table(skjemaData[["Sykehusnavn"]],
                         skjemaData[["Skjemanavn"]] ))
 
 }

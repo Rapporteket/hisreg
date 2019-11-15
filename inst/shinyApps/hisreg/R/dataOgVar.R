@@ -100,11 +100,6 @@ RegData <- merge(RegData, Followups,
                  by.y = "c_mceid",
                  all.x = T)
 
-SkjemaOversikt <- SkjemaOversikt %>%
-  dplyr::select(-Sykehusnavn) %>%
-  merge(RegData %>% dplyr::select(SykehusNavn, m_mceid),
-        by.x = "ForlopsID",
-        by.y = "m_mceid")
 }
 RegData <- hisregPreprosess(RegData)
 RegDataAll <- RegData[which(RegData$AvdRESH == 999002), ]
@@ -113,8 +108,6 @@ RegData <- RegData[RegData$AvdRESH != 999002, ]
 RegData$SykehusNavn <- as.factor(as.character(RegData$SykehusNavn))
 RegDataAll$SykehusNavn <- as.factor(as.character(RegDataAll$SykehusNavn))
 RegData$HovedDato <- as.POSIXct.POSIXlt(RegData$HovedDato)
-
-
 
 #------------------Variabel valg-------------------------------------
 
