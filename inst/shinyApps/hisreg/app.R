@@ -89,16 +89,16 @@ server <-  function(input, output, session) {
     raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
   }
 
-  shiny::callModule(modFordelinger, "mod1", rID = reshID())
-  shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(),
-                    add_int = TRUE, add_enh = FALSE, fun = "PS")
-  shiny::callModule(modGjennomsnitt, "mod3", rID = reshID(),
-                    add_int = FALSE, add_enh = FALSE, fun = "PI")
-  shiny::callModule(modGjennomsnitt, "mod4", rID = reshID(),
-                    add_int = TRUE, add_enh = FALSE, fun = "FEPS")
-  shiny::callModule(modGjennomsnitt, "mod5", rID = reshID(),
-                    add_int = FALSE, add_enh = TRUE, fun = "FEPI")
-  shiny::callModule(tabell, "tab")
+  # shiny::callModule(modFordelinger, "mod1", rID = reshID())
+  # shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(),
+  #                   add_int = TRUE, add_enh = FALSE, fun = "PS")
+  # shiny::callModule(modGjennomsnitt, "mod3", rID = reshID(),
+  #                   add_int = FALSE, add_enh = FALSE, fun = "PI")
+  # shiny::callModule(modGjennomsnitt, "mod4", rID = reshID(),
+  #                   add_int = TRUE, add_enh = FALSE, fun = "FEPS")
+  # shiny::callModule(modGjennomsnitt, "mod5", rID = reshID(),
+  #                   add_int = FALSE, add_enh = TRUE, fun = "FEPI")
+  # shiny::callModule(tabell, "tab")
 
     #Navbarwidget
     output$appUserName <- shiny::renderText(rapbase::getUserFullName(session))
