@@ -14,11 +14,11 @@ system.file(
   package = "hisreg"
 ) %>%
   source(encoding = "UTF-8")
-# system.file(
-#   "shinyApps/hisreg/R/modFordelinger.R",
-#   package = "hisreg"
-# ) %>%
-#   source(encoding = "UTF-8")
+system.file(
+  "shinyApps/hisreg/R/modFordelinger.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
 # system.file(
 #   "shinyApps/hisreg/R/modGjennomsnitt.R",
 #   package = "hisreg"
@@ -54,8 +54,8 @@ ui <- shiny::tagList(
       rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
                                    organization = uiOutput("appOrgName"),
                                    addUserInfo = TRUE),
-      tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico"))#,
-      #modFordelingerUI("mod1")
+      tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
+      modFordelingerUI("mod1")
     ),
     shiny::navbarMenu("Gjennomsnitt"#,
       # shiny::tabPanel("Per sykehus",
@@ -85,9 +85,9 @@ server <-  function(input, output, session) {
   userRole <- reactive({
     ifelse(onServer, rapbase::getUserRole(session), 'SC')
   })
-  # if (onServer){
-     raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
-  # }
+  if (onServer){
+    raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
+  }
 
   # shiny::callModule(modFordelinger, "mod1", rID = reshID())
   # shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(),
