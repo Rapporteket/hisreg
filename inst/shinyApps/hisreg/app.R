@@ -54,8 +54,8 @@ ui <- shiny::tagList(
       rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
                                    organization = uiOutput("appOrgName"),
                                    addUserInfo = TRUE),
-      tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
-      modFordelingerUI("mod1")
+      tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico"))#,
+      #modFordelingerUI("mod1")
     ),
     shiny::navbarMenu("Gjennomsnitt",
       shiny::tabPanel("Per sykehus",
