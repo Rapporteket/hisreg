@@ -152,19 +152,6 @@ modFordelinger <- function(input, output, session, rID) {
 
   #andelsfigurer
   output$figur <- renderPlot({
-    if (onServer) {
-      # msgFigAndVis <- paste(
-      #   "Hisreg: fordelingsfigur, viser andeler av ",
-      #   input$varSel
-      # )
-      raplog::repLogger(
-        session,
-        msg = paste(
-          "Hisreg: fordelingsfigur, viser andeler av ",
-          input$varSel
-        )
-      )
-    }
     hisreg::hisregFigAndeler(RegData = RegData, valgtVar = input$varSel,
                              datoFra = input$dateRan[1],
                              datoTil = input$dateRan[2],
@@ -173,6 +160,16 @@ modFordelinger <- function(input, output, session, rID) {
                              reshID = rID, enhetsUtvalg = input$enhSel,
                              forlop1 = input$typInt,
                              erMann = as.numeric(input$kjoSle))
+    if (onServer) {
+      msgFigAndVis <- paste(
+        "Hisreg: fordelingsfigur, viser andeler av ",
+        input$varSel
+      )
+      raplog::repLogger(
+        session,
+        msg = msgFigAndVis
+      )
+    }
   })
 
   #tabell
