@@ -164,7 +164,7 @@ modFordelinger <- function(input, output, session, rID) {
       # msgFigAndVis <- paste(
       #   "Hisreg: fordelingsfigur, viser andeler av ",
       #   input$varSel
-      )
+      #)
       raplog::repLogger(
         session,
         msg = "msgFigAndVis"
