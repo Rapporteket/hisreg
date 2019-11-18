@@ -161,13 +161,13 @@ modFordelinger <- function(input, output, session, rID) {
                              forlop1 = input$typInt,
                              erMann = as.numeric(input$kjoSle))
     if (onServer) {
-      msgFigAndVis <- paste(
-        "Hisreg: fordelingsfigur, viser andeler av ",
-        input$varSel
+      # msgFigAndVis <- paste(
+      #   "Hisreg: fordelingsfigur, viser andeler av ",
+      #   input$varSel
       )
       raplog::repLogger(
         session,
-        msg = msgFigAndVis
+        msg = "msgFigAndVis"
       )
     }
   })
