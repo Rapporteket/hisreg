@@ -57,16 +57,16 @@ ui <- shiny::tagList(
       tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico"))#,
       #modFordelingerUI("mod1")
     ),
-    shiny::navbarMenu("Gjennomsnitt",
-      shiny::tabPanel("Per sykehus",
-                      modGjennomsnittUI("mod2")
-                      ),
-      shiny::tabPanel("Per intervensjonstype",
-                      modGjennomsnittUI("mod3")),
-      shiny::tabPanel("Før og etter intervensjon, per sykehus",
-                      modGjennomsnittUI("mod4", varValg = varValgGjenFE)),
-      shiny::tabPanel("Før og etter intervensjon, per intervensjonstype",
-                      modGjennomsnittUI("mod5", varValg = varValgGjenFE))
+    shiny::navbarMenu("Gjennomsnitt"#,
+      # shiny::tabPanel("Per sykehus",
+      #                 modGjennomsnittUI("mod2")
+      #                 ),
+      # shiny::tabPanel("Per intervensjonstype",
+      #                 modGjennomsnittUI("mod3")),
+      # shiny::tabPanel("Før og etter intervensjon, per sykehus",
+      #                 modGjennomsnittUI("mod4", varValg = varValgGjenFE)),
+      # shiny::tabPanel("Før og etter intervensjon, per intervensjonstype",
+      #                 modGjennomsnittUI("mod5", varValg = varValgGjenFE))
       ), #navbarMenu,
 
       tabPanel("Tabeller",
