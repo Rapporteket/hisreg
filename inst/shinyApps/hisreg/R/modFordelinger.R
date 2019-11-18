@@ -152,16 +152,16 @@ modFordelinger <- function(input, output, session, rID) {
 
   #andelsfigurer
   output$figur <- renderPlot({
-    # if (onServer) {
-    #   msgFigAndVis <- paste(
-    #     "Hisreg: fordelingsfigur, viser andelerr av ",
-    #     input$varSel
-    #   )
-    #   raplog::repLogger(
-    #     session,
-    #     msg = msgFigAndVis
-    #   )
-    # }
+    if (onServer) {
+      msgFigAndVis <- paste(
+        "Hisreg: fordelingsfigur, viser andelerr av ",
+        input$varSel
+      )
+      raplog::repLogger(
+        session,
+        msg = msgFigAndVis
+      )
+    }
     hisreg::hisregFigAndeler(RegData = RegData, valgtVar = input$varSel,
                              datoFra = input$dateRan[1],
                              datoTil = input$dateRan[2],
@@ -176,16 +176,16 @@ modFordelinger <- function(input, output, session, rID) {
   observe({
     cont <- cont(input$enhSel)
     output$tabell <- DT::renderDT(
-      if (onServer) {
-        msgTabAndVis <- paste(
-          "Hisreg: fordelingstabell, viser andeler av ",
-          input$varSel
-        )
-        raplog::repLogger(
-          session,
-          msg = msgTabAndVis
-        )
-      }
+      # if (onServer) {
+      #   msgTabAndVis <- paste(
+      #     "Hisreg: fordelingstabell, viser andeler av ",
+      #     input$varSel
+      #   )
+      #   raplog::repLogger(
+      #     session,
+      #     msg = msgTabAndVis
+      #   )
+      # }
       if (input$enhSel == 1) {
         df() %>% datatable(selection = "none",
                            container = cont, rownames = FALSE,
