@@ -85,6 +85,9 @@ server <-  function(input, output, session) {
   userRole <- reactive({
     ifelse(onServer, rapbase::getUserRole(session), 'SC')
   })
+  if (onServer){
+    raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
+  }
 
   shiny::callModule(modFordelinger, "mod1", rID = reshID())
   shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(),

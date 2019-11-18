@@ -21,11 +21,13 @@ Imports:
     kableExtra,
     htmltools,
     shinyalert,
-    shinyjs
+    shinyjs,
+    raplog (>= 0.0.0.9000)
 Suggests:
     knitr,
     rmarkdown
 RoxygenNote: 6.1.1
-Remotes: 
+Remotes:  
     Rapporteket/rapbase@rel,
-    Rapporteket/rapFigurer
+    Rapporteket/rapFigurer,
+    Rapporteket/raplog@rel
