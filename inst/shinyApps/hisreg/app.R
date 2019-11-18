@@ -1,4 +1,5 @@
 library(shiny)
+library(raplog)
 library(hisreg)
 library(tidyverse)
 library(shinyalert)
@@ -89,7 +90,7 @@ server <-  function(input, output, session) {
     raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
   }
 
-  # shiny::callModule(modFordelinger, "mod1", rID = reshID())
+  shiny::callModule(modFordelinger, "mod1", rID = reshID())
   # shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(),
   #                   add_int = TRUE, add_enh = FALSE, fun = "PS")
   # shiny::callModule(modGjennomsnitt, "mod3", rID = reshID(),
