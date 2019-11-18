@@ -9,26 +9,26 @@ library(htmltools)
 library(rapbase)
 
 
-system.file(
-  "shinyApps/hisreg/R/dataOgVar.R",
-  package = "hisreg"
-) %>%
-  source(encoding = "UTF-8")
-system.file(
-  "shinyApps/hisreg/R/modFordelinger.R",
-  package = "hisreg"
-) %>%
-  source(encoding = "UTF-8")
-system.file(
-  "shinyApps/hisreg/R/modGjennomsnitt.R",
-  package = "hisreg"
-) %>%
-  source(encoding = "UTF-8")
-system.file(
-  "shinyApps/hisreg/R/ModTabeller.R",
-  package = "hisreg"
-) %>%
-  source(encoding = "UTF-8")
+# system.file(
+#   "shinyApps/hisreg/R/dataOgVar.R",
+#   package = "hisreg"
+# ) %>%
+#   source(encoding = "UTF-8")
+# system.file(
+#   "shinyApps/hisreg/R/modFordelinger.R",
+#   package = "hisreg"
+# ) %>%
+#   source(encoding = "UTF-8")
+# system.file(
+#   "shinyApps/hisreg/R/modGjennomsnitt.R",
+#   package = "hisreg"
+# ) %>%
+#   source(encoding = "UTF-8")
+# system.file(
+#   "shinyApps/hisreg/R/ModTabeller.R",
+#   package = "hisreg"
+# ) %>%
+#   source(encoding = "UTF-8")
 
 #
 # system.file("shinyApps/hisreg/R/dataOgVar.R",
