@@ -67,10 +67,10 @@ ui <- shiny::tagList(
       #                 modGjennomsnittUI("mod4", varValg = varValgGjenFE)),
       # shiny::tabPanel("Før og etter intervensjon, per intervensjonstype",
       #                 modGjennomsnittUI("mod5", varValg = varValgGjenFE))
-      ), #navbarMenu,
+      )#, #navbarMenu,
 
-      tabPanel("Tabeller",
-               tabellUI("tab"))
+      # tabPanel("Tabeller",
+      #          tabellUI("tab"))
 
 
   )#navbarPage
@@ -86,7 +86,7 @@ server <-  function(input, output, session) {
     ifelse(onServer, rapbase::getUserRole(session), 'SC')
   })
   # if (onServer){
-  #   raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
+     raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
   # }
 
   # shiny::callModule(modFordelinger, "mod1", rID = reshID())
