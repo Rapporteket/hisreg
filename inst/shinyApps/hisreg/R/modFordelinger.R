@@ -151,7 +151,7 @@ modFordelinger <- function(input, output, session, rID) {
   })
 
   #andelsfigurer
-  reactive({
+  observe({
     raplog::repLogger(session, msg = "msgFigAndVis")
     output$figur <- renderPlot(
       hisreg::hisregFigAndeler(RegData = RegData, valgtVar = input$varSel,
@@ -203,7 +203,7 @@ modFordelinger <- function(input, output, session, rID) {
     )
   })
 
-  reactive({
+  observe({
     if (onServer) {
       msgFigAndNed <- paste(
         "Hisreg: nedlasting av fordelingsfigur, viser andeler av ",
@@ -228,7 +228,7 @@ modFordelinger <- function(input, output, session, rID) {
   )
   })
 
-  shiny::reactive({
+  shiny::observe({
     if (onServer) {
       msgFigAndNed <- paste(
         "Hisreg: nedlasting av fordelingsfigur, viser andeler av ",
