@@ -152,7 +152,7 @@ modFordelinger <- function(input, output, session, rID) {
 
   #andelsfigurer
   observe({
-    #raplog::repLogger(session, msg = "msgFigAndVis")
+    raplog::repLogger(session, msg = "msgFigAndVis")
     output$figur <- renderPlot(
       hisreg::hisregFigAndeler(RegData = RegData, valgtVar = input$varSel,
                              datoFra = input$dateRan[1],
