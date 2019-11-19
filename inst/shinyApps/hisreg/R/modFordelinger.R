@@ -151,9 +151,10 @@ modFordelinger <- function(input, output, session, rID) {
   })
 
   #andelsfigurer
-  output$figur <- renderPlot({
+  reactive({
     raplog::repLogger(session, msg = "msgFigAndVis")
-    hisreg::hisregFigAndeler(RegData = RegData, valgtVar = input$varSel,
+    output$figur <- renderPlot(
+      hisreg::hisregFigAndeler(RegData = RegData, valgtVar = input$varSel,
                              datoFra = input$dateRan[1],
                              datoTil = input$dateRan[2],
                              minald = input$aldSli[1],
@@ -171,22 +172,23 @@ modFordelinger <- function(input, output, session, rID) {
     #     msg = msgFigAndVis
     #   )
     # }
+  )
   })
 
   #tabell
   observe({
     cont <- cont(input$enhSel)
+    if (onServer) {
+      msgTabAndVis <- paste(
+        "Hisreg: fordelingstabell, viser andeler av ",
+        input$varSel
+      )
+      raplog::repLogger(
+        session,
+        msg = msgTabAndVis
+      )
+    }
     output$tabell <- DT::renderDT(
-      # if (onServer) {
-      #   msgTabAndVis <- paste(
-      #     "Hisreg: fordelingstabell, viser andeler av ",
-      #     input$varSel
-      #   )
-      #   raplog::repLogger(
-      #     session,
-      #     msg = msgTabAndVis
-      #   )
-      # }
       if (input$enhSel == 1) {
         df() %>% datatable(selection = "none",
                            container = cont, rownames = FALSE,
@@ -200,18 +202,23 @@ modFordelinger <- function(input, output, session, rID) {
       }
     )
   })
+
+  reactive({
+    if (onServer) {
+      msgFigAndNed <- paste(
+        "Hisreg: nedlasting av fordelingsfigur, viser andeler av ",
+        input$varSel
+      )
+      raplog::repLogger(
+        session,
+        msg = msgFigAndNed
+      )
+    }
+
   output$lastNed <- downloadHandler(
+
+
     filename = function() {
-      if (onServer) {
-        msgFigAndNed <- paste(
-          "Hisreg: nedlasting av fordelingsfigur, viser andeler av ",
-          input$varSel
-        )
-        raplog::repLogger(
-          session,
-          msg = msgFigAndNed
-        )
-      }
       paste0(input$varSel, Sys.time(), ".csv")
     },
     content = function(file) {
@@ -219,18 +226,22 @@ modFordelinger <- function(input, output, session, rID) {
       write.csv2(tab, file, row.names = F)
     }
   )
+  })
+
+  shiny::reactive({
+    if (onServer) {
+      msgFigAndNed <- paste(
+        "Hisreg: nedlasting av fordelingsfigur, viser andeler av ",
+        input$varSel
+      )
+      raplog::repLogger(
+        session,
+        msg = msgFigAndNed
+      )
+    }
   output$lastNedBilde <- downloadHandler(
+
     filename = function(){
-      if (onServer) {
-        msgTabAndNed <- paste(
-          "Hisreg: nedlasting av fordelingstabell, viser andeler av ",
-          input$varSel
-        )
-        raplog::repLogger(
-          session,
-          msg = msgTabAndNed
-        )
-      }
       paste0(input$varSel, Sys.time(), '.', input$outfil)
     },
 
@@ -246,7 +257,7 @@ modFordelinger <- function(input, output, session, rID) {
                                erMann = as.numeric(input$kjoSle))
      }
   )
-
+  })
 
 
 }
