@@ -151,10 +151,9 @@ modFordelinger <- function(input, output, session, rID) {
   })
 
   #andelsfigurer
-  observe({
-    raplog::repLogger(session, msg = "msgFigAndVis")
-    output$figur <- renderPlot(
-      hisreg::hisregFigAndeler(RegData = RegData, valgtVar = input$varSel,
+
+  output$figur <- renderPlot(
+    hisreg::hisregFigAndeler(RegData = RegData, valgtVar = input$varSel,
                              datoFra = input$dateRan[1],
                              datoTil = input$dateRan[2],
                              minald = input$aldSli[1],
@@ -162,32 +161,11 @@ modFordelinger <- function(input, output, session, rID) {
                              reshID = rID, enhetsUtvalg = input$enhSel,
                              forlop1 = input$typInt,
                              erMann = as.numeric(input$kjoSle))
-    # if (onServer) {
-    #   msgFigAndVis <- paste(
-    #     "Hisreg: fordelingsfigur, viser andeler av ",
-    #     input$varSel
-    #   )
-    #   raplog::repLogger(
-    #     session,
-    #     msg = msgFigAndVis
-    #   )
-    # }
   )
-  })
 
   #tabell
   observe({
     cont <- cont(input$enhSel)
-    if (onServer) {
-      msgTabAndVis <- paste(
-        "Hisreg: fordelingstabell, viser andeler av ",
-        input$varSel
-      )
-      raplog::repLogger(
-        session,
-        msg = msgTabAndVis
-      )
-    }
     output$tabell <- DT::renderDT(
       if (input$enhSel == 1) {
         df() %>% datatable(selection = "none",
@@ -203,21 +181,7 @@ modFordelinger <- function(input, output, session, rID) {
     )
   })
 
-  observe({
-    # if (onServer) {
-    #   msgFigAndNed <- paste(
-    #     "Hisreg: nedlasting av fordelingsfigur, viser andeler av ",
-    #     input$varSel
-    #   )
-    #   raplog::repLogger(
-    #     session,
-    #     msg = msgFigAndNed
-    #   )
-    # }
-
   output$lastNed <- downloadHandler(
-
-
     filename = function() {
       paste0(input$varSel, Sys.time(), ".csv")
     },
@@ -226,19 +190,7 @@ modFordelinger <- function(input, output, session, rID) {
       write.csv2(tab, file, row.names = F)
     }
   )
-  })
 
-  shiny::observe({
-    # if (onServer) {
-    #   msgFigAndNed <- paste(
-    #     "Hisreg: nedlasting av fordelingsfigur, viser andeler av ",
-    #     input$varSel
-    #   )
-    #   raplog::repLogger(
-    #     session,
-    #     msg = msgFigAndNed
-    #   )
-    # }
   output$lastNedBilde <- downloadHandler(
 
     filename = function(){
@@ -257,6 +209,47 @@ modFordelinger <- function(input, output, session, rID) {
                                erMann = as.numeric(input$kjoSle))
      }
   )
+
+  shiny::observe({
+    if (onServer) {
+      if (input$tabs = "fig") {
+        mld <- paste(
+          "Hisreg: figur - fordeling. variabel -",
+          input$varSel
+        )
+      } else if (input$tabs = "tab") {
+        mld <- paste(
+          "Hisreg: tabell - fordeling. variabel -",
+          input$varSel
+        )
+      }
+      raplog::repLogger(
+        session,
+        msg = mld
+      )
+      mldNLF <- paste(
+        "Hisreg: nedlasting figur - fordeling. variabel",
+        input$varSel
+      )
+      mldNLT <- paste(
+        "Hisreg: nedlasting figur - fordeling. variabel",
+        input$varSel
+      )
+      shinyjs::onclick(
+        "lastNedBilde",
+        raplog::repLogger(
+          session,
+          msg = mldNLF
+        )
+      )
+      shinyjs::onclick(
+        "lastNed",
+        raplog::repLogger(
+          session,
+          msg = mldNLT
+        )
+      )
+    }
   })
 
 
