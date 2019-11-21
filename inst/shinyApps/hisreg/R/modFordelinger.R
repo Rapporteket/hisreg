@@ -212,12 +212,12 @@ modFordelinger <- function(input, output, session, rID) {
 
   shiny::observe({
     if (onServer) {
-      if (input$tabs = "fig") {
+      if (input$tabs == "fig") {
         mld <- paste(
           "Hisreg: figur - fordeling. variabel -",
           input$varSel
         )
-      } else if (input$tabs = "tab") {
+      } else if (input$tabs == "tab") {
         mld <- paste(
           "Hisreg: tabell - fordeling. variabel -",
           input$varSel

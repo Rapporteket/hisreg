@@ -14,7 +14,7 @@ logoWidget <- tags$script(shiny::HTML(logoCode))
 #------------------Data-------------------------------------
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-onServer <- context == "TEST" | context == "QA" | context == "PRODUCTION"
+onServer <- context == "TEST" | context == "QA" | context == "PRODUCTION"|TRUE
 if (onServer) {
   RegData <- hisregHentRegData()
   SkjemaOversikt <- rapbase::LoadRegData(
