@@ -71,7 +71,7 @@ modFordelingerUI <- function(id, varValg = varValgFordeling) {
 
 #moduleserver
 
-modFordelinger <- function(input, output, session, rID) {
+modFordelinger <- function(input, output, session, rID, ss) {
 
   output$figfil <- shiny::renderUI({
     ns <- session$ns
@@ -224,7 +224,7 @@ modFordelinger <- function(input, output, session, rID) {
         )
       }
       raplog::repLogger(
-        session,
+        session = ss,
         msg = mld
       )
       mldNLF <- paste(
@@ -238,14 +238,14 @@ modFordelinger <- function(input, output, session, rID) {
       shinyjs::onclick(
         "lastNedBilde",
         raplog::repLogger(
-          session,
+          session = ss,
           msg = mldNLF
         )
       )
       shinyjs::onclick(
         "lastNed",
         raplog::repLogger(
-          session,
+          session = ss,
           msg = mldNLT
         )
       )

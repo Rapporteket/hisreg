@@ -83,7 +83,7 @@ server <-  function(input, output, session) {
     raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
   }
 
-  shiny::callModule(modFordelinger, "mod1", rID = reshID())
+  shiny::callModule(modFordelinger, "mod1", rID = reshID(), ss = session)
   # shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(),
   #                   add_int = TRUE, add_enh = FALSE, fun = "PS")
   # shiny::callModule(modGjennomsnitt, "mod3", rID = reshID(),
@@ -106,7 +106,6 @@ server <-  function(input, output, session) {
                    closeOnEsc = TRUE, closeOnClickOutside = TRUE,
                    html = TRUE, confirmButtonText = "Den er grei!")
     })
-
 }
 
 shinyApp(ui, server)
