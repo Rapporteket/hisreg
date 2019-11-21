@@ -245,7 +245,7 @@ modFordelinger <- function(input, output, session, rID, ss) {
       shinyjs::onclick(
         "lastNed",
         raplog::repLogger(
-          session = ss,
+          session[["parent"]] ,
           msg = mldNLT
         )
       )
