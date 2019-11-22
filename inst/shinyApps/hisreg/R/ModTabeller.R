@@ -186,8 +186,18 @@ tabell <- function(input, output, session, ss) {
   observe({
     cont <- headerFooter(tabellData())
     subS <- dim(tabellData())[1] - 1
+    colOrder <- c("Preintervensjon",
+              "Intervensjon",
+              "Kontroll 3 mnd",
+              "Kontroll 6 mnd",
+              "Kontroll 9 mnd",
+              "Kontroll 12 mnd",
+              "Kontroll 15 mnd",
+              "Kontroll 18 mnd",
+              "Kontroll 21 mnd",
+              "Kontroll 24 mnd" )
     output$Tabell2 <-  renderDT(
-      tabellData()[1:subS, ] %>%
+      tabellData()[1:subS, c(colOrder,"Sum")] %>%
         DT::datatable(
           container = cont,
           selection = "none",
