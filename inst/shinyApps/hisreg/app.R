@@ -20,16 +20,16 @@ system.file(
   package = "hisreg"
 ) %>%
   source(encoding = "UTF-8")
-# system.file(
-#   "shinyApps/hisreg/R/modGjennomsnitt.R",
-#   package = "hisreg"
-# ) %>%
-#   source(encoding = "UTF-8")
-# system.file(
-#   "shinyApps/hisreg/R/ModTabeller.R",
-#   package = "hisreg"
-# ) %>%
-#   source(encoding = "UTF-8")
+system.file(
+  "shinyApps/hisreg/R/modGjennomsnitt.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
+system.file(
+  "shinyApps/hisreg/R/ModTabeller.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
 
 
 #------------App UI----------------
@@ -51,20 +51,20 @@ ui <- shiny::tagList(
       tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
       modFordelingerUI("mod1")
     ),
-    shiny::navbarMenu("Gjennomsnitt"#,
-      # shiny::tabPanel("Per sykehus",
-      #                 modGjennomsnittUI("mod2")
-      #                 ),
-      # shiny::tabPanel("Per intervensjonstype",
-      #                 modGjennomsnittUI("mod3")),
-      # shiny::tabPanel("Før og etter intervensjon, per sykehus",
-      #                 modGjennomsnittUI("mod4", varValg = varValgGjenFE)),
-      # shiny::tabPanel("Før og etter intervensjon, per intervensjonstype",
-      #                 modGjennomsnittUI("mod5", varValg = varValgGjenFE))
-      )#, #navbarMenu,
+    shiny::navbarMenu("Gjennomsnitt",
+      shiny::tabPanel("Per sykehus",
+                      modGjennomsnittUI("mod2")
+                      ),
+      shiny::tabPanel("Per intervensjonstype",
+                      modGjennomsnittUI("mod3")),
+      shiny::tabPanel("Før og etter intervensjon, per sykehus",
+                      modGjennomsnittUI("mod4", varValg = varValgGjenFE)),
+      shiny::tabPanel("Før og etter intervensjon, per intervensjonstype",
+                      modGjennomsnittUI("mod5", varValg = varValgGjenFE))
+      ), #navbarMenu,
 
-      # tabPanel("Tabeller",
-      #          tabellUI("tab"))
+      tabPanel("Tabeller",
+               tabellUI("tab"))
 
 
   )#navbarPage
@@ -84,27 +84,27 @@ server <-  function(input, output, session) {
   }
 
   shiny::callModule(modFordelinger, "mod1", rID = reshID(), ss = session)
-  # shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(),
-  #                   add_int = TRUE, add_enh = FALSE, fun = "PS")
-  # shiny::callModule(modGjennomsnitt, "mod3", rID = reshID(),
-  #                   add_int = FALSE, add_enh = FALSE, fun = "PI")
-  # shiny::callModule(modGjennomsnitt, "mod4", rID = reshID(),
-  #                   add_int = TRUE, add_enh = FALSE, fun = "FEPS")
-  # shiny::callModule(modGjennomsnitt, "mod5", rID = reshID(),
-  #                   add_int = FALSE, add_enh = TRUE, fun = "FEPI")
-  # shiny::callModule(tabell, "tab")
+  shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(), ss = session,
+                    add_int = TRUE, add_enh = FALSE, fun = "PS")
+  shiny::callModule(modGjennomsnitt, "mod3", rID = reshID(), ss = session,
+                    add_int = FALSE, add_enh = FALSE, fun = "PI")
+  shiny::callModule(modGjennomsnitt, "mod4", rID = reshID(), ss = session,
+                    add_int = TRUE, add_enh = FALSE, fun = "FEPS")
+  shiny::callModule(modGjennomsnitt, "mod5", rID = reshID(), ss = session,
+                    add_int = FALSE, add_enh = TRUE, fun = "FEPI")
+  shiny::callModule(tabell, "tab", ss = session)
 
-    #Navbarwidget
-    output$appUserName <- shiny::renderText(rapbase::getUserFullName(session))
-    output$appOrgName <- shiny::renderText(rapbase::getUserReshId(session))
+  #Navbarwidget
+  output$appUserName <- shiny::renderText(rapbase::getUserFullName(session))
+  output$appOrgName <- shiny::renderText(rapbase::getUserReshId(session))
 
-    # Brukerinformasjon
-    userInfo <- rapbase::howWeDealWithPersonalData(session)
-    observeEvent(input$userInfo, {
-        shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
-                   type = "", imageUrl = "rap/logo.svg",
-                   closeOnEsc = TRUE, closeOnClickOutside = TRUE,
-                   html = TRUE, confirmButtonText = "Den er grei!")
+  # Brukerinformasjon
+  userInfo <- rapbase::howWeDealWithPersonalData(session)
+  observeEvent(input$userInfo, {
+      shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
+                 type = "", imageUrl = "rap/logo.svg",
+                 closeOnEsc = TRUE, closeOnClickOutside = TRUE,
+                 html = TRUE, confirmButtonText = "Den er grei!")
     })
 }
 

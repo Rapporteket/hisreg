@@ -209,7 +209,7 @@ modFordelinger <- function(input, output, session, rID, ss) {
                                erMann = as.numeric(input$kjoSle))
      }
   )
-
+  #logging
   shiny::observe({
     if (onServer) {
       if (input$tabs == "fig") {
@@ -232,7 +232,7 @@ modFordelinger <- function(input, output, session, rID, ss) {
         input$varSel
       )
       mldNLT <- paste(
-        "Hisreg: nedlasting figur - fordeling. variabel",
+        "Hisreg: nedlasting tabell - fordeling. variabel",
         input$varSel
       )
       shinyjs::onclick(
@@ -245,7 +245,7 @@ modFordelinger <- function(input, output, session, rID, ss) {
       shinyjs::onclick(
         "lastNed",
         raplog::repLogger(
-          session[["parent"]] ,
+          ss,
           msg = mldNLT
         )
       )

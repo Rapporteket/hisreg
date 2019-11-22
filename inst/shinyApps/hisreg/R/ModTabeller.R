@@ -45,7 +45,7 @@ tabellUI <- function(id, datoStart = "2008-01-01",
   )
 }
 
-tabell <- function(input, output, session) {
+tabell <- function(input, output, session, ss) {
   output$tabui <- shiny::renderUI({
     ns <- session$ns
     if (input$tab == "forlPas") {
@@ -145,16 +145,8 @@ tabell <- function(input, output, session) {
   output$lastNedTabell1 <- downloadHandler(
     filename = function() {
       if (req(input$skjemarad) == "PasientID") {
-        raplog::repLogger(
-          session,
-          msg = paste("Hisreg: nedlasting pasienttabell")
-        )
         paste0("pasienttabell", req(input$tidenh), Sys.time(), ".csv")
       } else {
-        raplog::repLogger(
-          session,
-          msg = paste("Hisreg: nedlasting forløpstabell")
-        )
         paste0("forlopstabell", req(input$tidenh), Sys.time(), ".csv")
       }
     },
@@ -165,10 +157,6 @@ tabell <- function(input, output, session) {
   )
   output$lastNedTabell2 <- downloadHandler(
     filename = function() {
-      raplog::repLogger(
-        session,
-        msg = paste("Hisreg: nedlasting skjemastabell")
-      )
       if (req(input$status) == "1") {
         paste0("ferdistilteskjema", Sys.time(), ".csv")
       } else {
@@ -183,11 +171,6 @@ tabell <- function(input, output, session) {
   observe({
     cont <- headerFooter(tabellData())
     subS <- dim(tabellData())[1] - 1
-    raplog::repLogger(
-      session,
-      msg = paste("Hisreg: pasient og forløpstabell")
-    )
-
     output$Tabell1 <-  renderDT(
       as.data.frame.matrix(tabellData()) [1:subS, ] %>%
         DT::datatable(
@@ -203,11 +186,6 @@ tabell <- function(input, output, session) {
   observe({
     cont <- headerFooter(tabellData())
     subS <- dim(tabellData())[1] - 1
-    raplog::repLogger(
-      session,
-      msg = paste("Hisreg: skjematabell")
-    )
-
     output$Tabell2 <-  renderDT(
       as.data.frame.matrix(tabellData())[1:subS, ] %>%
         DT::datatable(
@@ -219,6 +197,44 @@ tabell <- function(input, output, session) {
                          lengthChange = FALSE,
                          dom = "t"))
     )
+  })
+  shiny::observe({
+    if (onServer) {
+      if (input$tab == "forlPas") {
+        mld <- paste(
+          "Hisreg: tabell", input$skjemarad
+        )
+      } else if (input$tab == "skjema") {
+        mld <- paste(
+          "Hisreg: tabell - skjematabell"
+        )
+      }
+      raplog::repLogger(
+        session = ss,
+        msg = mld
+      )
+      mldNlSkj <- paste(
+        "Hisreg: nedlasting skjematabell",
+        input$varSel
+      )
+      mldNlFol <- paste(
+        "Hisreg: nedlasting", input$skjemarad," tabell"
+      )
+      shinyjs::onclick(
+        "lastNedTabell1",
+        raplog::repLogger(
+          session = ss,
+          msg = mldNlFol
+        )
+      )
+      shinyjs::onclick(
+        "lastNedTabell2",
+        raplog::repLogger(
+          ss,
+          msg = mldNlSkj
+        )
+      )
+    }
   })
 
 }

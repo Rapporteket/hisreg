@@ -84,7 +84,7 @@ modGjennomsnittUI <- function(id, varValg = varValgGjenPer) {
 
 
 modGjennomsnitt <- function(input, output, session, rID = 601031,
-                            add_int = T, add_enh = T, fun = "PS") {
+                        add_int = T, add_enh = T, fun = "PS", ss) {
 
   output$figfil <- shiny::renderUI({
     ns <- session$ns
@@ -120,17 +120,6 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
   shiny::observe({
     if (fun == "PS") {
       output$figur <- shiny::renderPlot({
-        if (onServer) {
-            msgFigGjenVisPS <- paste(
-              "Hisreg: gjennomsnitt per sykehus, viser ",
-              input$varSel
-            )
-
-          raplog::repLogger(
-            session,
-            msg = msgFigGjenVis
-          )
-        }
         hisreg::hisregFigGjsnGrVar(RegData,
                                    valgtVar = req(input$varSel),
                                    datoFra = req(input$dateRan[1]),
@@ -145,17 +134,6 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
 
     } else if (fun == "PI") {
       output$figur <- shiny::renderPlot({
-        if (onServer) {
-          msgFigGjenVisPI <- paste(
-            "Hisreg: gjennomsnitt per intervensjon, viser ",
-            input$varSel
-          )
-
-          raplog::repLogger(
-            session,
-            msg = msgFigGjenVis
-          )
-        }
         hisreg::hisregFigGjsnGrVar(RegData,
                                    valgtVar = req(input$varSel),
                                    datoFra = req(input$dateRan[1]),
@@ -169,17 +147,6 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
 
     }else if (fun == "FEPI") {
       output$figur <- shiny::renderPlot({
-        if (onServer) {
-          msgFigGjenVisFEPI <- paste(
-            "Hisreg: gjennomsnitt før og etter per intervensjon, viser ",
-            input$varSel
-          )
-
-          raplog::repLogger(
-            session,
-            msg = msgFigGjenVisFEPI
-          )
-        }
         hisreg::hisregFigGjsnPrePostGrVar(RegData,
                                 valgtVar = req(input$varSel),
                                 datoFra = req(input$dateRan[1]),
@@ -194,17 +161,6 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
 
     }else if (fun == "FEPS") {
       output$figur <- shiny::renderPlot({
-        if (onServer) {
-          msgFigGjenVisFEPS <- paste(
-            "Hisreg: gjennomsnitt før og etter per sykehus, viser ",
-            input$varSel
-          )
-
-          raplog::repLogger(
-            session,
-            msg = msgFigGjenVisFEPS
-          )
-        }
         hisreg::hisregFigGjsnPrePostShus(RegData,
                                        valgtVar = req(input$varSel),
                                        datoFra = req(input$dateRan[1]),
@@ -335,26 +291,6 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
     container <- contGjen(fun)
     output$tabell <- DT::renderDT(
       if (fun == "PI" | fun == "PS") {
-        if (onServer) {
-          if(fun == "PI") {
-            raplog::repLogger(
-              session,
-              msg = paste(
-                "Hisreg: gjennomsnitttabell per sykehus, viser ",
-                input$varSel
-              )
-            )
-          } else {
-            raplog::repLogger(
-              session,
-              msg = paste(
-                "Hisreg: gjennomsnitttabell per intervensjon, viser ",
-                input$varSel
-              )
-            )
-          }
-        }
-
         df() %>%
         dplyr::filter(N > 10) %>%
         DT::datatable(selection = "none",
@@ -362,25 +298,6 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
                       colnames = c("95% Konfidensintervall" = "konfint"),
                       options = list(dom = "t"))
       }else{
-        if (onServer) {
-          if(fun == "FEPS") {
-            raplog::repLogger(
-              session,
-              msg = paste(
-                "Hisreg: gjennomsnitttabell før og etter per sykehus, viser ",
-                input$varSel
-              )
-            )
-          } else {
-            raplog::repLogger(
-              session,
-              msg = paste(
-                "Hisreg: gjennomsnitttabell før og etter per intervensjon, viser ",
-                input$varSel
-              )
-            )
-          }
-        }
         df() %>%
          dplyr::filter(N >= 5) %>%
           DT::datatable(selection = "none",
@@ -392,41 +309,6 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
   })
   output$lastNedTab <- downloadHandler(
     filename = function() {
-      if (onServer) {
-        if(fun = "PS"){
-          raplog::repLogger(
-            session,
-            msg = paste(
-              "Hisreg: nedlasting gjennomsnittstabell per sykehus. Vist variabel: ",
-              input$varSel
-            )
-          )
-        }else if (fun = "PI") {
-          raplog::repLogger(
-            session,
-            msg = paste(
-              "Hisreg: nedlasting gjennomsnittstabell per intervensjon. Vist variabel: ",
-              input$varSel
-            )
-          )
-        } else if (fun = "FEPS") {
-          raplog::repLogger(
-            session,
-            msg = paste(
-              "Hisreg: nedlasting gjennomsnittstabell før og etter per sykehus. Vist variabel: ",
-              input$varSel
-            )
-          )
-        }else if (fun = "FEPI") {
-          raplog::repLogger(
-            session,
-            msg = paste(
-              "Hisreg: nedlasting gjennomsnittstabell før og etter per intervensjon. Vist variabel: ",
-              input$varSel
-            )
-          )
-        }
-      }
       paste0(input$varSel, fun, Sys.time(), ".csv")
     },
     content = function(file) {
@@ -440,15 +322,6 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
     },
     content = function(file){
       if (fun == "PS") {
-        if (onServer) {
-            raplog::repLogger(
-              session,
-              msg = paste(
-                "Hisreg: nedlasting gjennomsnitt per sykehus. Vist variabel: ",
-                input$varSel
-              )
-            )
-          }
         hisreg::hisregFigGjsnGrVar(RegData,
                                    valgtVar = req(input$varSel),
                                    datoFra = req(input$dateRan[1]),
@@ -460,15 +333,6 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
                                    forlop1 = req(as.numeric(input$typInt)),
                                    outfile = file)
       } else if (fun == "PI") {
-        if (onServer) {
-          raplog::repLogger(
-            session,
-            msg = paste(
-              "Hisreg: nedlasting gjennomsnitt per intervensjon. Vist variabel: ",
-              input$varSel
-            )
-          )
-        }
           hisreg::hisregFigGjsnGrVar(RegData,
                                      valgtVar = req(input$varSel),
                                      datoFra = req(input$dateRan[1]),
@@ -480,16 +344,7 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
                                      maxald = req(input$aldSli[2]),
                                      outfile = file)
       }else if (fun == "FEPI") {
-        if (onServer) {
-          raplog::repLogger(
-            session,
-            msg = paste(
-              "Hisreg: nedlasting gjennomsnitt før og etter per intervensjon. Vist variabel: ",
-              input$varSel
-            )
-          )
-        }
-          hisreg::hisregFigGjsnPrePostGrVar(RegData,
+           hisreg::hisregFigGjsnPrePostGrVar(RegData,
                                   valgtVar = req(input$varSel),
                                   datoFra = req(input$dateRan[1]),
                                   datoTil = req(input$dateRan[2]),
@@ -501,15 +356,6 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
                                   enhetsUtvalg =  as.numeric(req(input$enhSel),
                                   outfile = file))
       }else if (fun == "FEPS") {
-        if (onServer) {
-          raplog::repLogger(
-            session,
-            msg = paste(
-              "Hisreg: nedlasting gjennomsnitt før og etter per sykehus. Vist variabel: ",
-              input$varSel
-            )
-          )
-        }
           hisreg::hisregFigGjsnPrePostShus(RegData,
                                  valgtVar = req(input$varSel),
                                  datoFra = req(input$dateRan[1]),
@@ -525,4 +371,46 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
 
     }
   )
+  shiny::observe({
+    if (onServer) {
+      if (input$tabs == "fig") {
+        mld <- paste(
+          "Hisreg: figur - gjennomsnitt.", fun, " variabel -",
+          input$varSel
+        )
+      } else if (input$tabs == "tab") {
+        mld <- paste(
+          "Hisreg: tabell - gjennomsnitt.", fun, " variabel -",
+          input$varSel
+        )
+      }
+      raplog::repLogger(
+        session = ss,
+        msg = mld
+      )
+      mldNLF <- paste(
+        "Hisreg: nedlasting figur - gjennomsnitt.", fun," variabel",
+        input$varSel
+      )
+      mldNLT <- paste(
+        "Hisreg: nedlasting tabell - gjennomsnitt.", fun, " variabel",
+        input$varSel
+      )
+      shinyjs::onclick(
+        "lastNedBilde",
+        raplog::repLogger(
+          session = ss,
+          msg = mldNLF
+        )
+      )
+      shinyjs::onclick(
+        "lastNedTab",
+        raplog::repLogger(
+          ss,
+          msg = mldNLT
+        )
+      )
+    }
+  })
+
 }
