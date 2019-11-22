@@ -35,19 +35,21 @@ hisregSkjemaTabell <- function(df,
                 .data[[typeDato]] %>% as.Date() %>%
                   dplyr::between(as.Date(tidFra), as.Date(tidTil)))
 
-  levels(skjemaData$Skjemanavn) <- c("Preintervensjon",
-                                   "Intervensjon",
-                                   "Kontroll 3 mnd",
-                                   "Kontroll 6 mnd",
-                                   "Kontroll 9 mnd",
-                                   "Kontroll 12 mnd",
-                                   "Kontroll 15 mnd",
-                                   "Kontroll 18 mnd",
-                                   "Kontroll 21 mnd",
-                                   "Kontroll 24 mnd" )
+  lev <- c("Preintervensjon",
+           "Intervensjon",
+           "Kontroll 3 mnd",
+           "Kontroll 6 mnd",
+           "Kontroll 9 mnd",
+           "Kontroll 12 mnd",
+           "Kontroll 15 mnd",
+           "Kontroll 18 mnd",
+           "Kontroll 21 mnd",
+           "Kontroll 24 mnd" )
+  levels(skjemaData$Skjemanavn) <- lev
 
   utData <- stats::addmargins(table(skjemaData[["Sykehusnavn"]],
                         skjemaData[["Skjemanavn"]] ))
+  utData <- utData[,c(lev,"Sum")]
   return( as.data.frame.matrix(utData))
 }
 
