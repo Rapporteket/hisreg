@@ -24,10 +24,11 @@ hisregSkjemaTabell <- function(df,
                               tidTil = Sys.Date(),
                               status= 1,
                               typeDato = "HovedDato") {
+  iKladd <-  c(0, -1)
   if (status == 99) {
-    status <-  c(-1, 0)
+    status <-  iKladd
   } else if ( status == 1) {
-    status <- setdiff(unique(df$SkjemaStatus), c(-1, 0))
+    status <- setdiff(unique(df$SkjemaStatus), iKladd)
   }
 
   skjemaData <- df %>% dplyr::filter(SkjemaStatus %in% status,
