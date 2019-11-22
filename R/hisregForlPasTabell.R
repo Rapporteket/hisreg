@@ -74,5 +74,5 @@ hisregForlPasTabell <- function(RegDt ,
 
   tabData <-  addmargins(table(utData[["SykehusNavn"]],
                                       utData[[tidenh]]))
- return( tabData)
+ return( as.data.frame.matrix( tabData))
 }

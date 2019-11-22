@@ -121,7 +121,7 @@ tabell <- function(input, output, session, ss) {
     })
   tabellData <- reactive({
      if (req(input$tab) == "forlPas") {
-       as.data.frame.matrix(
+
          hisregForlPasTabell(RegData,
                         tidFra = req(input$dato[1]),
                         tidTil = req(input$dato[2]),
@@ -131,15 +131,15 @@ tabell <- function(input, output, session, ss) {
                         tidenh = req(input$tidenh),
                         IDType = req(input$skjemarad),
                         frlType = req(as.numeric(input$forl)))
-      )
+
      } else if (req(input$tab) == "skjema") {
-      as.data.frame.matrix(
+
         hisregSkjemaTabell(SkjemaOversikt,
                           tidFra = min(req(input$dato)),
                           tidTil = max(req(input$dato)),
                           status = req(input$status),
                           typeDato = req(input$typeDato))
-        )
+
     }
     })
   output$lastNedTabell1 <- downloadHandler(
@@ -172,7 +172,7 @@ tabell <- function(input, output, session, ss) {
     cont <- headerFooter(tabellData())
     subS <- dim(tabellData())[1] - 1
     output$Tabell1 <-  renderDT(
-      as.data.frame.matrix(tabellData()) [1:subS, ] %>%
+      tabellData() [1:subS, ] %>%
         DT::datatable(
           container = cont,
           selection = "none",
