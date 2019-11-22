@@ -187,7 +187,7 @@ tabell <- function(input, output, session, ss) {
     cont <- headerFooter(tabellData())
     subS <- dim(tabellData())[1] - 1
     output$Tabell2 <-  renderDT(
-      as.data.frame.matrix(tabellData())[1:subS, ] %>%
+      tabellData()[1:subS, ] %>%
         DT::datatable(
           container = cont,
           selection = "none",
