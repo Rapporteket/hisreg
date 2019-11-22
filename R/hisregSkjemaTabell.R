@@ -25,7 +25,9 @@ hisregSkjemaTabell <- function(df,
                               status= 1,
                               typeDato = "HovedDato") {
   if (status == 99) {
-    status <-  setdiff(unique(df$SkjemaStatus), 1)
+    status <-  -1
+  } else if ( status == 1) {
+    status <- setdiff(unique(df$SkjemaStatus), -1)
   }
 
   skjemaData <- df %>% dplyr::filter(SkjemaStatus %in% status,

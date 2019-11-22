@@ -82,7 +82,7 @@ tabell <- function(input, output, session, ss) {
         shiny::selectInput(ns("status"),
                          label = "Skjema status",
                          choices = c("Ferdigstilt" = 1,
-                                     "Ikke ferdige" = 99),
+                                     "I kladd" = 99),
                          selected = 1),
        shiny::selectInput(ns("typeDato"),
                          label = "Dato for filtrering",
