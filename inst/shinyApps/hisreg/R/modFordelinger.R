@@ -10,7 +10,7 @@ cont <- function(enh) {
           th(class = "dt-center", colspan = 3, "Landet forøveig")
         ),
         tr(
-          lapply(rep(c("Antall", "N", "Andel"), 2), th)
+          lapply(rep(c("N", "Antall", "Andel"), 2), th)
         )
       )
     ))
@@ -19,7 +19,7 @@ cont <- function(enh) {
       class = "display",
       thead(
         tr(
-          lapply(c("Kategori", "Antall", "N", "Andel"), th)
+          lapply(c("Kategori", "N", "Antall", "Andel"), th)
         )
       )
     ))
@@ -51,7 +51,7 @@ modFordelingerUI <- function(id, varValg = varValgFordeling) {
     ),
     shiny::mainPanel(width = 9,
       shiny::fluidRow(
-        shiny::column(8,
+        shiny::column(6,
           tabsetPanel(id = ns("tabs"),
             tabPanel("Figur", value = "fig",
               shiny::plotOutput(ns("figur"),

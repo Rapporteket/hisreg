@@ -60,7 +60,7 @@ modGjennomsnittUI <- function(id, varValg = varValgGjenPer) {
     ),
     shiny::mainPanel(width = 9,
       fluidPage(
-        column(width = 8,
+        column(width = 6,
           shiny::tabsetPanel(id = ns("tabs"),
             shiny::tabPanel("Figur", value = "fig",
               shiny::plotOutput(ns("figur"),
