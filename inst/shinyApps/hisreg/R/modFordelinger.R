@@ -1,12 +1,17 @@
 #hjelpefunksjon som lager topp og bunntekst til tabellen
-cont <- function(enh) {
+cont <- function(enh, usRole) {
+  if (usRole == "SC") {
+    avd = "Valgt avdeling"
+  } else {
+    avd = "Din avdeling"
+  }
   if (enh == 1) {
     htmltools::withTags(table(
       class = "display",
       thead(
         tr(
           th(rowspan = 2, "Kategori"),
-          th(class = "dt-center", colspan = 3, "Din avdeling"),
+          th(class = "dt-center", colspan = 3, avd),
           th(class = "dt-center", colspan = 3, "Landet forøveig")
         ),
         tr(
@@ -34,6 +39,7 @@ modFordelingerUI <- function(id, varValg = varValgFordeling) {
 
   shiny::sidebarLayout(
     shiny::sidebarPanel(width = 3,
+      shiny::uiOutput(ns("SC")),
       shiny::selectInput(ns("varSel"), label = "Velg variabel",
                          choices = varValg, selected = varValg[[1]]),
       shiny::selectInput(ns("typInt"), label = "Type intervensjon",
@@ -71,7 +77,7 @@ modFordelingerUI <- function(id, varValg = varValgFordeling) {
 
 #moduleserver
 
-modFordelinger <- function(input, output, session, rID, ss) {
+modFordelinger <- function(input, output, session, rID, role, ss) {
 
   output$figfil <- shiny::renderUI({
     ns <- session$ns
@@ -81,6 +87,21 @@ modFordelinger <- function(input, output, session, rID, ss) {
         choices = c("pdf", "png", "jpg", "bmp", "tif", "svg"))
     }
   })
+  output$SC <- renderUI({
+    ns <- session$ns
+    if (role == "SC") {
+      shiny::selectInput(ns("shSelect"), label = "Velg Avdeling",
+                         choices = avdValg, selected = rID )
+    }
+  })
+
+  resh <- reactive(
+    if (role == "SC"){
+      req(input$shSelect)
+    } else {
+      rID
+    }
+  )
 
   data <- reactive({
     hisreg::hisregFigAndeler(RegData = RegData,
@@ -89,7 +110,7 @@ modFordelinger <- function(input, output, session, rID, ss) {
                              datoTil = input$dateRan[2],
                              minald = input$aldSli[1],
                              maxald = input$aldSli[2],
-                             reshID = rID,
+                             reshID = resh(),
                              enhetsUtvalg = input$enhSel,
                              forlop1 = input$typInt,
                              erMann = as.numeric(input$kjoSle))
@@ -158,14 +179,14 @@ modFordelinger <- function(input, output, session, rID, ss) {
                              datoTil = input$dateRan[2],
                              minald = input$aldSli[1],
                              maxald = input$aldSli[2],
-                             reshID = rID, enhetsUtvalg = input$enhSel,
+                             reshID = resh(), enhetsUtvalg = input$enhSel,
                              forlop1 = input$typInt,
                              erMann = as.numeric(input$kjoSle))
   )
 
   #tabell
   observe({
-    cont <- cont(input$enhSel)
+    cont <- cont(input$enhSel, role)
     output$tabell <- DT::renderDT(
       if (input$enhSel == 1) {
         df() %>% datatable(selection = "none",
@@ -203,7 +224,7 @@ modFordelinger <- function(input, output, session, rID, ss) {
                                datoTil = input$dateRan[2],
                                minald = input$aldSli[1],
                                maxald = input$aldSli[2],
-                               reshID = rID, enhetsUtvalg = input$enhSel,
+                               reshID = resh(), enhetsUtvalg = input$enhSel,
                                forlop1 = input$typInt,
                                outfile = file,
                                erMann = as.numeric(input$kjoSle))

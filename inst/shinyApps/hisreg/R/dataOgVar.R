@@ -14,7 +14,7 @@ logoWidget <- tags$script(shiny::HTML(logoCode))
 #------------------Data-------------------------------------
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-onServer <- context == "TEST" | context == "QA" | context == "PRODUCTION"#| TRUE
+onServer <- context == "TEST" | context == "QA" | context == "PRODUCTION" #| TRUE
 if (onServer) {
   RegData <- hisregHentRegData()
   SkjemaOversikt <- rapbase::LoadRegData(
@@ -110,6 +110,9 @@ RegDataAll$SykehusNavn <- as.factor(as.character(RegDataAll$SykehusNavn))
 RegData$HovedDato <- as.POSIXct.POSIXlt(RegData$HovedDato)
 
 #------------------Variabel valg-------------------------------------
+
+avdValg <- unique(RegData$AvdRESH)
+names(avdValg) <- unique(RegData$SykehusNavn)
 
 varValgFordeling <- c("Alder" = "PasientAlder",
                       "Alder ved første byll" = "p_age_abscess",

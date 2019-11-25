@@ -77,19 +77,32 @@ server <-  function(input, output, session) {
     ifelse(onServer,as.numeric(rapbase::getUserReshId(session)),601031)
   })
   userRole <- reactive({
-    ifelse(onServer, rapbase::getUserRole(session), 'SC')
+    ifelse(!onServer, rapbase::getUserRole(session), 'SC')
   })
   if (onServer){
     raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
   }
 
-  shiny::callModule(modFordelinger, "mod1", rID = reshID(), ss = session)
-  shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(), ss = session,
-                    add_int = TRUE, add_enh = FALSE, fun = "PS")
+  observe(
+    if (userRole() != "SC") {
+      shinyjs::hide(
+        selector =  ".dropdown-menu li:nth-child(1)")
+      shinyjs::hide(
+        selector =  ".dropdown-menu li:nth-child(3)")
+    } else {
+      shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(), ss = session,
+                        add_int = TRUE, add_enh = FALSE, fun = "PS")
+      shiny::callModule(modGjennomsnitt, "mod4", rID = reshID(), ss = session,
+                        add_int = TRUE, add_enh = FALSE, fun = "FEPS")
+    }
+  )
+
+  shiny::callModule(modFordelinger, "mod1", rID = reshID(), role = userRole(),
+                    ss = session)
+
   shiny::callModule(modGjennomsnitt, "mod3", rID = reshID(), ss = session,
                     add_int = FALSE, add_enh = FALSE, fun = "PI")
-  shiny::callModule(modGjennomsnitt, "mod4", rID = reshID(), ss = session,
-                    add_int = TRUE, add_enh = FALSE, fun = "FEPS")
+
   shiny::callModule(modGjennomsnitt, "mod5", rID = reshID(), ss = session,
                     add_int = FALSE, add_enh = TRUE, fun = "FEPI")
   shiny::callModule(tabell, "tab", ss = session)
