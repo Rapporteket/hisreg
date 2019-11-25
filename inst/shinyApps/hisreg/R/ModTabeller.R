@@ -134,11 +134,14 @@ tabell <- function(input, output, session, ss) {
 
      } else if (req(input$tab) == "skjema") {
 
-        hisregSkjemaTabell(SkjemaOversikt,
-                          tidFra = min(req(input$dato)),
-                          tidTil = max(req(input$dato)),
-                          status = req(input$status),
-                          typeDato = req(input$typeDato))
+        hisregSkjemaTabell(
+          SkjemaOversikt %>%
+            dplyr::filter( AvdRESH != 999002), #fjerner Roskilede
+          tidFra = min(req(input$dato)),
+          tidTil = max(req(input$dato)),
+          status = req(input$status),
+          typeDato = req(input$typeDato)
+          )
 
     }
     })
