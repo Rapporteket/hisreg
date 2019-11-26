@@ -28,6 +28,7 @@ tabellUI <- function(id, datoStart = "2008-01-01",
                         value = "forlPas",
            shiny::h3(textOutput(ns("txt1")),
                      style = "text-align:center"),
+           shiny::uiOutput(ns("tidsIntervall")),
            DT::DTOutput(ns("Tabell1")),
            shiny::downloadButton(ns("lastNedTabell1"),
                                 "Last ned tabell")
@@ -64,7 +65,8 @@ tabell <- function(input, output, session, ss) {
         shiny::selectInput(ns("tidenh"),
                          "Velg tidsenhet",
                          choices = c("Måned" = "maaned",
-                                     "År" = "aar")),
+                                     "År" = "aar"),
+                         selected = "aar"),
         shiny::selectInput(ns("forl"),
                          label = "Forløpstype",
                          choices = typInt1,
@@ -95,6 +97,22 @@ tabell <- function(input, output, session, ss) {
     }
 
   })
+  output$tidsIntervall <- renderUI({
+    ns <- session$ns
+    ic <- icon("calendar-alt")
+    st <- "color : grey ; background-color:white "
+    if (input$tab == "forlPas" & req(input$tidenh) == "maaned") {
+      tagList(
+        shiny::fluidRow(
+          column(3,offset = 9,
+            shiny::actionButton(ns("tre"), "3 mnd", ic, style = st, width = "30%"),
+            shiny::actionButton(ns("seks"), "6 mnd", ic, style = st,width = "30%"),
+            shiny::actionButton(ns("et"), "1 år", ic, style =st,width = "30%")
+          )
+        )
+      )
+    }
+  })
   forloptxt <- reactive({
 
       if (req(input$skjemarad) == "m_mceid") {
@@ -119,6 +137,49 @@ tabell <- function(input, output, session, ss) {
            tidenhtxt(),
            " per avdeling")
     })
+  observeEvent(input$tre,{
+    valgtDato <- as.Date(max(input$dato)) -
+      lubridate::day(as.Date(max(input$dato))) + 1
+
+    shiny::updateDateRangeInput(
+      session,
+      inputId = "dato",
+      start = valgtDato %m-% months(3),
+    )
+  })
+  observeEvent(input$seks,{
+    valgtDato <- as.Date(max(input$dato)) -
+      lubridate::day(as.Date(max(input$dato))) + 1
+
+    shiny::updateDateRangeInput(
+      session,
+      inputId = "dato",
+      start = valgtDato %m-% months(6),
+    )
+  })
+  observeEvent(input$et,{
+    valgtDato <- as.Date(max(input$dato)) -
+      lubridate::day(as.Date(max(input$dato))) + 1
+
+    shiny::updateDateRangeInput(
+      session,
+      inputId = "dato",
+      start = valgtDato %m-% months(12),
+    )
+  })
+
+  observe({
+    if (input$tab == "forlPas" & req(input$tidenh) == "maaned") {
+
+      valgtDato <- as.Date(max(input$dato))
+      shiny::updateDateRangeInput(
+        session,
+        inputId = "dato",
+        #start = valgtDato -365,
+        #min = valgtDato - 365 ,
+        )
+    }
+  })
   tabellData <- reactive({
      if (req(input$tab) == "forlPas") {
 
@@ -189,18 +250,8 @@ tabell <- function(input, output, session, ss) {
   observe({
     cont <- headerFooter(tabellData())
     subS <- dim(tabellData())[1] - 1
-    colOrder <- c("Preintervensjon",
-              "Intervensjon",
-              "Kontroll 3 mnd",
-              "Kontroll 6 mnd",
-              "Kontroll 9 mnd",
-              "Kontroll 12 mnd",
-              "Kontroll 15 mnd",
-              "Kontroll 18 mnd",
-              "Kontroll 21 mnd",
-              "Kontroll 24 mnd" )
     output$Tabell2 <-  renderDT(
-      tabellData()[1:subS, c(colOrder,"Sum")] %>%
+      tabellData()[1:subS, ] %>%
         DT::datatable(
           container = cont,
           selection = "none",
