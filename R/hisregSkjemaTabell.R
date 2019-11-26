@@ -45,12 +45,18 @@ hisregSkjemaTabell <- function(df,
            "Kontroll 18 mnd",
            "Kontroll 21 mnd",
            "Kontroll 24 mnd" )
-  levels(skjemaData$Skjemanavn) <- lev
+
+  levPresent <- lev[lev %in% unique(skjemaData$Skjemanavn)]
+  levels(skjemaData$Skjemanavn) <- levPresent
+  skjemaData$Skjemanavn <- ordered(skjemaData$Skjemanavn, levels = levPresent)
+
+
+
 
   utData <- stats::addmargins(table(skjemaData[["Sykehusnavn"]],
                         skjemaData[["Skjemanavn"]] ))
-  utData <- utData[,c(lev,"Sum")]
-  return( as.data.frame.matrix(utData))
+  utData <- as.data.frame.matrix(utData)
+  return( utData)
 }
 
 
