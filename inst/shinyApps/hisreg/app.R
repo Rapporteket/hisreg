@@ -8,7 +8,7 @@ library(kableExtra)
 library(DT)
 library(htmltools)
 library(rapbase)
-
+library(lubridate)
 
 system.file(
   "shinyApps/hisreg/R/dataOgVar.R",

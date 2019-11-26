@@ -22,12 +22,13 @@ Imports:
     htmltools,
     shinyalert,
     shinyjs,
-    raplog (>= 0.0.0.9000)
+    raplog (>= 0.0.0.9000),
+    lubridate
 Suggests:
     knitr,
     rmarkdown
 RoxygenNote: 6.1.1
-Remotes:  
+Remotes: 
     Rapporteket/rapbase@rel,
     Rapporteket/rapFigurer,
     Rapporteket/raplog@rel
