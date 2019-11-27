@@ -168,18 +168,7 @@ tabell <- function(input, output, session, ss) {
     )
   })
 
-  observe({
-    if (input$tab == "forlPas" & req(input$tidenh) == "maaned") {
 
-      valgtDato <- as.Date(max(input$dato))
-      shiny::updateDateRangeInput(
-        session,
-        inputId = "dato",
-        #start = valgtDato -365,
-        #min = valgtDato - 365 ,
-        )
-    }
-  })
   tabellData <- reactive({
      if (req(input$tab) == "forlPas") {
 

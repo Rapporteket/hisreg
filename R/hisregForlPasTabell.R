@@ -46,9 +46,12 @@ hisregForlPasTabell <- function(RegDt ,
       c(ingen_intervensjon)
 
   }
+  if(tidenh == "maaned" & length(seq(as.Date(tidFra), as.Date(tidTil), by = "month")) - 1 < 14) {
+    tidenh <- "underEtAar"
+  }
 
 
-  utData <- RegDt %>%
+  tabData <- RegDt %>%
     dplyr::select(PasientID,
                   m_mceid,
                   SykehusNavn,
@@ -62,17 +65,21 @@ hisregForlPasTabell <- function(RegDt ,
                                                "Apr", "Mai", "Jun",
                                                "Jul", "Aug", "Sep",
                                                "Okt", "Nov", "Des")),
-                  aar = lubridate::year(HovedDato)) %>%
+                  aar = lubridate::year(HovedDato),
+                  underEtAar = paste(maaned, "-", aar)) %>%
         dplyr::filter(as.Date(HovedDato) %>% dplyr::between(as.Date(tidFra),
                                                              as.Date(tidTil)),
                        PasientAlder %>% dplyr::between(aldmin, aldmax),
                        ErMann %in% kjoen, ForlopsType1Num %in% frlType) %>%
-          dplyr::select(PasientID, m_mceid, SykehusNavn, maaned, aar) %>%
+          dplyr::select(PasientID, m_mceid, SykehusNavn, maaned, aar, underEtAar) %>%
             dplyr::arrange(aar, maaned)
 
-  utData <- utData %>% dplyr::filter(!duplicated(utData[[IDType]]))
-
-  tabData <-  addmargins(table(utData[["SykehusNavn"]],
-                                      utData[[tidenh]]))
- return( as.data.frame.matrix( tabData))
+  tabData <- tabData %>% dplyr::filter(!duplicated(tabData[[IDType]]))
+  tabData$underEtAar <- ordered(
+    tabData$underEtAar,
+    levels = unique(tabData$underEtAar)
+  )
+  utData <-  addmargins(table(tabData[["SykehusNavn"]],
+                                      tabData[[tidenh]]))
+  return( as.data.frame.matrix(utData))
 }
