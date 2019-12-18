@@ -84,7 +84,7 @@ server <-  function(input, output, session) {
     ifelse(onServer,as.numeric(rapbase::getUserReshId(session)),601031)
   })
   userRole <- reactive({
-    "SC"#ifelse(onServer, rapbase::getUserRole(session), 'SC')
+    ifelse(onServer, rapbase::getUserRole(session), 'SC')
   })
   if (onServer){
     raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
