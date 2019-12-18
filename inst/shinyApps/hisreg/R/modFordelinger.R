@@ -39,14 +39,15 @@ modFordelingerUI <- function(id, varValg = varValgFordeling) {
 
   shiny::sidebarLayout(
     shiny::sidebarPanel(width = 3,
-      shiny::uiOutput(ns("SC")),
       shiny::selectInput(ns("varSel"), label = "Velg variabel",
                          choices = varValg, selected = varValg[[1]]),
       shiny::selectInput(ns("typInt"), label = "Type intervensjon",
                          choices = typInt, selected = 99),
+      shiny::uiOutput(ns("SC")),
       shiny::selectInput(ns("enhSel"), label = "Velg enhe(er)",
                          choices = enhvalg, selected = enhvalg[[1]]),
       shiny::dateRangeInput(ns("dateRan"), label = "Tidsperiode",
+                            language = "no", separator = "til",
                             min = "2011-01-01", max = Sys.Date(),
                             start = "2011-01-01", end = Sys.Date()),
       shiny::selectInput(ns("kjoSle"), label = "Kjønn", choices = kjoenn,
@@ -106,8 +107,8 @@ modFordelinger <- function(input, output, session, rID, role, ss) {
   data <- reactive({
     hisreg::hisregFigAndeler(RegData = RegData,
                              valgtVar = input$varSel,
-                             datoFra = input$dateRan[1],
-                             datoTil = input$dateRan[2],
+                             datoFra = min(input$dateRan),
+                             datoTil = max(input$dateRan),
                              minald = input$aldSli[1],
                              maxald = input$aldSli[2],
                              reshID = resh(),
@@ -175,8 +176,8 @@ modFordelinger <- function(input, output, session, rID, role, ss) {
 
   output$figur <- renderPlot(
     hisreg::hisregFigAndeler(RegData = RegData, valgtVar = input$varSel,
-                             datoFra = input$dateRan[1],
-                             datoTil = input$dateRan[2],
+                             datoFra = min(input$dateRan),
+                             datoTil = max(input$dateRan),
                              minald = input$aldSli[1],
                              maxald = input$aldSli[2],
                              reshID = resh(), enhetsUtvalg = input$enhSel,
@@ -220,8 +221,8 @@ modFordelinger <- function(input, output, session, rID, role, ss) {
 
     content = function(file){
       hisreg::hisregFigAndeler(RegData = RegData, valgtVar = input$varSel,
-                               datoFra = input$dateRan[1],
-                               datoTil = input$dateRan[2],
+                               datoFra = min(input$dateRan),
+                               datoTil = max(input$dateRan),
                                minald = input$aldSli[1],
                                maxald = input$aldSli[2],
                                reshID = resh(), enhetsUtvalg = input$enhSel,

@@ -17,6 +17,8 @@ tabellUI <- function(id, datoStart = "2008-01-01",
     shiny::sidebarPanel(width = 3,
       shiny::dateRangeInput(ns("dato"),
                             "Tidsperiode:",
+                            language = "no",
+                            separator = "til",
                             start = datoStart,
                             end = datoSlutt,
                             format = "yyyy-mm-dd"),
@@ -24,7 +26,7 @@ tabellUI <- function(id, datoStart = "2008-01-01",
     ),
     shiny::mainPanel(width = 9,
       shiny::tabsetPanel(id = ns("tab"),
-        shiny::tabPanel("Pasient og forløpstabeller",
+        shiny::tabPanel("Antall unike pasienter/Pasientforløp",
                         value = "forlPas",
            shiny::h3(textOutput(ns("txt1")),
                      style = "text-align:center"),
@@ -33,7 +35,7 @@ tabellUI <- function(id, datoStart = "2008-01-01",
            shiny::downloadButton(ns("lastNedTabell1"),
                                 "Last ned tabell")
         ),
-        shiny::tabPanel("Skjematabeller",
+        shiny::tabPanel("Antall skjema",
           value = "skjema",
            shiny::h3(textOutput(ns("txt2")),
                      style = "text-align:center"),
@@ -173,8 +175,8 @@ tabell <- function(input, output, session, ss) {
      if (req(input$tab) == "forlPas") {
 
          hisregForlPasTabell(RegData,
-                        tidFra = req(input$dato[1]),
-                        tidTil = req(input$dato[2]),
+                        tidFra = min(req(input$dato)),
+                        tidTil = max(req(input$dato)),
                         aldmin = req(input$ald[1]),
                         aldmax = req(input$ald[2]),
                         kjoen = req(as.numeric(input$kjo)),
@@ -213,7 +215,7 @@ tabell <- function(input, output, session, ss) {
       if (req(input$status) == "1") {
         paste0("ferdistilteskjema", Sys.time(), ".csv")
       } else {
-        paste0("ikkeferdigeskjema", Sys.time(), ".csv")
+        paste0("Uferdigeskjema", Sys.time(), ".csv")
       }
     },
     content = function(file) {
