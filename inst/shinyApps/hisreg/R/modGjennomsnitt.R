@@ -36,7 +36,7 @@ contGjen <- function(fun) {
 modGjennomsnittUI <- function(id, varValg = varValgGjenPer) {
   ns <- shiny::NS(id)
   shiny::sidebarLayout(
-    shiny::sidebarPanel(width = 3,
+    shiny::sidebarPanel(width = 3,div(id=ns("sbPanel"),
       shiny::selectInput(ns("varSel"), label = "Velg variabel",
                          choices = varValg, selected = varValg[[1]]),
       shiny::uiOutput(ns("intrv")),
@@ -58,7 +58,10 @@ modGjennomsnittUI <- function(id, varValg = varValgGjenPer) {
                          min = 0,
                          max = 130,
                          value = c(0, 130)),
-      shiny::uiOutput(ns("figfil"))
+      shiny::uiOutput(ns("figfil"))),
+      shiny::actionLink(inputId=ns("nullstill"),
+                        style="color:black" ,
+                        label = "Nullstill Valg")
     ),
     shiny::mainPanel(width = 9,
       fluidPage(
@@ -285,7 +288,7 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
                  )
     }
   })
-
+  observeEvent(req(input$nullstill), {shinyjs::reset("sbPanel")})
   output$text <- renderText({
     data()$tittel
   })

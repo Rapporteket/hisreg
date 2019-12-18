@@ -14,7 +14,7 @@ tabellUI <- function(id, datoStart = "2008-01-01",
                      datoSlutt = Sys.Date(), forltype = typInt) {
   ns <- shiny::NS(id)
   shiny::sidebarLayout(
-    shiny::sidebarPanel(width = 3,
+    shiny::sidebarPanel(width = 3, div( id= ns("sbPanel"),
       shiny::dateRangeInput(ns("dato"),
                             "Tidsperiode:",
                             language = "no",
@@ -22,7 +22,10 @@ tabellUI <- function(id, datoStart = "2008-01-01",
                             start = datoStart,
                             end = datoSlutt,
                             format = "yyyy-mm-dd"),
-      shiny::uiOutput(ns("tabui"))
+      shiny::uiOutput(ns("tabui"))),
+      shiny::actionLink(inputId=ns("nullstill"),
+                        style="color:black" ,
+                        label = "Nullstill Valg")
     ),
     shiny::mainPanel(width = 9,
       shiny::tabsetPanel(id = ns("tab"),
@@ -99,6 +102,7 @@ tabell <- function(input, output, session, ss) {
     }
 
   })
+  observeEvent(req(input$nullstill), {shinyjs::reset("sbPanel")})
   output$tidsIntervall <- renderUI({
     ns <- session$ns
     ic <- icon("calendar-alt")

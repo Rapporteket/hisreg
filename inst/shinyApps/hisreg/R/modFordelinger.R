@@ -39,6 +39,7 @@ modFordelingerUI <- function(id, varValg = varValgFordeling) {
 
   shiny::sidebarLayout(
     shiny::sidebarPanel(width = 3,
+      div(id = ns("sbPanel"),
       shiny::selectInput(ns("varSel"), label = "Velg variabel",
                          choices = varValg, selected = varValg[[1]]),
       shiny::selectInput(ns("typInt"), label = "Type intervensjon",
@@ -54,7 +55,10 @@ modFordelingerUI <- function(id, varValg = varValgFordeling) {
                          selected = 99),
       shiny::sliderInput(ns("aldSli"), label = "Alder", min = 0,
                          max = 130, value = c(0, 130)),
-      shiny::uiOutput(ns("figfil"))
+      shiny::uiOutput(ns("figfil"))),
+      shiny::actionLink(inputId=ns("nullstill"),
+                        style="color:black" ,
+                        label = "Nullstill Valg")
     ),
     shiny::mainPanel(width = 9,
       shiny::fluidRow(
@@ -103,6 +107,8 @@ modFordelinger <- function(input, output, session, rID, role, ss) {
       rID
     }
   )
+
+  observeEvent(req(input$nullstill), {shinyjs::reset("sbPanel")})
 
   data <- reactive({
     hisreg::hisregFigAndeler(RegData = RegData,
