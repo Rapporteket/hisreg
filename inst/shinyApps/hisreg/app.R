@@ -11,6 +11,11 @@ library(rapbase)
 library(lubridate)
 
 system.file(
+  "shinyApps/hisreg/R/startside.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
+system.file(
   "shinyApps/hisreg/R/dataOgVar.R",
   package = "hisreg"
 ) %>%
@@ -44,13 +49,15 @@ ui <- shiny::tagList(
     windowTitle = regTitle,
     theme = "rap/bootstrap.css",
 
-    shiny::tabPanel("Fordelinger",
+    shiny::tabPanel("Startside",
       rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
                                    organization = uiOutput("appOrgName"),
                                    addUserInfo = TRUE),
       tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
-      modFordelingerUI("mod1")
+      startsideUI("startside")
     ),
+    tabPanel("Fordelinger",
+             modFordelingerUI("mod1")),
     shiny::navbarMenu("Gjennomsnitt",
       shiny::tabPanel("Per sykehus",
                       modGjennomsnittUI("mod2")
@@ -63,7 +70,7 @@ ui <- shiny::tagList(
                       modGjennomsnittUI("mod5", varValg = varValgGjenFE))
       ), #navbarMenu,
 
-      tabPanel("Tabeller",
+      tabPanel("Administrative tabeller",
                tabellUI("tab"))
 
 
@@ -77,7 +84,7 @@ server <-  function(input, output, session) {
     ifelse(onServer,as.numeric(rapbase::getUserReshId(session)),601031)
   })
   userRole <- reactive({
-    ifelse(onServer, rapbase::getUserRole(session), 'SC')
+    "SC"#ifelse(onServer, rapbase::getUserRole(session), 'SC')
   })
   if (onServer){
     raplog::appLogger(session, msg = "Hisreg: Shiny app starter")
@@ -96,7 +103,7 @@ server <-  function(input, output, session) {
                         add_int = TRUE, add_enh = FALSE, fun = "FEPS")
     }
   )
-
+  shiny::callModule(startside, "startside", usrRole=userRole())
   shiny::callModule(modFordelinger, "mod1", rID = reshID(), role = userRole(),
                     ss = session)
 
