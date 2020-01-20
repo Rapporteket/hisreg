@@ -148,7 +148,7 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
   retn<-'V'
   txtretn<-1
 
-  FigTypUt <- figtype(outfile, fargepalett='BlaaOff')
+  FigTypUt <- rapFigurer::figtype(outfile, fargepalett='BlaaOff')
   NutvTxt <- length(utvalgTxt)
   vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.7))
   par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1+length(tittel)-1)))	#Har alltid datoutvalg med
@@ -185,7 +185,6 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
   }
 
 
-
-
-
+  utData <- list(tittel = tittel, utvalgTxt = utvalgTxt, CIN=KINed, CIO=KIOpp, Andeler = PlotMatrise, Grtxt1 = grtxt, Grtxt2 = Ngr)
+  return(invisible(utData))
 }

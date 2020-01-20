@@ -29,7 +29,7 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
   RegData <- RegData[!is.na(RegData$Variabel), ]
 
   ## Gjør utvalg basert på brukervalg (LibUtvalg)
-  hisregUtvalg <- hisregUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald,
+  hisregUtvalg <- hisreg::hisregUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald,
                                maxald=maxald, erMann=erMann, forlop1 = forlop1, forlop2 = forlop2)
   RegData <- hisregUtvalg$RegData
   utvalgTxt <- hisregUtvalg$utvalgTxt
@@ -65,9 +65,9 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
 
 
   if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
-    FigTypUt <- figtype(outfile)
+    FigTypUt <- rapFigurer::figtype(outfile)
     farger <- FigTypUt$farger
-    plot.new()
+    #plot.new()
     if (dim(RegData)[1]>0) {
       tekst <- paste('Færre enn ', Ngrense, ' registreringer ved hvert av sykehusene', sep='')
     } else {tekst <- 'Ingen registrerte data for dette utvalget'}
@@ -120,8 +120,8 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
     cexGrNavn <- 0.8
     cexSoyletxt <- 0.75
 
-    if (outfile=='') {x11(width=3*595, height=3*800)}
-    FigTypUt <- figtype(outfile, height=3*800, fargepalett=hisregUtvalg$fargepalett)	#res=96,
+    #if (outfile=='') {}x11(width=3*595, height=3*800)}
+    FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=hisregUtvalg$fargepalett)	#res=96,
     farger <- FigTypUt$farger
     #Tilpasse marger for å kunne skrive utvalgsteksten
     NutvTxt <- length(utvalgTxt)
@@ -197,10 +197,6 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
   ###################### UNDER UTVIKLING #########################################
 
 
+  utData <- list(tittel = tittel, utvalgTxt = utvalgTxt, Andeler = Midt, CIN = KIned, CIO = KIopp, Antall = Ngr[sortInd])
+  return(invisible(utData))
 }
-
-
-
-
-
-
