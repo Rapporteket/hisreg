@@ -5,9 +5,10 @@
 \title{Søylediagram med gjennomsnitt før og etter intervensjon fordelt på sykehus}
 \usage{
 hisregFigGjsnPrePostGrVar(RegData, valgtVar, datoFra = "2000-01-01",
-  datoTil = "2050-01-01", reshID, minald = 0, maxald = 120, erMann = 99,
-  outfile = "", forlop1 = 99, forlop2 = 99, enhetsUtvalg = 1,
-  preprosess = F, hentData = F, gr_var = "SykehusNavn")
+  datoTil = "2050-01-01", reshID, enhetsUtvalg = 0, minald = 0,
+  maxald = 120, erMann = 99, outfile = "", forlop1 = 99,
+  forlop2 = 99, preprosess = F, hentData = F,
+  gr_var = "SykehusNavn")
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
@@ -20,6 +21,11 @@ hisregFigGjsnPrePostGrVar(RegData, valgtVar, datoFra = "2000-01-01",
 
 \item{reshID}{Parameter følger fra innlogging helseregister.no og angir
 hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
+
+\item{enhetsUtvalg}{Lag figur for
+0: Hele landet
+1: Egen enhet mot resten av landet (Default)
+2: Egen enhet}
 
 \item{minald}{Alder, fra og med (Default: 0)}
 
@@ -46,11 +52,6 @@ til systemets default output device (som regel skjerm))}
 4 - CO2-laser
 5 - Deroofing}
 
-\item{enhetsUtvalg}{Lag figur for
-0: Hele landet
-1: Egen enhet mot resten av landet (Default)
-2: Egen enhet}
-
 \item{preprosess}{Preprosesser data
 FALSE: Nei (Default)
 TRUE: Ja}
@@ -70,4 +71,3 @@ Funksjon som genererer en figur med som viser endring i en variabels gjennomsnit
 \details{
 Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 }
-

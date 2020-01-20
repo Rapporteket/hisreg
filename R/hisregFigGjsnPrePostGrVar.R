@@ -74,6 +74,19 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
     utvalgTxt <- c(paste0('Avdeling: ', shtxt), utvalgTxt)
   }
 
+  if (dim(RegData)[1] < 5) {
+    ########## Plot feilmelding
+    # farger <- FigTypUt$farger
+    plot.new()
+    # title(tittel)	#, line=-6)
+    legend('topleft',utvalgTxt, bty='n', cex=0.9)
+    # legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
+    text(0.5, 0.6, 'Færre enn 5 registreringer', cex=1.2)
+    if ( outfile != '') {dev.off()}
+  } else {
+
+
+
   PrePost <- aggregate(RegData[, c('VarPre', "VarPost")],
                        by=list(RegData$Gr_var), mean, na.rm = TRUE)
   PrePostSD <- aggregate(RegData[, c('VarPre', "VarPost")],
@@ -135,7 +148,7 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
   retn<-'V'
   txtretn<-1
 
-  FigTypUt <- figtype(outfile, fargepalett='BlaaOff')
+  FigTypUt <- rapFigurer::figtype(outfile, fargepalett='BlaaOff')
   NutvTxt <- length(utvalgTxt)
   vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.7))
   par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1+length(tittel)-1)))	#Har alltid datoutvalg med
@@ -169,10 +182,9 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
   par('fig'=c(0, 1, 0, 1))
   if ( outfile != '') {dev.off()}
 
+  }
 
 
-
-
-
-
+  utData <- list(tittel = tittel, utvalgTxt = utvalgTxt, CIN=KINed, CIO=KIOpp, Andeler = PlotMatrise, Grtxt1 = grtxt, Grtxt2 = Ngr)
+  return(invisible(utData))
 }

@@ -29,7 +29,7 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
   RegData <- RegData[!is.na(RegData$Variabel), ]
 
   ## Gjør utvalg basert på brukervalg (LibUtvalg)
-  hisregUtvalg <- hisregUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald,
+  hisregUtvalg <- hisreg::hisregUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald,
                                maxald=maxald, erMann=erMann, forlop1 = forlop1, forlop2 = forlop2)
   RegData <- hisregUtvalg$RegData
   utvalgTxt <- hisregUtvalg$utvalgTxt
@@ -65,9 +65,9 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
 
 
   if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
-    FigTypUt <- figtype(outfile)
+    FigTypUt <- rapFigurer::figtype(outfile)
     farger <- FigTypUt$farger
-    plot.new()
+    #plot.new()
     if (dim(RegData)[1]>0) {
       tekst <- paste('Færre enn ', Ngrense, ' registreringer ved hvert av sykehusene', sep='')
     } else {tekst <- 'Ingen registrerte data for dette utvalget'}
@@ -81,8 +81,10 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
     Gjsn <- tapply(RegData$Variabel, RegData[ ,gr_var], mean, na.rm=T)
     SE <- tapply(RegData$Variabel, RegData[ ,gr_var], sd, na.rm=T)/sqrt(Ngr)
     if (fjern_sjeldne == 1) {
-      Gjsn <- Gjsn[-indGrUt]
-      SE <- SE[-indGrUt]
+      if (indGrUt !=0) {
+        Gjsn <- Gjsn[-indGrUt]
+        SE <- SE[-indGrUt]
+      }
     } else {
       Gjsn[indGrUt] <- dummy0
       SE[indGrUt] <- 0
@@ -95,8 +97,10 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
     KIHele <- MidtHele + sd(RegData$Variabel)/sqrt(N)*c(-2,2)
 
     if (fjern_sjeldne == 1) {
-      Ngr <- Ngr[-indGrUt]
-      Ngrtxt <- Ngrtxt[-indGrUt]
+      if (indGrUt !=0) {
+        Ngr <- Ngr[-indGrUt]
+        Ngrtxt <- Ngrtxt[-indGrUt]
+      }
     }
     GrNavnSort <- paste(names(Ngr)[sortInd], Ngrtxt[sortInd], sep='')
     AntGr <- length(which(Ngr >= Ngrense))	#length(which(Midt>0))
@@ -116,8 +120,8 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
     cexGrNavn <- 0.8
     cexSoyletxt <- 0.75
 
-    if (outfile=='') {x11(width=3*595, height=3*800)}
-    FigTypUt <- figtype(outfile, height=3*800, fargepalett=hisregUtvalg$fargepalett)	#res=96,
+    #if (outfile=='') {}x11(width=3*595, height=3*800)}
+    FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=hisregUtvalg$fargepalett)	#res=96,
     farger <- FigTypUt$farger
     #Tilpasse marger for å kunne skrive utvalgsteksten
     NutvTxt <- length(utvalgTxt)
@@ -133,7 +137,7 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
                      xlim=c(0,xmax), ylim=c(0.05, 1.25)*length(Ngr), font.main=1, xlab='', las=1, cex.names=cexGrNavn)
     }
 
-    indGrUtPlot <- AntGr+(1:length(indGrUt))
+    # indGrUtPlot <- AntGr+(1:length(indGrUt))
     posKI <- pos[1:AntGr]
     ybunn <- 0
     # ytopp <- max(posKI)*1.03	 #min(posKI)
@@ -193,10 +197,6 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
   ###################### UNDER UTVIKLING #########################################
 
 
+  utData <- list(tittel = tittel, utvalgTxt = utvalgTxt, Andeler = Midt, CIN = KIned, CIO = KIopp, Antall = Ngr[sortInd])
+  return(invisible(utData))
 }
-
-
-
-
-
-

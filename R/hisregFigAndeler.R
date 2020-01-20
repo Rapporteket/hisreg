@@ -99,10 +99,12 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
       AntRest <- table(RegData$VariabelGr[ind$Rest])
       Nrest <- sum(AntRest)	#length(indRest)- Kan inneholde NA
       Andeler$Rest <- 100*AntRest/Nrest
+      #Antall <- list(Hoved = NHoved, Rest = Nrest)
     } else {
       AntHoved <- table(RegData$VariabelGr)
       NHoved <- sum(AntHoved)
       Andeler$Hoved <- 100*AntHoved/NHoved
+      #Antall <- list(Hoved = NHoved)
     }
   }
 
@@ -116,11 +118,13 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
       ind$Hoved <- 1:dim(RegData)[1]
       ind$Rest <- NULL
       medSml <- 0
+
     } else {						#Skal gjøre sammenlikning
       medSml <- 1
       ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
 #       ind$Hoved <-which(as.numeric(RegData$AvdRESH)==reshID)
 #       ind$Rest <- which(as.numeric(RegData$AvdRESH) != reshID)
+
     }
 
     PlotParams <- hisregPrepVar(RegData[ind$Hoved, ], valgtVar=valgtVar)
@@ -128,13 +132,19 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
     NHoved <- max(PlotParams$NVar, na.rm=T)
     Andeler$Hoved <- 100*PlotParams$AntVar/PlotParams$NVar
 
+
+
+
     if (medSml == 1) {
       PlotParams2 <- hisregPrepVar(RegData[ind$Rest, ], valgtVar=valgtVar)
       AntRest <- PlotParams2$AntVar
       Nrest <- max(PlotParams2$NVar, na.rm=T)	#length(indRest)- Kan inneholde NA
       Andeler$Rest <- 100*PlotParams2$AntVar/PlotParams2$NVar
+
+
       rm(PlotParams2)
     }
+
 
   }
 
@@ -142,7 +152,7 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
   ##-----------Figur---------------------------------------
   tittel <- PlotParams$tittel; grtxt <- PlotParams$grtxt; grtxt2 <- PlotParams$grtxt2;
   subtxt <- PlotParams$subtxt; retn <- PlotParams$retn; cexgr <- PlotParams$cexgr;
-  FigTypUt <- figtype(outfile=outfile, fargepalett=hisregUtvalg$fargepalett, pointsizePDF=12)
+  FigTypUt <- rapFigurer::figtype(outfile=outfile, fargepalett=hisregUtvalg$fargepalett, pointsizePDF=12)
 
   #Hvis for få observasjoner..
   if (NHoved < 1 | (Nrest<0 & enhetsUtvalg==1)) {
@@ -222,7 +232,9 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
     if ( outfile != '') {dev.off()}
 
   }
-
+  Antall <- list(Hoved = NHoved, Rest = Nrest)
+  utData <- list(tittel = tittel, utvalgTxt = utvalgTxt, Andeler = Andeler, Antall = Antall, Grtxt = grtxt)
+  return(invisible(utData))
 
 }
 

@@ -14,8 +14,21 @@ Depends:
     rapbase
 Imports:
     xtable,
-    plotrix
+    plotrix,
+    rapFigurer (>= 0.1.0),
+    magrittr,
+    DT,
+    kableExtra,
+    htmltools,
+    shinyalert,
+    shinyjs,
+    raplog (>= 0.0.0.9000),
+    lubridate
 Suggests:
     knitr,
     rmarkdown
-RoxygenNote: 5.0.1
+RoxygenNote: 6.1.1
+Remotes: 
+    Rapporteket/rapbase@rel,
+    Rapporteket/rapFigurer,
+    Rapporteket/raplog@rel
