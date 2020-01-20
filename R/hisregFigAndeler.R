@@ -92,6 +92,7 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
     ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
     PlotParams$RegData <- NA
     if (enhetsUtvalg==1) {
+      ind <- list(Hoved=which(RegData$AvdRESH == reshID), Rest=which(RegData$AvdRESH != reshID))
       AntHoved <- table(RegData$VariabelGr[ind$Hoved])
       NHoved <- sum(AntHoved)
       Andeler$Hoved <- 100*AntHoved/NHoved

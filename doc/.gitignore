@@ -13,26 +13,24 @@ VariablerTilQuery.txt
 hisregQuery.sql
 komplKirurgi.pdf
 Hisreg.java
-Variabler_hisreg
-Variabler_hisreg.csv
-bugs.R
-DataHisreg23032017.csv
-DataHisreg23032017.zip
-Variabelliste HISREG_juni2016.docx
-views.sql
-datoTull.Rmd
-dekningsgrad.Rmd
-dekningsgrad.html
-figTilAarsrapp2016.R
-tmp_andelStabelGrVar.R
-DataHisreg11102017.csv
-DataHisreg11102017.zip
 AlleVar.csv
 AlleVarNum.csv
+DataHisreg11102017.csv
+DataHisreg11102017.zip
+DataHisreg23032017.csv
+DataHisreg23032017.zip
 Followups.csv
 FollowupsNum.csv
 ForlopsOversikt.csv
 Utleveringer.R
+Variabelliste HISREG_juni2016.docx
+Variabler_hisreg
+Variabler_hisreg.csv
+bugs.R
+datoTull.Rmd
+dekningsgrad.Rmd
+dekningsgrad.html
+figTilAarsrapp2016.R
 hisregRikshospitalet.zip
 prod_vs_test.R
 TidlBeh.png
@@ -50,3 +48,4 @@ alle.csv
 bestillinger_utleveringer.R
 kun_andre_avdelinger.csv
 unik_pas_pr_avd_pr_aar.csv
+
