@@ -211,7 +211,7 @@ tabell <- function(input, output, session, ss) {
     },
     content = function(file) {
       tab <- tabellData()
-     write.csv2(tab, file, row.names = F)
+     write.csv2(tab, file, row.names = T)
     }
   )
   output$lastNedTabell2 <- downloadHandler(
@@ -224,7 +224,7 @@ tabell <- function(input, output, session, ss) {
     },
     content = function(file) {
       tab <- tabellData()
-      write.csv2(tab, file, row.names = F)
+      write.csv2(tab, file, row.names = T)
     }
   )
   observe({
