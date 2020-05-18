@@ -4,10 +4,23 @@
 \alias{hisregFigAndeler}
 \title{Lag søylediagram eller som viser andeler av ulike variabler}
 \usage{
-hisregFigAndeler(RegData, valgtVar, datoFra = "2000-01-01",
-  datoTil = "2050-01-01", reshID, minald = 0, maxald = 120,
-  erMann = 99, outfile = "", forlop1 = 99, forlop2 = 99,
-  enhetsUtvalg = 1, preprosess = F, hentData = F, incl_N = T)
+hisregFigAndeler(
+  RegData,
+  valgtVar,
+  datoFra = "2000-01-01",
+  datoTil = "2050-01-01",
+  reshID,
+  minald = 0,
+  maxald = 120,
+  erMann = 99,
+  outfile = "",
+  forlop1 = 99,
+  forlop2 = 99,
+  enhetsUtvalg = 1,
+  preprosess = F,
+  hentData = F,
+  incl_N = T
+)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

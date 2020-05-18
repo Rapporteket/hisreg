@@ -25,19 +25,19 @@ if (onServer) {
   )
 } else {
 
-ForlopsData <- read.table("V:/hisreg/ForlopsOversikt2019-10-10 10-15-43.txt",
+ForlopsData <- read.table("I:/hisreg/ForlopsOversikt2019-10-10 10-15-43.txt",
                           header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-RegData <- read.table("V:/hisreg/AlleVarNum2019-10-10 10-15-40.txt",
+RegData <- read.table("I:/hisreg/AlleVarNum2019-10-10 10-15-40.txt",
                       header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-SkjemaOversikt <- read.table("V:/hisreg/SkjemaOversikt2019-10-10 10-15-44.txt",
+SkjemaOversikt <- read.table("I:/hisreg/SkjemaOversikt2019-10-10 10-15-44.txt",
                              header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-RegDataLabel <- read.table("V:/hisreg/AlleVar2019-10-10 10-15-37.txt",
+RegDataLabel <- read.table("I:/hisreg/AlleVar2019-10-10 10-15-37.txt",
                            header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-Followups <- read.table("V:/hisreg/FollowupsNum2019-10-10 10-15-42.txt",
+Followups <- read.table("I:/hisreg/FollowupsNum2019-10-10 10-15-42.txt",
                            header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
 
