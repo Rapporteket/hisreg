@@ -33,9 +33,10 @@ dataDumpUI <- function(id) {
                        shiny::tags$h3('Datadump - Hisreg', align='center'),
                        shiny::tags$hr(),
                        shiny::tags$p(
-                         'Her kan du laste ned forskjellige varianter av datadump for
-          Hisreg. Lokale brukere vil bare kunne laste ned data
-          for egen avdeling.'
+                         'Her kan du laste ned forskjellige varianter av datadump for Hisreg. Lokale brukere vil bare kunne laste ned
+                         data for egen avdeling. Merk at all datofiltrering gjøres på Hoveddato, som i de fleste tilfeller sammenfaller
+                         med intervensjonsdato. Dvs. at et valgt datointervall for oppfølgingsdata ikke vil gi deg oppfølgingene som
+                         er utført i perioden, men oppfølgingene som finnes for en intervensjon i gitt periode.'
                        ),
                        shiny::tags$h5(
                          shiny::tags$b(shiny::tags$u(
