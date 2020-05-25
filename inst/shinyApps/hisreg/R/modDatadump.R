@@ -105,17 +105,17 @@ dataDump <- function(input, output, session, userRole, reshID, mainSession){
   })
 
   qry <-   reactive({
-    if (userRole ==  "SC") {
+    # if (userRole ==  "SC") {
       paste0(
         "SELECT ", input$ddselect, ".* ", AddHovedDatoVariabels(),
         " FROM ", input$ddselect, " ", AddHovedDatoJoin())
-    } else {
-      paste0(
-        "SELECT ",input$ddselect, ".* ", AddHovedDatoVariabels(),
-        " FROM ", input$ddselect, " ", AddHovedDatoJoin(), " WHERE ",
-        input$ddselect, ".AvdRESH = ", reshID
-      )
-    }
+    # } else {
+    #   paste0(
+    #     "SELECT ",input$ddselect, ".* ", AddHovedDatoVariabels(),
+    #     " FROM ", input$ddselect, " ", AddHovedDatoJoin(), " WHERE ",
+    #     input$ddselect, ".AvdRESH = ", reshID
+    #   )
+    # }
   })
 
 
@@ -137,6 +137,9 @@ dataDump <- function(input, output, session, userRole, reshID, mainSession){
               max(input$ddDateRange)
             )
         )
+      if (userRole !=  "SC") {
+        dataDump <- dataDump[which(dataDump$AvdRESH == reshID), ]
+      }
       write.csv2(dataDump, file, fileEncoding = "Latin1", row.names = F)
     }
   )
