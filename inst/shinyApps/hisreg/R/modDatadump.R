@@ -137,7 +137,7 @@ dataDump <- function(input, output, session, userRole, reshID, mainSession){
               max(input$ddDateRange)
             )
         )
-      write.csv2(dataDump, file, fileEncoding = "UTF-8")
+      write.csv2(dataDump, file, fileEncoding = "Latin1", row.names = F)
     }
   )
   shinyjs::onclick(
