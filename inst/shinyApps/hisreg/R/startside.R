@@ -43,7 +43,7 @@ startsideUI <- function(id){
                                     a("Hisreg", href="https://www.kvalitetsregistre.no/registers/565/resultater"),
                                     target="_blank", align='center' )),
                           column(width = 4,offset = 2,
-                                 h4('Mer informasjon om registeret finnes på muskelregisteret sin hjemmeside: ', align='center',
+                                 h4('Mer informasjon om registeret finnes på Hisreg sin hjemmeside: ', align='center',
                                     a("www.hisreg.no", href="http://www.hisreg.no", target="_blank"))
                           )
                         )
