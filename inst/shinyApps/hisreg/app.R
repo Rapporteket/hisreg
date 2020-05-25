@@ -35,7 +35,11 @@ system.file(
   package = "hisreg"
 ) %>%
   source(encoding = "UTF-8")
-
+system.file(
+  "shinyApps/hisreg/R/modDatadump.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
 
 #------------App UI----------------
 
@@ -71,7 +75,10 @@ ui <- shiny::tagList(
       ), #navbarMenu,
 
       tabPanel("Administrative tabeller",
-               tabellUI("tab"))
+               tabellUI("tab")),
+    tabPanel(
+      "Datadump", dataDumpUI("dataDumpHisreg")
+      )
 
 
   )#navbarPage
@@ -113,6 +120,8 @@ server <-  function(input, output, session) {
   shiny::callModule(modGjennomsnitt, "mod5", rID = reshID(), ss = session,
                     add_int = FALSE, add_enh = TRUE, fun = "FEPI")
   shiny::callModule(tabell, "tab", ss = session)
+  shiny::callModule(dataDump, "dataDumpHisreg", mainSession = session,
+                    reshID = reshID(), userRole = userRole())
 
   #Navbarwidget
   output$appUserName <- shiny::renderText(rapbase::getUserFullName(session))
