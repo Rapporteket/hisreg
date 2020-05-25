@@ -81,10 +81,10 @@ dataDump <- function(input, output, session, userRole, reshID, mainSession){
   #add HovedDato to allevar and allevarnum
   AddHovedDatoVariabels <-   reactive({
     switch (input$ddselect,
-            "AlleVarNum" = ", ForlopsOversikt.ForlopsID, ForlopsOversikt.HovedDato ",
-            "AlleVar" = ", ForlopsOversikt.ForlopsID, ForlopsOversikt.HovedDato ",
-            "Followups" = ", ForlopsOversikt.ForlopsID, ForlopsOversikt.HovedDato ",
-            "FollowupsNum" = ", ForlopsOversikt.ForlopsID, ForlopsOversikt.HovedDato ",
+            "AlleVarNum" = ", ForlopsOversikt.ForlopsID, ForlopsOversikt.HovedDato, ForlopsOversikt.AvdRESH ",
+            "AlleVar" = ", ForlopsOversikt.ForlopsID, ForlopsOversikt.HovedDato, ForlopsOversikt.AvdRESH ",
+            "Followups" = ", ForlopsOversikt.ForlopsID, ForlopsOversikt.HovedDato, ForlopsOversikt.AvdRESH ",
+            "FollowupsNum" = ", ForlopsOversikt.ForlopsID, ForlopsOversikt.HovedDato, ForlopsOversikt.AvdRESH ",
             "ForlopsOversikt" = "",
             "SkjemaOversikt" = ""
     )
