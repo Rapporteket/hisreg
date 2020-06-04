@@ -12,8 +12,10 @@ hisregPreprosess <- function(RegData)
   RegData <- RegData[RegData$BasisRegStatus==1, ]
 
   # datoVar <- 'HovedDato'
-  RegData$HovedDato <- as.POSIXlt(RegData$HovedDato, format="%Y-%m-%d") # Ordne datoformat
-  RegData$Aar <- RegData$HovedDato$year+1900
+  # RegData$HovedDato <- as.POSIXlt(RegData$HovedDato, format="%Y-%m-%d") # Ordne datoformat
+  # RegData$Aar <- RegData$HovedDato$year+1900
+  RegData$HovedDato <- as.Date(RegData$HovedDato, format="%Y-%m-%d") # Ordne datoformat
+  RegData$Aar <- as.numeric(format(RegData$HovedDato, "%Y"))
   RegData$ErMann[RegData$ErMann==2] <- 0
   RegData$SykehusNavnLang <- RegData$SykehusNavn
   RegData$SykehusNavn <- as.character(RegData$SykehusNavn)

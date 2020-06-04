@@ -107,7 +107,7 @@ RegDataAll <- RegData[which(RegData$AvdRESH == 999002), ]
 RegData <- RegData[RegData$AvdRESH != 999002, ]
 RegData$SykehusNavn <- as.factor(as.character(RegData$SykehusNavn))
 RegDataAll$SykehusNavn <- as.factor(as.character(RegDataAll$SykehusNavn))
-RegData$HovedDato <- as.POSIXct.POSIXlt(RegData$HovedDato)
+# RegData$HovedDato <- as.POSIXct.POSIXlt(RegData$HovedDato)
 
 #------------------Variabel valg-------------------------------------
 
