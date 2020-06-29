@@ -101,7 +101,7 @@ RegData <- merge(RegData, Followups,
                  all.x = T)
 
 }
-RegData <- hisregPreprosess(RegData)
+RegData <- hisreg::hisregPreprosess(RegData)
 RegDataAll <- RegData[which(RegData$AvdRESH == 999002), ]
 # Roskilde skal ikke inngå blant de nasjonale tallene.
 RegData <- RegData[RegData$AvdRESH != 999002, ]
