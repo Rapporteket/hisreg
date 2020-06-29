@@ -4,8 +4,17 @@
 \alias{hisregUtvalg}
 \title{Gjør utvalg av dataene}
 \usage{
-hisregUtvalg(RegData, datoFra, datoTil, minald, maxald, erMann, forlop1,
-  forlop2, fargepalett = "BlaaRapp")
+hisregUtvalg(
+  RegData,
+  datoFra,
+  datoTil,
+  minald,
+  maxald,
+  erMann,
+  forlop1,
+  forlop2,
+  fargepalett = "BlaaRapp"
+)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

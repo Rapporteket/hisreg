@@ -16,7 +16,7 @@ logoWidget <- tags$script(shiny::HTML(logoCode))
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
 onServer <- context == "TEST" | context == "QA" | context == "PRODUCTION" | context == "DEV"
 if (onServer) {
-  RegData <- hisregHentRegData()
+  RegData <- hisreg::hisregHentRegData()
   SkjemaOversikt <- rapbase::LoadRegData(
     registryName = "hisreg",
     dbType = "mysql",
@@ -25,19 +25,19 @@ if (onServer) {
   )
 } else {
 
-ForlopsData <- read.table("V:/hisreg/ForlopsOversikt2019-10-10 10-15-43.txt",
+ForlopsData <- read.table("I:/hisreg/ForlopsOversikt2020-06-16 10-35-02.txt",
                           header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-RegData <- read.table("V:/hisreg/AlleVarNum2019-10-10 10-15-40.txt",
+RegData <- read.table("I:/hisreg/AlleVarNum2020-06-16 10-35-02.txt",
                       header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-SkjemaOversikt <- read.table("V:/hisreg/SkjemaOversikt2019-10-10 10-15-44.txt",
+SkjemaOversikt <- read.table("I:/hisreg/SkjemaOversikt2020-06-16 10-35-02.txt",
                              header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-RegDataLabel <- read.table("V:/hisreg/AlleVar2019-10-10 10-15-37.txt",
+RegDataLabel <- read.table("I:/hisreg/AlleVar2020-06-16 10-35-02.txt",
                            header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-Followups <- read.table("V:/hisreg/FollowupsNum2019-10-10 10-15-42.txt",
+Followups <- read.table("I:/hisreg/FollowupsNum2020-06-16 10-35-02.txt",
                            header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
 
@@ -101,13 +101,13 @@ RegData <- merge(RegData, Followups,
                  all.x = T)
 
 }
-RegData <- hisregPreprosess(RegData)
+RegData <- hisreg::hisregPreprosess(RegData)
 RegDataAll <- RegData[which(RegData$AvdRESH == 999002), ]
 # Roskilde skal ikke inngå blant de nasjonale tallene.
 RegData <- RegData[RegData$AvdRESH != 999002, ]
 RegData$SykehusNavn <- as.factor(as.character(RegData$SykehusNavn))
 RegDataAll$SykehusNavn <- as.factor(as.character(RegDataAll$SykehusNavn))
-RegData$HovedDato <- as.POSIXct.POSIXlt(RegData$HovedDato)
+# RegData$HovedDato <- as.POSIXct.POSIXlt(RegData$HovedDato)
 
 #------------------Variabel valg-------------------------------------
 

@@ -4,8 +4,13 @@
 \alias{hisregSkjemaTabell}
 \title{Skjematabeller for hisreg}
 \usage{
-hisregSkjemaTabell(df, tidFra = "2008-01-01", tidTil = Sys.Date(),
-  status = 1, typeDato = "HovedDato")
+hisregSkjemaTabell(
+  df,
+  tidFra = "2008-01-01",
+  tidTil = Sys.Date(),
+  status = 1,
+  typeDato = "HovedDato"
+)
 }
 \arguments{
 \item{df}{en dataramme med alle variabler}

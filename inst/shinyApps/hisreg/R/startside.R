@@ -27,7 +27,9 @@ startsideUI <- function(id){
                         h4(id = ns("SC2"),tags$b('Gjennomsnitt før og etter, per sykehus'), ' viser gjennomsnitt av valgt variabel før og etter intervensjon per sykehus.'),
                         h4(tags$b('Gjennomsnitt før og etter, per intervensjontype'), ' viser gjennomsnitt av valgt variabel før og etter intervensjon per intervensjonstype.'),
                         h4("Konfidensintervaller er inkludert i alle figurer og tabeller med gjennomsnittsverdier."),
-                        h4(tags$b('Administrative tabeller '), 'er en samling oversikter over antall registreringer og pasientforløp/unike pasienter.')
+                        h4(tags$b('Administrative tabeller '), 'er en samling oversikter over antall registreringer og pasientforløp/unike pasienter.'),
+                        h4(tags$b('Datadump '), 'lar brukeren laste ned registerets rådata. En vanlig bruker får tilgang til registreringer fra egen avdeling mens
+                           SC-bruker kan se alle registreringer.')
                     ),
                     br(),
                     br(),
@@ -41,7 +43,7 @@ startsideUI <- function(id){
                                     a("Hisreg", href="https://www.kvalitetsregistre.no/registers/565/resultater"),
                                     target="_blank", align='center' )),
                           column(width = 4,offset = 2,
-                                 h4('Mer informasjon om registeret finnes på muskelregisteret sin hjemmeside: ', align='center',
+                                 h4('Mer informasjon om registeret finnes på Hisreg sin hjemmeside: ', align='center',
                                     a("www.hisreg.no", href="http://www.hisreg.no", target="_blank"))
                           )
                         )

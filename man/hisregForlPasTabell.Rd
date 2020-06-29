@@ -4,9 +4,17 @@
 \alias{hisregForlPasTabell}
 \title{Forløps of pasient tabeller for hisreg}
 \usage{
-hisregForlPasTabell(RegDt, tidFra = "2008-01-01", tidTil = Sys.Date(),
-  aldmin = 0, aldmax = 120, kjoen = 99, tidenh = "aar",
-  frlType = 1, IDType = "PasientID")
+hisregForlPasTabell(
+  RegDt,
+  tidFra = "2008-01-01",
+  tidTil = Sys.Date(),
+  aldmin = 0,
+  aldmax = 120,
+  kjoen = 99,
+  tidenh = "aar",
+  frlType = 1,
+  IDType = "PasientID"
+)
 }
 \arguments{
 \item{RegDt}{en dataramme med alle variabler}
