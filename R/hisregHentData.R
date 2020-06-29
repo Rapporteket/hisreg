@@ -2,8 +2,6 @@
 #'
 #' Provides Hisreg data from staging
 #'
-#' @inheritParams hisregFigAndeler
-#'
 #' @return RegData data frame
 #' @export
 
