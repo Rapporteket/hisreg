@@ -251,7 +251,8 @@ write.csv2(Ind8_kontroll_hudlege_kirbeh, "I:/hisreg/Ind8_kontroll_hudlege_kirbeh
 Indikator9 <- RegData[(RegData$c_infection %in% c(1,2) | RegData$c_delayed_wound_healing %in% c(1,2) |
                         RegData$c_stricturer %in% c(1,2) | RegData$c_nervedamage %in% c(1,2) |
                         RegData$c_bloodpoisoning %in% c(1,2) | RegData$c_bleeding %in% c(1,2) |
-                        RegData$c_other_complications %in% c(1,2)) & RegData$ForlopsType1Num %in% c(1,3) , ] %>%
+                        RegData$c_other_complications %in% c(1,2)) & RegData$ForlopsType1Num %in% c(1,3) &
+                        RegData$c_do_month == 6 & RegData$OppflgRegStatus >= 1, ] %>%
   group_by(AvdRESH, Aar, m_mceid) %>%
   summarise(Variabel = c_infection==1 | c_delayed_wound_healing==1 | c_stricturer==1 |
               c_nervedamage==1 | c_bloodpoisoning==1 | c_bleeding==1 | c_other_complications==1)
@@ -269,6 +270,26 @@ tmp <- Indikator9 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Vari
 tmp$verdi <- paste0(round(tmp$andel, 1), '% (', tmp$N, ')')
 Ind9_kompl_kir <- tmp[, -(3:5)] %>% spread(key=Aar, value = verdi, fill = '')
 write.csv2(Ind9_kompl_kir, "I:/hisreg/Ind9_kompl_kir.csv", row.names = F)
+
+## Versjon 2:
+Indikator9_v2 <- fulldata[which((fulldata$c_infection %in% c(1,2) | fulldata$c_delayed_wound_healing %in% c(1,2) |
+                             fulldata$c_stricturer %in% c(1,2) | fulldata$c_nervedamage %in% c(1,2) |
+                             fulldata$c_bloodpoisoning %in% c(1,2) | fulldata$c_bleeding %in% c(1,2) |
+                             fulldata$c_other_complications %in% c(1,2)) & fulldata$ForlopsType1Num %in% c(1,3) &
+                            fulldata$c_do_month == 6 & fulldata$OppflgRegStatus >= 1), ] %>%
+  group_by(AvdRESH, Aar, m_mceid) %>%
+  summarise(Variabel = c_infection==1 | c_delayed_wound_healing==1 | c_stricturer==1 |
+              c_nervedamage==1 | c_bloodpoisoning==1 | c_bleeding==1 | c_other_complications==1)
+
+Indikator9_v2$Variabel[is.na(Indikator9_v2$Variabel)] <- FALSE
+Indikator9_v2$Variabel <- as.numeric(Indikator9_v2$Variabel)
+Indikator9_v2$SykehusNavn <- RegData$SykehusNavn[match(Indikator9_v2$AvdRESH, RegData$AvdRESH)]
+tmp <- Indikator9_v2 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
+                                                               andel = sum(Variabel)/n()*100,
+                                                               N=n())
+tmp$verdi <- paste0(round(tmp$andel, 1), '% (', tmp$N, ')')
+Ind9_kompl_kir <- tmp[, -(3:5)] %>% spread(key=Aar, value = verdi, fill = '')
+
 ########### Indikator 10: Andel pasienter med bivirkninger rapportert av pasienter ved ################
 ########### kontroll 3 måneder etter startet medisinsk behandling                   ################
 # Inkluderer kun forløp der  "c_medical_treatment",

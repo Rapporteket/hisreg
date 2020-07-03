@@ -245,6 +245,10 @@ hisregPrepVar <- function(RegData, valgtVar)
   if (valgtVar== 'KomplKir') {
     RegData <- RegData[which(RegData$i_type %in% c(1,3)), ]
     RegData <- RegData[which(RegData$c_do_month == 6 & RegData$OppflgRegStatus >= 1), ]
+    RegData <- RegData[which(RegData$c_infection %in% c(1,2) | RegData$c_delayed_wound_healing %in% c(1,2) |
+                          RegData$c_stricturer %in% c(1,2) | RegData$c_nervedamage %in% c(1,2) |
+                          RegData$c_bloodpoisoning %in% c(1,2) | RegData$c_bleeding %in% c(1,2) |
+                          RegData$c_other_complications %in% c(1,2)), ]
     N <- dim(RegData)[1]
     RegData$c_infection[RegData$c_infection == 2] <- 0
     RegData$c_infection[RegData$c_infection == 3] <- NA
