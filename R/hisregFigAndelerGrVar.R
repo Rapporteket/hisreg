@@ -88,7 +88,7 @@ hisregFigAndelerGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoT
   AndelVar <- AndelVar[, NGr>=terskel]
   grtxt <- grtxt[NGr>=terskel]
 
-  FigTypUt <- figtype(outfile=outfile, fargepalett="BlaaHNpms287"
+  FigTypUt <- rapFigurer::figtype(outfile=outfile, fargepalett="BlaaHNpms287"
                       , pointsizePDF=12)
 
   farger <- FigTypUt$farger

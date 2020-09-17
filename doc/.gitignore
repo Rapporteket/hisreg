@@ -48,4 +48,15 @@ alle.csv
 bestillinger_utleveringer.R
 kun_andre_avdelinger.csv
 unik_pas_pr_avd_pr_aar.csv
-
+01-createTables.sql
+02-createViews.sql
+03-reportViews.sql
+2.0-test.sql
+2020_HISREG_Kvalitetsindikatorer (15.05.20 ny versjon med kommentar).xlsx
+Hisreg_klokeboken_2020-05-28.csv
+Hisreg_klokeboken_2020-06-04.csv
+tabell1.csv
+tabell2.csv
+tabell3.csv
+~$riabelliste HISREG.docx
+Årsrapport HISREG 2019_påbegynt (010).docx

@@ -3,15 +3,15 @@ library(hisreg)
 library(tidyverse)
 library(lubridate)
 
-ForlopsData <- read.table("I:/hisreg/ForlopsOversikt2020-06-16 10-35-02.txt",
+ForlopsData <- read.table("I:/hisreg/ForlopsOversikt2020-08-21 13-19-34.txt",
                           header = TRUE, sep = ";", encoding = "UTF-8")
-AlleVarNum <- read.table("I:/hisreg/AlleVarNum2020-06-16 10-35-02.txt",
+AlleVarNum <- read.table("I:/hisreg/AlleVarNum2020-08-21 13-19-34.txt",
                       header = TRUE, sep = ";", encoding = "UTF-8")
-SkjemaOversikt <- read.table("I:/hisreg/SkjemaOversikt2020-06-16 10-35-02.txt",
+SkjemaOversikt <- read.table("I:/hisreg/SkjemaOversikt2020-08-21 13-19-34.txt",
                              header = TRUE, sep = ";", encoding = "UTF-8")
-RegDataLabel <- read.table("I:/hisreg/AlleVar2020-06-16 10-35-02.txt",
+RegDataLabel <- read.table("I:/hisreg/AlleVar2020-08-21 13-19-34.txt",
                            header = TRUE, sep = ";", encoding = "UTF-8")
-Followups_all <- read.table("I:/hisreg/FollowupsNum2020-06-16 10-35-02.txt",
+Followups_all <- read.table("I:/hisreg/FollowupsNum2020-08-21 13-19-34.txt",
                         header = TRUE, sep = ";", encoding = "UTF-8")
 # FollowupsAll <- FollowupsAll %>% group_by(c_mceid) %>%
 #   summarise(c_date_3mnd = c_date[c_do_month])
@@ -112,8 +112,14 @@ indikator1 <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "tid_almlege_spes_kombo")
 indikator1$Variabel <- 0
 indikator1$Variabel[indikator1$tid_almlege_spes == 0] <- 1
 indikator1 <- indikator1[indikator1$Aar %in% 2015:2019, ]
+Ind1 <- indikator1[, -c(2,4)]
+names(Ind1) <- c('Aar', 'ReshId', 'Teller Ind1')
+Ind1[, 'Nevner Ind1'] <- 1
+Ind1$Indikator <- 'Ind1'
+Ind1$AarID <- paste0(Ind1$Aar, Ind1$ReshId)
+Ind1 <- Ind1[, c(1,5,4,3,2,6)]
 
-write.csv2(indikator1[, -4], "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator1_tid_almlege_spes.csv",
+write.csv2(Ind1, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator1_tid_almlege_spes.csv",
            row.names = F)
 
 tmp <- indikator1 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
@@ -132,8 +138,14 @@ aux$hurley_diff <- aux$pre_hurley_score - aux$c_hurley_score
 indikator4 <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "hurley_diff")]
 indikator4$Variabel <- 0
 indikator4$Variabel[indikator4$hurley_diff > 0] <- 1
+Ind4 <- indikator4[, -c(2,4)]
+names(Ind4) <- c('Aar', 'ReshId', 'Teller Ind4')
+Ind4[, 'Nevner Ind4'] <- 1
+Ind4$Indikator <- 'Ind4'
+Ind4$AarID <- paste0(Ind4$Aar, Ind4$ReshId)
+Ind4 <- Ind4[, c(1,5,4,3,2,6)]
 
-write.csv2(indikator4[, -4], "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator4_hurley.csv",
+write.csv2(Ind4, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator4_hurley.csv",
            row.names = F)
 
 tmp <- indikator4 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
@@ -152,9 +164,14 @@ aux$dlqisum_diff <- aux$pre_dlqisum - aux$c_dlqisum
 indikator5 <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "dlqisum_diff")]
 indikator5$Variabel <- 0
 indikator5$Variabel[indikator5$dlqisum_diff >= 4] <- 1
+Ind5 <- indikator5[, -c(2,4)]
+names(Ind5) <- c('Aar', 'ReshId', 'Teller Ind5')
+Ind5[, 'Nevner Ind5'] <- 1
+Ind5$Indikator <- 'Ind5'
+Ind5$AarID <- paste0(Ind5$Aar, Ind5$ReshId)
+Ind5 <- Ind5[, c(1,5,4,3,2,6)]
 
-
-write.csv2(indikator5[, -4], "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator5_dlqi.csv",
+write.csv2(Ind5, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator5_dlqi.csv",
            row.names = F)
 
 tmp <- indikator5 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
@@ -174,9 +191,14 @@ aux$vasscore_diff_pst <- (aux$pre_vasscore - aux$c_vasscore)/aux$pre_vasscore*10
 indikator6 <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "vasscore_diff_pst")]
 indikator6$Variabel <- 0
 indikator6$Variabel[indikator6$vasscore_diff_pst > 30] <- 1
+Ind6 <- indikator6[, -c(2,4)]
+names(Ind6) <- c('Aar', 'ReshId', 'Teller Ind6')
+Ind6[, 'Nevner Ind6'] <- 1
+Ind6$Indikator <- 'Ind6'
+Ind6$AarID <- paste0(Ind6$Aar, Ind6$ReshId)
+Ind6 <- Ind6[, c(1,5,4,3,2,6)]
 
-
-write.csv2(indikator6[, -4], "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator6_vas.csv",
+write.csv2(Ind6, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator6_vas.csv",
            row.names = F)
 
 tmp <- indikator6 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
@@ -206,8 +228,14 @@ Indikator7_med <- aux %>% group_by(Aar, AvdRESH, m_mceid) %>%
   summarise(Variabel = max(Variabel))
 
 Indikator7_med$SykehusNavn <- RegData$SykehusNavn[match(Indikator7_med$AvdRESH, RegData$AvdRESH)]
+Ind7 <- Indikator7_med[, -c(3,5)]
+names(Ind7) <- c('Aar', 'ReshId', 'Teller Ind7')
+Ind7[, 'Nevner Ind7'] <- 1
+Ind7$Indikator <- 'Ind7'
+Ind7$AarID <- paste0(Ind7$Aar, Ind7$ReshId)
+Ind7 <- Ind7[, c(1,5,4,3,2,6)]
 
-write.csv2(Indikator7_med[, -3], "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator7_kontr_3mnd_med.csv",
+write.csv2(Ind7, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator7_kontr_3mnd_med.csv",
            row.names = F)
 
 tmp <- Indikator7_med %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
@@ -230,8 +258,14 @@ Indikator8_kir <- aux %>% group_by(Aar, AvdRESH, m_mceid) %>%
   summarise(Variabel = max(Variabel))
 
 Indikator8_kir$SykehusNavn <- RegData$SykehusNavn[match(Indikator8_kir$AvdRESH, RegData$AvdRESH)]
+Ind8 <- Indikator8_kir[, -c(3,5)]
+names(Ind8) <- c('Aar', 'ReshId', 'Teller Ind8')
+Ind8[, 'Nevner Ind8'] <- 1
+Ind8$Indikator <- 'Ind8'
+Ind8$AarID <- paste0(Ind8$Aar, Ind8$ReshId)
+Ind8 <- Ind8[, c(1,5,4,3,2,6)]
 
-write.csv2(Indikator8_kir[, -3], "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/Indikator8_kontr_6mnd_kir.csv",
+write.csv2(Ind8, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/Indikator8_kontr_6mnd_kir.csv",
            row.names = F)
 
 tmp <- Indikator8_kir %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
@@ -260,8 +294,14 @@ Indikator9 <- RegData[(RegData$c_infection %in% c(1,2) | RegData$c_delayed_wound
 Indikator9$Variabel[is.na(Indikator9$Variabel)] <- FALSE
 Indikator9$Variabel <- as.numeric(Indikator9$Variabel)
 Indikator9$SykehusNavn <- RegData$SykehusNavn[match(Indikator9$AvdRESH, RegData$AvdRESH)]
+Ind9 <- Indikator9[, -c(3,5)]
+names(Ind9) <- c( 'ReshId', 'Aar', 'Teller Ind9')
+Ind9[, 'Nevner Ind9'] <- 1
+Ind9$Indikator <- 'Ind9'
+Ind9$AarID <- paste0(Ind9$Aar, Ind9$ReshId)
+Ind9 <- Ind9[, c(2,5,4,3,1,6)]
 
-write.csv2(Indikator9[, -3], "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator9_kompl_kir.csv",
+write.csv2(Ind9, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator9_kompl_kir.csv",
            row.names = F)
 
 tmp <- Indikator9 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
@@ -316,9 +356,14 @@ indikator10 <- indikator10[indikator10$c_medical_treatment %in% 1:2 | indikator1
 indikator10$Variabel[is.na(indikator10$Variabel)] <- FALSE
 indikator10$Variabel <- as.numeric(indikator10$Variabel)
 indikator10$SykehusNavn <- RegData$SykehusNavn[match(indikator10$AvdRESH, RegData$AvdRESH)]
+Ind10 <- indikator10[, -c(3,5)]
+names(Ind10) <- c( 'ReshId', 'Aar', 'Teller Ind10')
+Ind10[, 'Nevner Ind10'] <- 1
+Ind10$Indikator <- 'Ind10'
+Ind10$AarID <- paste0(Ind10$Aar, Ind10$ReshId)
+Ind10 <- Ind10[, c(2,5,4,3,1,6)]
 
-
-write.csv2(indikator10[, -3], "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator10_bivirkn_med.csv",
+write.csv2(Ind10, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator10_bivirkn_med.csv",
            row.names = F)
 
 
@@ -329,6 +374,20 @@ tmp <- indikator10 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Var
 tmp$verdi <- paste0(round(tmp$andel, 1), '% (', tmp$N, ')')
 Ind10_bivirkn_med <- tmp[, -(3:5)] %>% spread(key=Aar, value = verdi, fill = '')
 write.csv2(Ind10_bivirkn_med, "I:/hisreg/Ind10_bivirkn_med.csv", row.names = F)
+
+
+#################################################################################
+###########################  Enhetsliste  #######################################
+#################################################################################
+
+enhetsliste <- fulldata[match(unique(fulldata$AvdRESH), fulldata$AvdRESH), c("AvdRESH", "SykehusNavn")]
+write.csv2(enhetsliste, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/enhetsliste.csv', row.names = F)
+
+
+
+
+
+
 
 # CONTROL_STOP_MEDICAL_TREATMENT
 # CONTROL_SYSTEMIC_ANTIBIOTIC_THERAPY_STOP
