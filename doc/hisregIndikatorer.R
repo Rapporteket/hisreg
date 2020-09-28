@@ -63,6 +63,7 @@ ForlopsData <- ForlopsData[, c("ForlopsID", "AvdRESH",
                                "ForlopsType1", "ForlopsType1Num",
                                "ForlopsType2", "ForlopsType2Num",
                                "ErMann", "SykehusNavn", "PasientID")]
+ForlopsData <- ForlopsData[ForlopsData$AvdRESH != 999002, ] # Fjern Roskilde
 RegData <- merge(RegData,
                  ForlopsData,
                  by.x = "m_mceid",
@@ -82,6 +83,8 @@ fulldata <- hisregPreprosess(fulldata)
 
 RegData <- RegData[which(RegData$Aar <= 2019), ]
 fulldata <- fulldata[which(fulldata$Aar <= 2019), ]
+
+write.csv2(fulldata, "I:/hisreg/explore.csv", row.names = F, fileEncoding = "Latin1")
 
 ########### Indikator 1: Andel henvist til hudspesialist innen 1 år av første besøk hos allmennlege  ###########
 
@@ -384,10 +387,35 @@ enhetsliste <- fulldata[match(unique(fulldata$AvdRESH), fulldata$AvdRESH), c("Av
 write.csv2(enhetsliste, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/enhetsliste.csv', row.names = F)
 
 
+#################################################################################
+###########################  Nøkkeltall  #######################################
+#################################################################################
+
+fulldata$OppflgAar <- as.numeric(format(as.Date(fulldata$c_date), format="%Y"))
 
 
+table(fulldata$Aar, fulldata$OppflgAar, useNA = 'ifany')
+table(fulldata$c_possible)
+table(fulldata$Intervensjon, useNA = 'ifany')
+table(fulldata$i_type, useNA = 'ifany')
+
+tmp<- RegData %>% group_by(Aar, PasientID) %>%
+  summarise("smoking" = min(pre_smoking, na.rm = T),
+            "ErMann" = ErMann[1]) %>% group_by(Aar) %>%
+  summarise("Andel røykere" = sum(smoking==1)/n(),
+            "Andel kvinner" = sum(ErMann==0)/n(),
+            N=n())
+
+tmp2 <- RegData %>% group_by(Aar) %>%
+  summarise("Kirugiske behandlinger" = sum(i_type==1),
+            "Medisinske behandlinger" = sum(i_type==2),
+            "Kirugiske- og medisinske behandlinger" = sum(i_type==3),
+            "Antall avdelinger" = length(unique(SykehusNavn)))
+nokkeltall <- merge(tmp, tmp2, by="Aar")
+write.csv2(nokkeltall, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/nokkeltall.csv', row.names = F)
 
 
+# t(nokkeltall)
 
 # CONTROL_STOP_MEDICAL_TREATMENT
 # CONTROL_SYSTEMIC_ANTIBIOTIC_THERAPY_STOP
