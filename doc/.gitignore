@@ -45,7 +45,6 @@ HandteringAvOppfolging.R
 aktuell_for_hisreg.csv
 aktuell_for_hisreg_unik.csv
 alle.csv
-bestillinger_utleveringer.R
 kun_andre_avdelinger.csv
 unik_pas_pr_avd_pr_aar.csv
 01-createTables.sql
