@@ -2,7 +2,44 @@ library(tidyverse)
 library(hisreg)
 rm(list = ls())
 
-############ Dekningsgradsdata til NPR 10.10.2017 ################################
+############ Dekningsgradsdata til NPR 27.10.2020 ################################
+
+hisregdata <- read.table('I:/hisreg/AlleVarNum2020-08-21 13-19-34.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+hisregdata$i_date <- as.Date(hisregdata$i_date)
+hisregdata$aar <- format(hisregdata$i_date, '%Y')
+hisregdata$pid <- hisregdata$m_pid
+ForlopsData <- read.table('I:/hisreg/ForlopsOversikt2020-08-21 13-19-34.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+ForlopsData <- ForlopsData[, c('ForlopsID', 'AvdRESH', 'BasisRegStatus', 'HovedDato', 'OppflgRegStatus', 'SykehusNavn')]
+hisregdata <- merge(hisregdata, ForlopsData, by.x = 'm_mceid', by.y = 'ForlopsID')
+Followups <- read.table('I:/hisreg/FollowupsNum2020-08-21 13-19-34.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+Followups <- Followups[Followups$c_possible != 2, ] # Fjerner Oppfølging ikke mulig
+Followups <- Followups[!is.na(Followups$c_mceid), ]
+Followups$c_date <- as.Date(Followups$c_date)
+
+tmp <- merge(Followups[, c("c_mceid", "c_centreid", "c_date", "c_do_month")],
+             hisregdata[, c("m_mceid", "i_date", "pid", "SykehusNavn", "AvdRESH")],
+             by.x = "c_mceid", by.y = "m_mceid")
+tmp$aar <- format(tmp$c_date, '%Y')
+
+samlet_hisreg <- bind_rows(hisregdata[, c("aar", "pid", "AvdRESH")], tmp[, c("aar", "pid", "AvdRESH")])
+
+nprdata <- samlet_hisreg %>% group_by(aar, AvdRESH, pid) %>% summarise(antall = n())
+
+nprdata <- nprdata[nprdata$AvdRESH != 999002, ]
+nprdata <- nprdata[nprdata$aar %in% 2016:2019, -4]
+
+write.csv2(nprdata, 'I:/hisreg/nprdata_hisreg30102020.csv', row.names = F)
+
+# table(nprdata$AvdRESH, nprdata$aar, useNA = 'ifany')
+
+koblingsdata <- read.table('I:/hisreg/PatientList_hisreg_2020-10-29.csv', header=TRUE, sep=",", encoding = 'UTF-8',
+                           colClasses = c('integer', 'character'))
+koblingsdata_npr <- koblingsdata[koblingsdata$PID %in% unique(nprdata$pid), ]
+write.csv2(koblingsdata_npr, 'I:/hisreg/koblingsdata_npr30102020.csv', row.names = F)
+
+
+
+############ Dekningsgradsdata til NPR 10.10.2019 ################################
 
 hisregdata <- read.table('I:/hisreg/AlleVarNum2019-10-10 10-15-40.txt', header=TRUE, sep=";", encoding = 'UTF-8')
 hisregdata$i_date <- as.Date(hisregdata$i_date)
