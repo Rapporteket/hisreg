@@ -36,7 +36,12 @@ system.file(
 ) %>%
   source(encoding = "UTF-8")
 system.file(
-  "shinyApps/hisreg/R/modDatadump.R",
+  "shinyApps/hisreg/R/ModTabeller.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
+system.file(
+  "shinyApps/hisreg/R/modul_admtab.R",
   package = "hisreg"
 ) %>%
   source(encoding = "UTF-8")
@@ -54,31 +59,33 @@ ui <- shiny::tagList(
     theme = "rap/bootstrap.css",
 
     shiny::tabPanel("Startside",
-      rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
-                                   organization = uiOutput("appOrgName"),
-                                   addUserInfo = TRUE),
-      tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
-      startsideUI("startside")
+                    rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
+                                                 organization = uiOutput("appOrgName"),
+                                                 addUserInfo = TRUE),
+                    tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
+                    startsideUI("startside")
     ),
     tabPanel("Fordelinger",
              modFordelingerUI("mod1")),
     shiny::navbarMenu("Gjennomsnitt",
-      shiny::tabPanel("Per sykehus",
-                      modGjennomsnittUI("mod2")
+                      shiny::tabPanel("Per sykehus",
+                                      modGjennomsnittUI("mod2")
                       ),
-      shiny::tabPanel("Per intervensjonstype",
-                      modGjennomsnittUI("mod3")),
-      shiny::tabPanel("Før og etter intervensjon, per sykehus",
-                      modGjennomsnittUI("mod4", varValg = varValgGjenFE)),
-      shiny::tabPanel("Før og etter intervensjon, per intervensjonstype",
-                      modGjennomsnittUI("mod5", varValg = varValgGjenFE))
-      ), #navbarMenu,
+                      shiny::tabPanel("Per intervensjonstype",
+                                      modGjennomsnittUI("mod3")),
+                      shiny::tabPanel("Før og etter intervensjon, per sykehus",
+                                      modGjennomsnittUI("mod4", varValg = varValgGjenFE)),
+                      shiny::tabPanel("Før og etter intervensjon, per intervensjonstype",
+                                      modGjennomsnittUI("mod5", varValg = varValgGjenFE))
+    ), #navbarMenu,
 
-      tabPanel("Administrative tabeller",
-               tabellUI("tab")),
+    tabPanel("Administrative tabeller",
+             tabellUI("tab")),
+    tabPanel("Nye administrative tabeller",
+             admtab_UI("tab_ny")),
     tabPanel(
       "Datadump", dataDumpUI("dataDumpHisreg")
-      )
+    )
 
 
   )#navbarPage
@@ -87,6 +94,10 @@ ui <- shiny::tagList(
 #----------------App server------------------------
 
 server <-  function(input, output, session) {
+
+  # print(names(allevar))
+  # print(dim(allevar))
+
   reshID <- reactive({
     ifelse(onServer,as.numeric(rapbase::getUserReshId(session)),601031)
   })
@@ -120,6 +131,7 @@ server <-  function(input, output, session) {
   shiny::callModule(modGjennomsnitt, "mod5", rID = reshID(), ss = session,
                     add_int = FALSE, add_enh = TRUE, fun = "FEPI")
   shiny::callModule(tabell, "tab", ss = session)
+  shiny::callModule(admtab, "tab_ny", skjemaoversikt=SkjemaOversikt_ny) # , skjemaoversikt=SkjemaOversikt_ny
   shiny::callModule(dataDump, "dataDumpHisreg", mainSession = session,
                     reshID = reshID(), userRole = userRole())
 
@@ -130,11 +142,11 @@ server <-  function(input, output, session) {
   # Brukerinformasjon
   userInfo <- rapbase::howWeDealWithPersonalData(session)
   observeEvent(input$userInfo, {
-      shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
-                 type = "", imageUrl = "rap/logo.svg",
-                 closeOnEsc = TRUE, closeOnClickOutside = TRUE,
-                 html = TRUE, confirmButtonText = "Den er grei!")
-    })
+    shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
+                           type = "", imageUrl = "rap/logo.svg",
+                           closeOnEsc = TRUE, closeOnClickOutside = TRUE,
+                           html = TRUE, confirmButtonText = "Den er grei!")
+  })
 }
 
 shinyApp(ui, server)

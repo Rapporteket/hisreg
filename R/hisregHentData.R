@@ -72,3 +72,27 @@ hisregHentRegData <- function() {
 
   return(RegData)
 }
+
+#' Fetch chosen table for Hisreg
+#'
+#' Provides Hisreg data from staging
+#'
+#' @param tabnavn Name of requested table
+#'
+#' @return RegData data frame
+#' @export
+hisregHentTabell <- function(tabnavn) {
+
+  registryName <- "hisreg2"
+  dbType <- "mysql"
+
+  query <- paste0("SELECT * FROM ", tabnavn)
+
+  RegData <- rapbase::LoadRegData(registryName, query, dbType)
+
+  return(RegData)
+}
+
+
+
+
