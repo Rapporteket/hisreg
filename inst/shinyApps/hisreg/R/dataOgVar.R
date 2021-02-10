@@ -114,18 +114,18 @@ RegData <- merge(RegData, Followups,
                  all.x = T)
 ############## NY DATA ####################
 # Les data:
-preinterventiondoctor <- read.table('I:/hisreg/preinterventiondoctor2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-registration <- read.table('I:/hisreg/registration2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-intervention <- read.table('I:/hisreg/intervention2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-mce <- read.table('I:/hisreg/mce2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-mcelist <- read.table('I:/hisreg/mcelist2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-patient <- read.table('I:/hisreg/patient2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-patientcontrol <- read.table('I:/hisreg/patientcontrol2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-preintervention <- read.table('I:/hisreg/preintervention2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-centre <- read.table('I:/hisreg/centre2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-doctorcontrol <- read.table('I:/hisreg/doctorcontrol2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-ForlopsOversikt_ny <- read.table('I:/hisreg/ForlopsOversikt2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-SkjemaOversikt_ny <- read.table('I:/hisreg/SkjemaOversikt2021-01-06 14-55-10.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+preinterventiondoctor <- read.table('I:/hisreg/preinterventiondoctor2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+registration <- read.table('I:/hisreg/registration2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+intervention <- read.table('I:/hisreg/intervention2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+mce <- read.table('I:/hisreg/mce2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+mcelist <- read.table('I:/hisreg/mcelist2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+patient <- read.table('I:/hisreg/patient2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+patientcontrol <- read.table('I:/hisreg/patientcontrol2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+preintervention <- read.table('I:/hisreg/preintervention2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+centre <- read.table('I:/hisreg/centre2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+doctorcontrol <- read.table('I:/hisreg/doctorcontrol2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+ForlopsOversikt_ny <- read.table('I:/hisreg/ForlopsOversikt2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+SkjemaOversikt_ny <- read.table('I:/hisreg/SkjemaOversikt2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
 
 }
 RegData <- hisreg::hisregPreprosess(RegData)
@@ -139,6 +139,10 @@ RegDataAll$SykehusNavn <- as.factor(as.character(RegDataAll$SykehusNavn))
 #### NY ######
 # Bearbeid data:
 SkjemaOversikt_ny$HovedDato <- as.Date(SkjemaOversikt_ny$HovedDato)
+SkjemaOversikt_ny$Skjemanavn <- as.factor(SkjemaOversikt_ny$Skjemanavn)
+SkjemaOversikt_ny <- merge(SkjemaOversikt_ny,
+                           ForlopsOversikt_ny[, c("ForlopsID", "ForlopsType1", "ForlopsType1Num")],
+                           by = "ForlopsID", all.x = T)
 preinterventiondoctor <- preinterventiondoctor[preinterventiondoctor$STATUS == 1, ]
 registration <- registration[registration$STATUS == 1, ]
 intervention <- intervention[intervention$STATUS == 1, ]

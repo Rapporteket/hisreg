@@ -81,9 +81,9 @@ hisregHentRegData <- function() {
 #'
 #' @return RegData data frame
 #' @export
-hisregHentTabell <- function(tabnavn) {
+hisregHentTabell <- function(tabnavn, registryName="hisreg2") {
 
-  registryName <- "hisreg2"
+  # registryName <- "hisreg2"
   dbType <- "mysql"
 
   query <- paste0("SELECT * FROM ", tabnavn)

@@ -35,11 +35,11 @@ system.file(
   package = "hisreg"
 ) %>%
   source(encoding = "UTF-8")
-system.file(
-  "shinyApps/hisreg/R/ModTabeller.R",
-  package = "hisreg"
-) %>%
-  source(encoding = "UTF-8")
+# system.file(
+#   "shinyApps/hisreg/R/ModTabeller.R",
+#   package = "hisreg"
+# ) %>%
+#   source(encoding = "UTF-8")
 system.file(
   "shinyApps/hisreg/R/modul_admtab.R",
   package = "hisreg"
