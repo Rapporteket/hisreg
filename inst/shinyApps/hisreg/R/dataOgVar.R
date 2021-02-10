@@ -23,18 +23,18 @@ if (onServer) {
     query = "SELECT *
              FROM SkjemaOversikt"
   )
-  preinterventiondoctor <- hisregHentTabell("preinterventiondoctor")
-  registration <- hisregHentTabell("registration")
-  intervention <- hisregHentTabell("intervention")
-  mce <- hisregHentTabell("mce")
-  mcelist <- hisregHentTabell("mcelist")
-  patient <- hisregHentTabell("patient")
-  patientcontrol <- hisregHentTabell("patientcontrol")
-  preintervention <- hisregHentTabell("preintervention")
-  centre <- hisregHentTabell("centre")
-  doctorcontrol <- hisregHentTabell("doctorcontrol")
-  ForlopsOversikt_ny <- hisregHentTabell("ForlopsOversikt")
-  SkjemaOversikt_ny <- hisregHentTabell("SkjemaOversikt")
+  preinterventiondoctor <- hisreg::hisregHentTabell("preinterventiondoctor")
+  registration <- hisreg::hisregHentTabell("registration")
+  intervention <- hisreg::hisregHentTabell("intervention")
+  mce <- hisreg::hisregHentTabell("mce")
+  mcelist <- hisreg::hisregHentTabell("mcelist")
+  patient <- hisreg::hisregHentTabell("patient")
+  patientcontrol <- hisreg::hisregHentTabell("patientcontrol")
+  preintervention <- hisreg::hisregHentTabell("preintervention")
+  centre <- hisreg::hisregHentTabell("centre")
+  doctorcontrol <- hisreg::hisregHentTabell("doctorcontrol")
+  ForlopsOversikt_ny <- hisreg::hisregHentTabell("ForlopsOversikt")
+  SkjemaOversikt_ny <- hisreg::hisregHentTabell("SkjemaOversikt")
 
 } else {
   ############## GAMMEL DATA ####################
@@ -126,8 +126,8 @@ centre <- read.table('I:/hisreg/centre2021-02-02 13-24-06.txt', header=TRUE, sep
 doctorcontrol <- read.table('I:/hisreg/doctorcontrol2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
 ForlopsOversikt_ny <- read.table('I:/hisreg/ForlopsOversikt2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
 SkjemaOversikt_ny <- read.table('I:/hisreg/SkjemaOversikt2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-
 }
+
 RegData <- hisreg::hisregPreprosess(RegData)
 RegDataAll <- RegData[which(RegData$AvdRESH == 999002), ]
 # Roskilde skal ikke inngå blant de nasjonale tallene.
