@@ -19,7 +19,8 @@ hisregFigGjsnGrVar(
   preprosess = F,
   hentData = F,
   gr_var = "SykehusNavn",
-  fjern_sjeldne = 0
+  fjern_sjeldne = 0,
+  skriftStr = 1.2
 )
 }
 \arguments{

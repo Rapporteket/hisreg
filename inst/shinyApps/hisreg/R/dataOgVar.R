@@ -23,8 +23,21 @@ if (onServer) {
     query = "SELECT *
              FROM SkjemaOversikt"
   )
-} else {
+  preinterventiondoctor <- hisregHentTabell("preinterventiondoctor")
+  registration <- hisregHentTabell("registration")
+  intervention <- hisregHentTabell("intervention")
+  mce <- hisregHentTabell("mce")
+  mcelist <- hisregHentTabell("mcelist")
+  patient <- hisregHentTabell("patient")
+  patientcontrol <- hisregHentTabell("patientcontrol")
+  preintervention <- hisregHentTabell("preintervention")
+  centre <- hisregHentTabell("centre")
+  doctorcontrol <- hisregHentTabell("doctorcontrol")
+  ForlopsOversikt_ny <- hisregHentTabell("ForlopsOversikt")
+  SkjemaOversikt_ny <- hisregHentTabell("SkjemaOversikt")
 
+} else {
+  ############## GAMMEL DATA ####################
 ForlopsData <- read.table("I:/hisreg/ForlopsOversikt2020-06-16 10-35-02.txt",
                           header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
@@ -99,6 +112,20 @@ RegData <- merge(RegData, Followups,
                  by.x = "m_mceid",
                  by.y = "c_mceid",
                  all.x = T)
+############## NY DATA ####################
+# Les data:
+preinterventiondoctor <- read.table('I:/hisreg/preinterventiondoctor2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+registration <- read.table('I:/hisreg/registration2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+intervention <- read.table('I:/hisreg/intervention2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+mce <- read.table('I:/hisreg/mce2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+mcelist <- read.table('I:/hisreg/mcelist2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+patient <- read.table('I:/hisreg/patient2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+patientcontrol <- read.table('I:/hisreg/patientcontrol2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+preintervention <- read.table('I:/hisreg/preintervention2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+centre <- read.table('I:/hisreg/centre2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+doctorcontrol <- read.table('I:/hisreg/doctorcontrol2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+ForlopsOversikt_ny <- read.table('I:/hisreg/ForlopsOversikt2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+SkjemaOversikt_ny <- read.table('I:/hisreg/SkjemaOversikt2021-02-02 13-24-06.txt', header=TRUE, sep=";", encoding = 'UTF-8')
 
 }
 RegData <- hisreg::hisregPreprosess(RegData)
@@ -108,6 +135,34 @@ RegData <- RegData[RegData$AvdRESH != 999002, ]
 RegData$SykehusNavn <- as.factor(as.character(RegData$SykehusNavn))
 RegDataAll$SykehusNavn <- as.factor(as.character(RegDataAll$SykehusNavn))
 # RegData$HovedDato <- as.POSIXct.POSIXlt(RegData$HovedDato)
+
+#### NY ######
+# Bearbeid data:
+SkjemaOversikt_ny$HovedDato <- as.Date(SkjemaOversikt_ny$HovedDato)
+SkjemaOversikt_ny$Skjemanavn <- as.factor(SkjemaOversikt_ny$Skjemanavn)
+SkjemaOversikt_ny <- merge(SkjemaOversikt_ny,
+                           ForlopsOversikt_ny[, c("ForlopsID", "ForlopsType1", "ForlopsType1Num")],
+                           by = "ForlopsID", all.x = T)
+preinterventiondoctor <- preinterventiondoctor[preinterventiondoctor$STATUS == 1, ]
+registration <- registration[registration$STATUS == 1, ]
+intervention <- intervention[intervention$STATUS == 1, ]
+mcelist <- mcelist[mcelist$REGISTRATION_STATUS == 1, ]
+patientcontrol <- patientcontrol[patientcontrol$STATUS == 1, ]
+preintervention <- preintervention[preintervention$STATUS == 1, ]
+doctorcontrol <- doctorcontrol[doctorcontrol$STATUS == 1, ]
+oppfolging_kir <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 1, ], doctorcontrol[doctorcontrol$CONTROLTYPE == 1, ],
+                        by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
+oppfolging_med <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 2, ], doctorcontrol[doctorcontrol$CONTROLTYPE == 2, ],
+                        by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
+oppfolging <- merge(oppfolging_kir, oppfolging_med, by = "MCEID", suffixes = c("_kir", "_med"), all = T)
+
+allevar <- merge(preintervention, preinterventiondoctor[!(names(preinterventiondoctor) %in% intersect(names(preintervention), names(preinterventiondoctor)[-1]))], by = "MCEID")
+allevar <- merge(allevar, intervention[!(names(intervention) %in% intersect(names(allevar), names(intervention)[-1]))], by = "MCEID")
+allevar <- merge(allevar, registration[!(names(registration) %in% intersect(names(allevar), names(registration)[-1]))], by = "MCEID")
+allevar <- merge(allevar, oppfolging, by = "MCEID", suffixes = c("", "_oppf"), all.x = T)
+allevar$Sykehusnavn <- centre$CENTRESHORTNAME[match(allevar$CENTREID, centre$ID)]
+
+###################
 
 #------------------Variabel valg-------------------------------------
 
