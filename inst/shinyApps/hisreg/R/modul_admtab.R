@@ -18,6 +18,10 @@ admtab_UI <- function(id){
                  shiny::uiOutput(ns("tab_mnd")),
                  shiny::uiOutput(ns("tab_aar")),
                  selectInput(inputId = ns("regstatus"), label = "Skjemastatus", choices = c('Ferdigstilt'=1, 'I kladd'=0)),
+                 selectInput(inputId = ns("forlopstype"), label = "Forløpstype",
+                             choices = c('Kirurgisk'=1, 'Medisinsk'=2, 'Kirurgisk og medisinsk'=3,
+                                         'Ingen intervensjon bestemt av lege'=4, 'Ingen intervensjon bestemt av pasient'=5),
+                             selected = 1:3, multiple = T),
                  tags$hr(),
                  actionButton(ns("reset_input"), "Nullstill valg")
     ),
