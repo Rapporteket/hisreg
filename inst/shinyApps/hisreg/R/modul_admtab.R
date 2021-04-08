@@ -18,6 +18,9 @@ admtab_UI <- function(id){
                  shiny::uiOutput(ns("tab_mnd")),
                  shiny::uiOutput(ns("tab_aar")),
                  selectInput(inputId = ns("regstatus"), label = "Skjemastatus", choices = c('Ferdigstilt'=1, 'I kladd'=0)),
+                 shinyjs::hidden(selectInput(inputId = ns("regstatus_tid"), label = "Skjemastatus",
+                             choices = c('Ferdige forløp'=1, 'Ferdig basisreg. oppfølging ikke ferdigstilt'=2,
+                                         'Basisreg. i kladd'=3))),
                  selectInput(inputId = ns("forlopstype"), label = "Forløpstype",
                              choices = c('Kirurgisk'=1, 'Medisinsk'=2, 'Kirurgisk og medisinsk'=3,
                                          'Ingen intervensjon bestemt av lege'=4, 'Ingen intervensjon bestemt av pasient'=5),
@@ -33,7 +36,7 @@ admtab_UI <- function(id){
                                    DTOutput(ns("Tabell_adm1")), downloadButton(ns("lastNed_adm1"), "Last ned tabell")
                           ),
                           tabPanel("Registreringer over tid", value = "id_ant_tid",
-                                   # DTOutput(ns("Tabell_adm2")), downloadButton(ns("lastNed_adm2"), "Last ned tabell")
+                                   DTOutput(ns("Tabell_adm2")), downloadButton(ns("lastNed_adm2"), "Last ned tabell")
                           )
     )
     )
@@ -52,14 +55,14 @@ admtab <- function(input, output, session, skjemaoversikt){
       shinyjs::hide(id = 'adm_tidsenhet')
       shinyjs::hide(id = 'tab_mnd')
       shinyjs::hide(id = 'tab_aar')
-      # shinyjs::hide(id = 'regstatus_tid')
+      shinyjs::hide(id = 'regstatus_tid')
       shinyjs::show(id = 'datovalg_adm')
     } else if (input$admtabeller == "id_ant_tid") {
       shinyjs::hide(id = 'datovalg_adm')
       shinyjs::show(id = 'adm_tidsenhet')
       shinyjs::show(id = 'tab_mnd')
       shinyjs::show(id = 'tab_aar')
-      # shinyjs::show(id = 'regstatus_tid')
+      shinyjs::show(id = 'regstatus_tid')
     }
   )
 
@@ -161,6 +164,10 @@ andre_adm_tab <- function() {
           by = "ForlopsID", suffixes = c("", "_kontrdok6"), all = T) %>%
     merge(intervention[, c("MCEID" , "TYPE_INTERVENTION")], by.x = "ForlopsID", by.y = "MCEID", all.x = T)
 
+  if (!is.null(input$forlopstype)) {
+    skjemaoversikt <- skjemaoversikt[skjemaoversikt$ForlopsType1Num %in% as.numeric(input$forlopstype), ]
+  }
+
   skjemaoversikt_forlop$statusbasis <- 0
   skjemaoversikt_forlop$statusbasis[rowSums(skjemaoversikt_forlop[, c("SkjemaStatus", "SkjemaStatus_prepas", "SkjemaStatus_predok", "SkjemaStatus_interv")])==4] <- 1
   skjemaoversikt_forlop$statusoppf3 <- 0
@@ -185,42 +192,30 @@ andre_adm_tab <- function() {
     aux <- skjemaoversikt_forlop
     aux <- aux[aux$HovedDato >= fraDato & aux$HovedDato <= tilDato, ]
 
-    # aux$mnd <- factor(format(aux$HovedDato, format='%b-%y'), levels = format(seq(as.Date(fraDato),as.Date(input$datovalg_adm_tid_mnd), by="month"), "%b-%y"))
     aux$mnd <- factor(format(aux$HovedDato, format='%b-%y'), levels = format(seq(fraDato, tilDato, by="month"), "%b-%y"))
 
     ant_skjema <- switch (input$regstatus_tid,
                           '1' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==1 & aux$statusoppf==1) , c('Sykehusnavn', 'mnd')]))),
                           '2' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==1 & aux$statusoppf==0) , c('Sykehusnavn', 'mnd')]))),
-                          '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==1 & is.na(aux$statusoppf)) , c('Sykehusnavn', 'mnd')]))),
-                          '4' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==0) , c('Sykehusnavn', 'mnd')])))
+                          # '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==1 & is.na(aux$statusoppf)) , c('Sykehusnavn', 'mnd')]))),
+                          '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==0) , c('Sykehusnavn', 'mnd')])))
     ) %>% as_tibble(rownames = 'Sykehusnavn')
   }
 
   if (input$adm_tidsenhet == 2) {
     req(input$datovalg_adm_tid_aar)
-    fraDato <- as.Date(input$datovalg_adm_tid_aar) %m-% years(input$ant_aar) %>% floor_date(unit="years")
-    tmp <- merge(skjemaoversikt[skjemaoversikt$Skjemanavn=='Registrering', c("ForlopsID", "SkjemaStatus", "HovedDato", "OpprettetDato", "Sykehusnavn", "AvdRESH")],
-                 skjemaoversikt[skjemaoversikt$Skjemanavn=='Reinnleggelse/oppføl', c("ForlopsID", "SkjemaStatus")],
-                 by = 'ForlopsID', all.x = T, suffixes = c('', '_oppf'))
-
-    if (input$kun_oblig) {
-      tmp <- tmp[tmp$ForlopsID %in% RegData$ForlopsID[RegData$Op_gr %in% 1:7], ]
-    }
-
-    tmp$SkjemaStatus[tmp$SkjemaStatus==-1] <- 0
-    tmp$SkjemaStatus_oppf[tmp$SkjemaStatus_oppf==-1] <- 0
-    tmp$HovedDato[is.na(tmp$HovedDato)] <- as.Date(tmp$OpprettetDato[is.na(tmp$HovedDato)])
-
-    # aux <- tmp[tmp$HovedDato >= fraDato & tmp$HovedDato <= input$datovalg_adm_tid_aar, ]
-    aux <- tmp
+    tilDato <- as.Date(paste0(input$datovalg_adm_tid_aar))
+    fraDato <- tilDato %m-% years(input$ant_aar) %>% floor_date(unit="years")
+    aux <- skjemaoversikt_forlop
+    aux <- aux[aux$HovedDato >= fraDato & aux$HovedDato <= tilDato, ]
 
     aux$mnd <- factor(format(aux$HovedDato, format='%Y'), levels = format(seq(as.Date(fraDato),as.Date(input$datovalg_adm_tid_aar), by="year"), "%Y"))
 
     ant_skjema <- switch (input$regstatus_tid,
                           '1' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==1 & aux$SkjemaStatus_oppf==1) , c('Sykehusnavn', 'mnd')]))),
                           '2' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==1 & aux$SkjemaStatus_oppf==0) , c('Sykehusnavn', 'mnd')]))),
-                          '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==1 & is.na(aux$SkjemaStatus_oppf)) , c('Sykehusnavn', 'mnd')]))),
-                          '4' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==0) , c('Sykehusnavn', 'mnd')])))
+                          # '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==1 & is.na(aux$SkjemaStatus_oppf)) , c('Sykehusnavn', 'mnd')]))),
+                          '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==0) , c('Sykehusnavn', 'mnd')])))
     ) %>% as_tibble(rownames = 'Sykehusnavn')
   }
 
@@ -231,13 +226,13 @@ andre_adm_tab <- function() {
 
 }
 
-# output$Tabell_adm2 = renderDT(
-#   datatable(andre_adm_tab()$ant_skjema[-dim(andre_adm_tab()$ant_skjema)[1], ],
-#             container = andre_adm_tab()$sketch,
-#             rownames = F,
-#             options = list(pageLength = 40)
-#   )
-# )
+output$Tabell_adm2 = renderDT(
+  datatable(andre_adm_tab()$ant_skjema[-dim(andre_adm_tab()$ant_skjema)[1], ],
+            container = andre_adm_tab()$sketch,
+            rownames = F,
+            options = list(pageLength = 40)
+  )
+)
 #
 # output$lastNed_adm2 <- downloadHandler(
 #   filename = function(){

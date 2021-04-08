@@ -21,7 +21,7 @@ if (onServer) {
     registryName = "hisreg",
     dbType = "mysql",
     query = "SELECT *
-             FROM SkjemaOversikt"
+             FROM SkjemaOversikt_v1"
   )
   preinterventiondoctor <- hisreg::hisregHentTabell("preinterventiondoctor")
   registration <- hisreg::hisregHentTabell("registration")
@@ -38,19 +38,19 @@ if (onServer) {
 
 } else {
   ############## GAMMEL DATA ####################
-ForlopsData <- read.table("I:/hisreg/ForlopsOversikt2020-06-16 10-35-02.txt",
+ForlopsData <- read.table("I:/hisreg/ForlopsOversikt_v12021-04-07 14-52-56.txt",
                           header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-RegData <- read.table("I:/hisreg/AlleVarNum2020-06-16 10-35-02.txt",
+RegData <- read.table("I:/hisreg/AlleVarNum2021-04-07 14-52-56.txt",
                       header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-SkjemaOversikt <- read.table("I:/hisreg/SkjemaOversikt2020-06-16 10-35-02.txt",
+SkjemaOversikt <- read.table("I:/hisreg/SkjemaOversikt_v12021-04-07 14-52-56.txt",
                              header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-RegDataLabel <- read.table("I:/hisreg/AlleVar2020-06-16 10-35-02.txt",
+RegDataLabel <- read.table("I:/hisreg/AlleVar2021-04-07 14-52-56.txt",
                            header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
-Followups <- read.table("I:/hisreg/FollowupsNum2020-06-16 10-35-02.txt",
+Followups <- read.table("I:/hisreg/FollowupsNum2021-04-07 14-52-56.txt",
                            header = TRUE, sep = ";", encoding = "UTF-8-BOM")
 
 

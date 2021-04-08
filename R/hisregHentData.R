@@ -38,19 +38,19 @@ hisregHentRegData <- function() {
                   AlleVarNum.i_mammae,
                   AlleVarNum.i_other_location,
                   AlleVar.i_type AS i_type_label,
-                  ForlopsOversikt.ForlopsID,
-                  ForlopsOversikt.AvdRESH,
-                  ForlopsOversikt.HovedDato,
-                  ForlopsOversikt.PasientAlder,
-                  ForlopsOversikt.BasisRegStatus,
-                  ForlopsOversikt.OppflgRegStatus,
-                  ForlopsOversikt.ForlopsType1,
-                  ForlopsOversikt.ForlopsType1Num,
-                  ForlopsOversikt.ForlopsType2,
-                  ForlopsOversikt.ForlopsType2Num,
-                  ForlopsOversikt.ErMann,
-                  ForlopsOversikt.SykehusNavn,
-                  ForlopsOversikt.PasientID,
+                  ForlopsOversikt_v1.ForlopsID,
+                  ForlopsOversikt_v1.AvdRESH,
+                  ForlopsOversikt_v1.HovedDato,
+                  ForlopsOversikt_v1.PasientAlder,
+                  ForlopsOversikt_v1.BasisRegStatus,
+                  ForlopsOversikt_v1.OppflgRegStatus,
+                  ForlopsOversikt_v1.ForlopsType1,
+                  ForlopsOversikt_v1.ForlopsType1Num,
+                  ForlopsOversikt_v1.ForlopsType2,
+                  ForlopsOversikt_v1.ForlopsType2Num,
+                  ForlopsOversikt_v1.ErMann,
+                  ForlopsOversikt_v1.SykehusNavn,
+                  ForlopsOversikt_v1.PasientID,
                   FollowupsNum.c_do_month,
                   FollowupsNum.c_infection,
                   FollowupsNum.c_delayed_wound_healing,
@@ -63,8 +63,8 @@ hisregHentRegData <- function() {
                   FollowupsNum.c_hsscoresum,
                   FollowupsNum.c_vasscore,
                   FollowupsNum.c_hurley_score
-                  FROM AlleVarNum INNER JOIN ForlopsOversikt
-                  ON AlleVarNum.m_mceid = ForlopsOversikt.ForlopsID
+                  FROM AlleVarNum INNER JOIN ForlopsOversikt_v1
+                  ON AlleVarNum.m_mceid = ForlopsOversikt_v1.ForlopsID
                   INNER JOIN AlleVar ON AlleVarNum.m_mceid = AlleVar.m_mceid
                   LEFT JOIN FollowupsNum ON AlleVarNum.m_mceid = FollowupsNum.c_mceid")
 
@@ -81,7 +81,7 @@ hisregHentRegData <- function() {
 #'
 #' @return RegData data frame
 #' @export
-hisregHentTabell <- function(tabnavn, registryName="hisreg2") {
+hisregHentTabell <- function(tabnavn, registryName="hisreg") {
 
   # registryName <- "hisreg2"
   dbType <- "mysql"
