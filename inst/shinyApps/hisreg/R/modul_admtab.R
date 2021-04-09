@@ -57,8 +57,10 @@ admtab <- function(input, output, session, skjemaoversikt){
       shinyjs::hide(id = 'tab_aar')
       shinyjs::hide(id = 'regstatus_tid')
       shinyjs::show(id = 'datovalg_adm')
+      shinyjs::show(id = 'regstatus')
     } else if (input$admtabeller == "id_ant_tid") {
       shinyjs::hide(id = 'datovalg_adm')
+      shinyjs::hide(id = 'regstatus')
       shinyjs::show(id = 'adm_tidsenhet')
       shinyjs::show(id = 'tab_mnd')
       shinyjs::show(id = 'tab_aar')
@@ -138,6 +140,7 @@ admtab <- function(input, output, session, skjemaoversikt){
 
 andre_adm_tab <- function() {
 
+  skjemaoversikt$SkjemaStatus <- as.numeric(skjemaoversikt$SkjemaStatus)
   skjemaoversikt_forlop <-
     merge(skjemaoversikt[skjemaoversikt$Skjemanavn == "Registrering",
                          c("ForlopsID", "HovedDato", "Sykehusnavn", "AvdRESH", "SkjemaStatus", "ForlopsType1", "ForlopsType1Num")],
@@ -165,7 +168,7 @@ andre_adm_tab <- function() {
     merge(intervention[, c("MCEID" , "TYPE_INTERVENTION")], by.x = "ForlopsID", by.y = "MCEID", all.x = T)
 
   if (!is.null(input$forlopstype)) {
-    skjemaoversikt <- skjemaoversikt[skjemaoversikt$ForlopsType1Num %in% as.numeric(input$forlopstype), ]
+    skjemaoversikt_forlop <- skjemaoversikt_forlop[skjemaoversikt_forlop$ForlopsType1Num %in% as.numeric(input$forlopstype), ]
   }
 
   skjemaoversikt_forlop$statusbasis <- 0
