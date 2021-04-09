@@ -30,12 +30,17 @@ admtab_UI <- function(id){
     ),
     mainPanel(tabsetPanel(id= ns("admtabeller"),
                           tabPanel("Antall skjema", value = "id_ant_skjema",
-                                   h4(tags$b(tags$u('Denne tabellen gir en avdelingsvis oversikt over innregistreringer i Hisreg:'))),
+                                   h2('Innregistreringer i Hisreg etter skjematype', align='center'),
                                    br(),
                                    br(),
                                    DTOutput(ns("Tabell_adm1")), downloadButton(ns("lastNed_adm1"), "Last ned tabell")
                           ),
                           tabPanel("Registreringer over tid", value = "id_ant_tid",
+                                   h2('Avdelingsvis oversikt over forløp i Hisreg over tid', align='center'),
+                                   br(),
+                                   h4("Alle datofiltreringer gjøres på intervensjonsdato"),
+                                   br(),
+                                   br(),
                                    DTOutput(ns("Tabell_adm2")), downloadButton(ns("lastNed_adm2"), "Last ned tabell")
                           )
     )
@@ -131,7 +136,7 @@ admtab <- function(input, output, session, skjemaoversikt){
 
     content = function(file){
       TabellData <- antskjema()$ant_skjema
-      write.csv2(TabellData, file, row.names = F)
+      write.csv2(TabellData, file, row.names = F, fileEncoding = "Latin1")
     }
   )
 
@@ -236,18 +241,18 @@ output$Tabell_adm2 = renderDT(
             options = list(pageLength = 40)
   )
 )
-#
-# output$lastNed_adm2 <- downloadHandler(
-#   filename = function(){
-#     paste0('Regoversikt_tid', Sys.time(), '.csv')
-#   },
-#
-#   content = function(file){
-#     TabellData <- andre_adm_tab()$ant_skjema
-#     write.csv3(TabellData, file, row.names = F)
-#   }
-# )
-#
+
+output$lastNed_adm2 <- downloadHandler(
+  filename = function(){
+    paste0('Regoversikt_tid', Sys.time(), '.csv')
+  },
+
+  content = function(file){
+    TabellData <- andre_adm_tab()$ant_skjema
+    write.csv2(TabellData, file, row.names = F, fileEncoding = "Latin1")
+  }
+)
+
 
 # shiny::observe({
 #   if (rapbase::isRapContext()) {
