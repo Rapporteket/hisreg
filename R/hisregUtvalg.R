@@ -18,7 +18,7 @@ hisregUtvalg <- function(RegData, datoFra, datoTil, minald, maxald, erMann, forl
   Ninn <- dim(RegData)[1]
   indVarMed <- 1:Ninn
   indAld <- which(RegData$PasientAlder >= minald & RegData$PasientAlder <= maxald)
-  indDato <- which(RegData$HovedDato >= as.POSIXlt(datoFra) & RegData$HovedDato <= as.POSIXlt(datoTil))
+  indDato <- which(RegData$HovedDato >= datoFra & RegData$HovedDato <= datoTil)
   indKj <- if (erMann %in% 0:1) {which(RegData$ErMann == erMann)} else {indKj <- 1:Ninn}
   indForlop1 <- if (forlop1 %in% c(1:4)) {which(RegData$ForlopsType1Num == forlop1)} else {indForlop1 <- 1:Ninn}
   indForlop2 <- if (forlop2 %in% c(1:5)) {which(RegData$ForlopsType2Num == forlop2)} else {indForlop2 <- 1:Ninn}

@@ -94,7 +94,7 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
   #-----------Figur---------------------------------------
   tittel <- PlotParams$tittel; grtxt <- PlotParams$grtxt; grtxt2 <- PlotParams$grtxt2;
   subtxt <- PlotParams$subtxt; retn <- PlotParams$retn; cexgr <- PlotParams$cexgr;
-  FigTypUt <- figtype(outfile=outfile, fargepalett='BlaaOff')
+  FigTypUt <- rapFigurer::figtype(outfile=outfile, fargepalett='BlaaOff')
 
 
   #Hvis for få observasjoner..

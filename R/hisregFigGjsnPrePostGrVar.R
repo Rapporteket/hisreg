@@ -75,6 +75,7 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
   }
 
   if (dim(RegData)[1] < 5) {
+    tittel <- ''; KINed <- ''; KIOpp <- ''; PlotMatrise<-''; grtxt<-''; Ngr<-''
     ########## Plot feilmelding
     # farger <- FigTypUt$farger
     plot.new()

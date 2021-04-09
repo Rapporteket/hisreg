@@ -11,7 +11,7 @@
 
 hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2050-01-01', reshID,
                              minald=0, maxald=120, erMann=99, outfile='', forlop1 = 99, forlop2 = 99,
-                             preprosess=F, hentData=F, gr_var='SykehusNavn', fjern_sjeldne = 0)
+                             preprosess=F, hentData=F, gr_var='SykehusNavn', fjern_sjeldne = 0, skriftStr=1.2)
 
 {
 
@@ -117,15 +117,17 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
 #     }
     #########################################################################
     xmax <-  1.1*max(c(Midt, KIned, KIopp))
-    cexGrNavn <- 0.8
-    cexSoyletxt <- 0.75
+    cexGrNavn <- skriftStr
+    cexSoyletxt <- skriftStr
 
     #if (outfile=='') {}x11(width=3*595, height=3*800)}
-    FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=hisregUtvalg$fargepalett)	#res=96,
+    # FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=hisregUtvalg$fargepalett)	#res=96,
+    # FigTypUt <- rapFigurer::figtype(outfile, height=800, fargepalett=hisregUtvalg$fargepalett)	#res=96,
+    FigTypUt <- rapFigurer::figtype(outfile, fargepalett=hisregUtvalg$fargepalett)
     farger <- FigTypUt$farger
     #Tilpasse marger for å kunne skrive utvalgsteksten
     NutvTxt <- length(utvalgTxt)
-    vmarg <- max(0, strwidth(GrNavnSort, units='figure', cex=cexGrNavn)*0.7)
+    vmarg <- max(0, strwidth(GrNavnSort, units='figure', cex=cexGrNavn)*0.8)
     #NB: strwidth oppfører seg ulikt avh. av device...
     par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 
@@ -158,7 +160,7 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
     }
 
     title(tittel, font.main=1)
-    title('med 95% konfidensintervall', line=0.5, font.main=1, cex.main=0.95)
+    title('med 95% konfidensintervall', line=0.5, font.main=1, cex.main=1.1*cexGrNavn)
     mtext(at=pos+0.1, GrNavnSort, side=2, las=1, cex=cexGrNavn, adj=1, line=0.25)	#Sykehusnavn
     text(x=max(strwidth(soyletxt, units='user', cex=cexSoyletxt)), y=pos+0.1,
          soyletxt, las=1, cex=cexSoyletxt, adj=1, col=farger[4])
