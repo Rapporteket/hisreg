@@ -23,16 +23,16 @@ if (onServer) {
     query = "SELECT *
              FROM SkjemaOversikt_v1"
   )
-  preinterventiondoctor <- hisreg::hisregHentTabell("preinterventiondoctor")
-  registration <- hisreg::hisregHentTabell("registration")
-  intervention <- hisreg::hisregHentTabell("intervention")
-  mce <- hisreg::hisregHentTabell("mce")
-  mcelist <- hisreg::hisregHentTabell("mcelist")
-  patient <- hisreg::hisregHentTabell("patient")
-  patientcontrol <- hisreg::hisregHentTabell("patientcontrol")
-  preintervention <- hisreg::hisregHentTabell("preintervention")
-  centre <- hisreg::hisregHentTabell("centre")
-  doctorcontrol <- hisreg::hisregHentTabell("doctorcontrol")
+  # preinterventiondoctor <- hisreg::hisregHentTabell("preinterventiondoctor")
+  # registration <- hisreg::hisregHentTabell("registration")
+  # intervention <- hisreg::hisregHentTabell("intervention")
+  # mce <- hisreg::hisregHentTabell("mce")
+  # mcelist <- hisreg::hisregHentTabell("mcelist")
+  # patient <- hisreg::hisregHentTabell("patient")
+  # patientcontrol <- hisreg::hisregHentTabell("patientcontrol")
+  # preintervention <- hisreg::hisregHentTabell("preintervention")
+  # centre <- hisreg::hisregHentTabell("centre")
+  # doctorcontrol <- hisreg::hisregHentTabell("doctorcontrol")
   ForlopsOversikt_ny <- hisreg::hisregHentTabell("ForlopsOversikt")
   SkjemaOversikt_ny <- hisreg::hisregHentTabell("SkjemaOversikt")
 
@@ -143,24 +143,24 @@ SkjemaOversikt_ny$Skjemanavn <- as.factor(SkjemaOversikt_ny$Skjemanavn)
 SkjemaOversikt_ny <- merge(SkjemaOversikt_ny,
                            ForlopsOversikt_ny[, c("ForlopsID", "ForlopsType1", "ForlopsType1Num")],
                            by = "ForlopsID", all.x = T)
-preinterventiondoctor <- preinterventiondoctor[preinterventiondoctor$STATUS == 1, ]
-registration <- registration[registration$STATUS == 1, ]
-intervention <- intervention[intervention$STATUS == 1, ]
-mcelist <- mcelist[mcelist$REGISTRATION_STATUS == 1, ]
-patientcontrol <- patientcontrol[patientcontrol$STATUS == 1, ]
-preintervention <- preintervention[preintervention$STATUS == 1, ]
-doctorcontrol <- doctorcontrol[doctorcontrol$STATUS == 1, ]
-oppfolging_kir <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 1, ], doctorcontrol[doctorcontrol$CONTROLTYPE == 1, ],
-                        by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
-oppfolging_med <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 2, ], doctorcontrol[doctorcontrol$CONTROLTYPE == 2, ],
-                        by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
-oppfolging <- merge(oppfolging_kir, oppfolging_med, by = "MCEID", suffixes = c("_kir", "_med"), all = T)
-
-allevar <- merge(preintervention, preinterventiondoctor[!(names(preinterventiondoctor) %in% intersect(names(preintervention), names(preinterventiondoctor)[-1]))], by = "MCEID")
-allevar <- merge(allevar, intervention[!(names(intervention) %in% intersect(names(allevar), names(intervention)[-1]))], by = "MCEID")
-allevar <- merge(allevar, registration[!(names(registration) %in% intersect(names(allevar), names(registration)[-1]))], by = "MCEID")
-allevar <- merge(allevar, oppfolging, by = "MCEID", suffixes = c("", "_oppf"), all.x = T)
-allevar$Sykehusnavn <- centre$CENTRESHORTNAME[match(allevar$CENTREID, centre$ID)]
+# preinterventiondoctor <- preinterventiondoctor[preinterventiondoctor$STATUS == 1, ]
+# registration <- registration[registration$STATUS == 1, ]
+# intervention <- intervention[intervention$STATUS == 1, ]
+# mcelist <- mcelist[mcelist$REGISTRATION_STATUS == 1, ]
+# patientcontrol <- patientcontrol[patientcontrol$STATUS == 1, ]
+# preintervention <- preintervention[preintervention$STATUS == 1, ]
+# doctorcontrol <- doctorcontrol[doctorcontrol$STATUS == 1, ]
+# oppfolging_kir <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 1, ], doctorcontrol[doctorcontrol$CONTROLTYPE == 1, ],
+#                         by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
+# oppfolging_med <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 2, ], doctorcontrol[doctorcontrol$CONTROLTYPE == 2, ],
+#                         by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
+# oppfolging <- merge(oppfolging_kir, oppfolging_med, by = "MCEID", suffixes = c("_kir", "_med"), all = T)
+#
+# allevar <- merge(preintervention, preinterventiondoctor[!(names(preinterventiondoctor) %in% intersect(names(preintervention), names(preinterventiondoctor)[-1]))], by = "MCEID")
+# allevar <- merge(allevar, intervention[!(names(intervention) %in% intersect(names(allevar), names(intervention)[-1]))], by = "MCEID")
+# allevar <- merge(allevar, registration[!(names(registration) %in% intersect(names(allevar), names(registration)[-1]))], by = "MCEID")
+# allevar <- merge(allevar, oppfolging, by = "MCEID", suffixes = c("", "_oppf"), all.x = T)
+# allevar$Sykehusnavn <- centre$CENTRESHORTNAME[match(allevar$CENTREID, centre$ID)]
 
 ###################
 
