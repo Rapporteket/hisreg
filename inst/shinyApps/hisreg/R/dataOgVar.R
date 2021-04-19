@@ -25,7 +25,7 @@ if (onServer) {
   )
   # preinterventiondoctor <- hisreg::hisregHentTabell("preinterventiondoctor")
   # registration <- hisreg::hisregHentTabell("registration")
-  # intervention <- hisreg::hisregHentTabell("intervention")
+  intervention <- hisreg::hisregHentTabell("intervention")
   # mce <- hisreg::hisregHentTabell("mce")
   # mcelist <- hisreg::hisregHentTabell("mcelist")
   # patient <- hisreg::hisregHentTabell("patient")
