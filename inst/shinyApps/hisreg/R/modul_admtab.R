@@ -20,7 +20,8 @@ admtab_UI <- function(id){
                  selectInput(inputId = ns("regstatus"), label = "Skjemastatus", choices = c('Ferdigstilt'=1, 'I kladd'=0)),
                  shinyjs::hidden(selectInput(inputId = ns("regstatus_tid"), label = "Skjemastatus",
                              choices = c('Ferdige forløp'=1, 'Ferdig basisreg. oppfølging ikke ferdigstilt'=2,
-                                         'Basisreg. i kladd'=3))),
+                                         'Basisreg. i kladd'=3),
+                             selected = 2)),
                  selectInput(inputId = ns("forlopstype"), label = "Forløpstype",
                              choices = c('Kirurgisk'=1, 'Medisinsk'=2, 'Kirurgisk og medisinsk'=3,
                                          'Ingen intervensjon bestemt av lege'=4, 'Ingen intervensjon bestemt av pasient'=5),
@@ -169,8 +170,8 @@ andre_adm_tab <- function() {
           by = "ForlopsID", suffixes = c("", "_kontrpas6"), all = T) %>%
     merge(skjemaoversikt[skjemaoversikt$Skjemanavn == "Kontroll lege 6mnd",
                          c("SkjemaStatus", "ForlopsID")],
-          by = "ForlopsID", suffixes = c("", "_kontrdok6"), all = T) %>%
-    merge(intervention[, c("MCEID" , "TYPE_INTERVENTION")], by.x = "ForlopsID", by.y = "MCEID", all.x = T)
+          by = "ForlopsID", suffixes = c("", "_kontrdok6"), all = T) #%>%
+    #merge(intervention[, c("MCEID" , "TYPE_INTERVENTION")], by.x = "ForlopsID", by.y = "MCEID", all.x = T)
 
   if (!is.null(input$forlopstype)) {
     skjemaoversikt_forlop <- skjemaoversikt_forlop[skjemaoversikt_forlop$ForlopsType1Num %in% as.numeric(input$forlopstype), ]
