@@ -23,7 +23,8 @@ Imports:
     shinyjs,
     raplog (>= 0.0.0.9000),
     lubridate,
-    rapbase
+    rapbase,
+    tidyverse
 Suggests:
     knitr,
     rmarkdown

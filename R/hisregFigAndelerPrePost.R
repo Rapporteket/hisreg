@@ -42,7 +42,10 @@ hisregFigAndelerPrePost <- function(RegData=0, valgtVar, datoFra='2000-01-01', d
   # Definerer pre -og postvariabler, fjerner registreringer som mangler én eller begge
   PrePostVar <- switch(valgtVar,
                        DLQI_PrePost = c('pre_dlqisum', 'c_dlqisum'),
-                       Hurley_PrePost = c('pre_hurley_score', 'c_hurley_score'))
+                       Hurley_PrePost = c('pre_hurley_score', 'c_hurley_score'),
+                       DLQISUM_PrePost = c('DLQISUM', 'DLQISUM_POST'),
+                       HURLEY_SCORE_PrePost = c('HURLEY_SCORE', 'HURLEY_SCORE_POST'))
+
   #   PrePostVar <- switch(valgtVar,
   #                        DLQI_PrePost = c('DLQI alvorlighetsgrad', 'før og etter behandling'),
   #                        Hurley_PrePost = c('Hurley score', 'før og etter behandling'))

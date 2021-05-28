@@ -52,13 +52,20 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
                'pre_bmi' = 'BMI, preintervensjon',
                'pre_dlqisum' = 'DLQI-sum, preintervensjon',
                'pre_vasscore' = 'VAS-score, preintervensjon',
-               'pre_hsscoresum' = 'HS-score, preintervensjon'
+               'pre_hsscoresum' = 'HS-score, preintervensjon',
+               'BMI' = 'BMI, preintervensjon',
+               'DLQISUM' = 'DLQI-sum, preintervensjon',
+               'VASSCORE' = 'VAS-score, preintervensjon'
   )
   xaksetxt <- switch(valgtVar,
                      'pre_bmi' = 'BMI',
                      'pre_dlqisum' = 'DLQI-sum',
                      'pre_vasscore' = 'VAS-score',
-                     'pre_hsscoresum' = 'HS-score'
+                     'pre_hsscoresum' = 'HS-score',
+                     'BMI' = 'BMI',
+                     'DLQISUM' = 'DLQI-sum',
+                     'VASSCORE' = 'VAS-score'
+
   )
 
   tittel <- paste0('Gjennomsnittlig ', vt)

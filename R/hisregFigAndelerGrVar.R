@@ -41,33 +41,31 @@ hisregFigAndelerGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoT
   RegData <- hisregUtvalg$RegData
   utvalgTxt <- hisregUtvalg$utvalgTxt
 
-  if (valgtVar=='TypeMedBeh') {
-    RegData <- RegData[which(RegData$i_type %in% c(2,3)), ]
-    RegData$i_biological_treatment[RegData$i_biological_treatment == 1] <- 0
-    RegData$i_biological_treatment[which(RegData$i_biological_treatment != 0)] <- 1
-    RegData$i_antibiotic_therapy[RegData$i_antibiotic_therapy == 2] <- 0
-    RegData$i_antibiotic_therapy[RegData$i_antibiotic_therapy == 9] <- NA
-    RegData$i_antiinflammatory_treatment[RegData$i_antiinflammatory_treatment == 1] <- 0
-    RegData$i_antiinflammatory_treatment[which(RegData$i_antiinflammatory_treatment != 0)] <- 1
-    RegData$i_analgesics[RegData$i_analgesics == 1] <- 0
-    RegData$i_analgesics[which(RegData$i_analgesics != 0)] <- 1
-    RegData$i_localized_med_treatment[RegData$i_localized_med_treatment == 2] <- 0
-    RegData$i_localized_med_treatment[which(RegData$i_localized_med_treatment != 0)] <- 1
-    tittel <- 'Type medisinsk behandling'
-    cexgr <- 1
-    AntVar <- aggregate(RegData[, c("i_biological_treatment", "i_antibiotic_therapy", "i_antiinflammatory_treatment",
-                                    "i_analgesics", "i_localized_med_treatment")], by = list(RegData$SykehusNavn), sum, na.rm=T)
-    NVar <- aggregate(RegData[, c("i_biological_treatment", "i_antibiotic_therapy", "i_antiinflammatory_treatment",
-                                  "i_analgesics", "i_localized_med_treatment")], by = list(RegData$SykehusNavn), length)
-    AndelVar <- AntVar[,-1]/NVar[,-1]*100
-    row.names(AndelVar) <- AntVar[,1]
+  if (valgtVar %in% c('TidlBeh', 'MedisinskBeh', 'KomplKir', 'KirurgiLokalisering', 'Antibiotisk',
+                      'LokalisertMedisinsk', 'type_kirurgi', 'MedisinskBeh_v2', "BiologiskBeh", "KomplKir_v2",
+                      "type_kirurgi_gr", "MedisinskBeh_gr")) {
+    flerevar <- 1
+  } else {
+    flerevar <- 0
+  }
+
+  if (flerevar == 1) {
+    PlotParams <- hisregPrepVar(RegData=RegData, valgtVar=valgtVar)
+    RegData <- PlotParams$RegData
+    PlotParams$RegData <- NA
+
+    AndelVar <- PlotParams$AntVar[,-1]/PlotParams$NVar[,-1]*100
+    row.names(AndelVar) <- PlotParams$AntVar[,1]
     AndelVar <- t(AndelVar)
 
     grtxt <- colnames(AndelVar)
-    grtxt <- paste0(grtxt, ' (n=', NVar[,2], ')')
-    NGr <- NVar[,2]
-    stabeltxt <- c('Biologisk \nbehandling', 'Antibiotisk \nbehandling',
-                   'Antiinflammatorisk \nbehandling', 'Analgetika', 'Lokalisert medisinsk \nbehandling')
+    grtxt <- paste0(grtxt, ' (n=', PlotParams$NVar[,2], ')')
+    NGr <- PlotParams$NVar[,2]
+
+    stabeltxt <- PlotParams$grtxt
+    tittel <- PlotParams$tittel;
+    cexgr <- PlotParams$cexgr;
+
   } else {
     PlotParams <- hisregPrepVar(RegData=RegData, valgtVar=valgtVar)
     RegData <- PlotParams$RegData
