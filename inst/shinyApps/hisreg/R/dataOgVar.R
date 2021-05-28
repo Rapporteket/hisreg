@@ -39,19 +39,19 @@ if (onServer) {
 } else {
   ############## GAMMEL DATA ####################
 ForlopsData <- read.table("I:/hisreg/ForlopsOversikt_v12021-04-08 16-25-45.txt",
-                          header = TRUE, sep = ";", encoding = "UTF-8-BOM")
+                          header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
 
 RegData <- read.table("I:/hisreg/AlleVarNum2021-04-08 16-25-45.txt",
-                      header = TRUE, sep = ";", encoding = "UTF-8-BOM")
+                      header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
 
 SkjemaOversikt <- read.table("I:/hisreg/SkjemaOversikt_v12021-04-08 16-25-45.txt",
-                             header = TRUE, sep = ";", encoding = "UTF-8-BOM")
+                             header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
 
 RegDataLabel <- read.table("I:/hisreg/AlleVar2021-04-08 16-25-45.txt",
-                           header = TRUE, sep = ";", encoding = "UTF-8-BOM")
+                           header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
 
 Followups <- read.table("I:/hisreg/FollowupsNum2021-04-08 16-25-45.txt",
-                           header = TRUE, sep = ";", encoding = "UTF-8-BOM")
+                           header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
 
 
 RegData <- RegData[, c("m_mceid", "p_age_abscess",
@@ -114,18 +114,18 @@ RegData <- merge(RegData, Followups,
                  all.x = T)
 ############## NY DATA ####################
 # Les data:
-# preinterventiondoctor <- read.table('I:/hisreg/preinterventiondoctor2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-# registration <- read.table('I:/hisreg/registration2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-# intervention <- read.table('I:/hisreg/intervention2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-# mce <- read.table('I:/hisreg/mce2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-# mcelist <- read.table('I:/hisreg/mcelist2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-# patient <- read.table('I:/hisreg/patient2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-# patientcontrol <- read.table('I:/hisreg/patientcontrol2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-# preintervention <- read.table('I:/hisreg/preintervention2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-# centre <- read.table('I:/hisreg/centre2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-# doctorcontrol <- read.table('I:/hisreg/doctorcontrol2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-ForlopsOversikt_ny <- read.table('I:/hisreg/ForlopsOversikt2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-SkjemaOversikt_ny <- read.table('I:/hisreg/SkjemaOversikt2021-04-08 16-25-45.txt', header=TRUE, sep=";", encoding = 'UTF-8')
+# preinterventiondoctor <- read.table('I:/hisreg/preinterventiondoctor2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+# registration <- read.table('I:/hisreg/registration2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+# intervention <- read.table('I:/hisreg/intervention2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+# mce <- read.table('I:/hisreg/mce2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+# mcelist <- read.table('I:/hisreg/mcelist2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+# patient <- read.table('I:/hisreg/patient2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+# patientcontrol <- read.table('I:/hisreg/patientcontrol2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+# preintervention <- read.table('I:/hisreg/preintervention2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+# centre <- read.table('I:/hisreg/centre2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+# doctorcontrol <- read.table('I:/hisreg/doctorcontrol2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+ForlopsOversikt_ny <- read.table('I:/hisreg/ForlopsOversikt2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+SkjemaOversikt_ny <- read.table('I:/hisreg/SkjemaOversikt2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
 }
 
 RegData <- hisreg::hisregPreprosess(RegData)

@@ -36,42 +36,134 @@ knitr::opts_knit$set(root.dir = './')
 <<LastData, include=FALSE, cache=FALSE>>=
 rm(list=ls())
 library(hisreg)
+library(tidyverse)
+options(dplyr.summarise.inform = FALSE)
 
 # Les inn data
-RegData <- read.table('I:/hisreg/AlleVarNum2021-03-10 13-49-17.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-RegData <- RegData[, c('m_mceid', 'p_age_abscess', 'p_education', 'p_surgery', 'p_antibiotics', 'pre_smoking',
-                       'pre_work', 'pre_bmi', 'pre_dlqisum',
-                       'pre_hsscoresum', 'pre_vasscore', 'pre_hurley_score', 'i_type', 'i_surgery_type', 'i_biological_treatment',
-                       'i_antibiotic_therapy', 'i_antiinflammatory_treatment', 'i_analgesics', 'i_localized_med_treatment', 'i_aksille',
-                       'i_lyske', 'i_pubis', 'i_genitalt', 'i_peritalt', 'i_glutealt', 'i_mammae', 'i_other_location',
-                       "i_rifampicin_clindamycin", "i_tetracyclin_lymecyclin", "i_amoxicilin", "i_sys_antibiotic_other",
-                       "i_corticosteroid_injection", "i_acelacic_acid", "i_clindamycin", "i_resorcinol",
-                       "i_medical_other")]
-Followups <- read.table('I:/hisreg/FollowupsNum2021-03-10 13-49-17.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-Followups <- Followups[Followups$c_possible != 2, ] # Fjerner Oppfølging ikke mulig
-Followups <- Followups[!is.na(Followups$c_mceid), ] # Fjerner oppfølginger uten pasientid
-Followups <- Followups[order(Followups$c_do_month, decreasing = FALSE), ]
-Followups <- Followups[match(unique(Followups$c_mceid), Followups$c_mceid), ] # Velg første oppfølging
-Followups <- Followups[, c('c_mceid', "c_date", 'c_do_month', 'c_infection', 'c_delayed_wound_healing', 'c_stricturer',
-                           'c_nervedamage', 'c_bloodpoisoning', 'c_bleeding', 'c_other_complications', 'c_dlqisum',
-                           'c_hsscoresum', 'c_vasscore', 'c_hurley_score')]
+ForlopsData <- read.table("I:/hisreg/ForlopsOversikt_v12021-04-08 16-25-45.txt",
+                          header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
+RegData <- read.table("I:/hisreg/AlleVarNum2021-04-08 16-25-45.txt",
+                      header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
+Followups <- read.table("I:/hisreg/FollowupsNum2021-04-08 16-25-45.txt",
+                        header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
+hisreg_old<-list(RegData=RegData, ForlopsData=ForlopsData, Followups=Followups)
 
-ForlopsData <- read.table('I:/hisreg/ForlopsOversikt2021-03-10 13-49-17.txt', header=TRUE, sep=";", encoding = 'UTF-8')
-ForlopsData <- ForlopsData[, c('ForlopsID', 'AvdRESH', 'BasisRegStatus', 'HovedDato', 'PasientAlder',
-                               'OppflgRegStatus', 'ForlopsType1', 'ForlopsType1Num',
-                               'ForlopsType2', 'ForlopsType2Num', 'ErMann', 'SykehusNavn', 'PasientID')]
+RegData_gml <- hisregKonverterData(RegData=RegData, ForlopsData=ForlopsData, Followups=Followups)
+RegData_gml <- RegData_gml[RegData_gml$AvdRESH != 999002, ] # Fjerner Roskilde
 
-RegData <- merge(RegData, ForlopsData, by.x = 'm_mceid', by.y = 'ForlopsID')
-RegData <- merge(RegData, Followups, by.x = 'm_mceid', by.y = 'c_mceid', all.x=T)
-RegData <- hisregPreprosess(RegData)
-# RegDataAll <- RegData[which(RegData$AvdRESH == 999002), ]
-RegData <- RegData[RegData$AvdRESH != 999002, ]  # Roskilde skal ikke inngå blant de nasjonale tallene.
-RegData$SykehusNavn <- as.factor(as.character(RegData$SykehusNavn))
-# RegDataAll$SykehusNavn <- as.factor(as.character(RegDataAll$SykehusNavn))
-# RegData <- RegData[which(RegData$Aar == 2015), ]
+preinterventiondoctor <- read.table('I:/hisreg/preinterventiondoctor2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+registration <- read.table('I:/hisreg/registration2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+intervention <- read.table('I:/hisreg/intervention2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+mce <- read.table('I:/hisreg/mce2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+mcelist <- read.table('I:/hisreg/mcelist2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+patient <- read.table('I:/hisreg/patient2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+patientcontrol <- read.table('I:/hisreg/patientcontrol2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+preintervention <- read.table('I:/hisreg/preintervention2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+centre <- read.table('I:/hisreg/centre2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+doctorcontrol <- read.table('I:/hisreg/doctorcontrol2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+ForlopsOversikt_ny <- read.table('I:/hisreg/ForlopsOversikt2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+SkjemaOversikt_ny <- read.table('I:/hisreg/SkjemaOversikt2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+
+names(ForlopsOversikt_ny)[names(ForlopsOversikt_ny)=="erMann"] <- "ErMann"
+
+SkjemaOversikt_ny$HovedDato <- as.Date(SkjemaOversikt_ny$HovedDato)
+SkjemaOversikt_ny$Skjemanavn <- as.factor(SkjemaOversikt_ny$Skjemanavn)
+SkjemaOversikt_ny <- merge(SkjemaOversikt_ny,
+                           ForlopsOversikt_ny[, c("ForlopsID", "ForlopsType1", "ForlopsType1Num")],
+                           by = "ForlopsID", all.x = T)
+preinterventiondoctor <- preinterventiondoctor[preinterventiondoctor$STATUS == 1, ]
+registration <- registration[registration$STATUS == 1, ]
+intervention <- intervention[intervention$STATUS == 1, ]
+mcelist <- mcelist[mcelist$REGISTRATION_STATUS == 1, ]
+patientcontrol <- patientcontrol[patientcontrol$STATUS == 1, ]
+preintervention <- preintervention[preintervention$STATUS == 1, ]
+doctorcontrol <- doctorcontrol[doctorcontrol$STATUS == 1, ]
+oppfolging_kir <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 1, ], doctorcontrol[doctorcontrol$CONTROLTYPE == 1, ],
+                        by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
+oppfolging_med <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 2, ], doctorcontrol[doctorcontrol$CONTROLTYPE == 2, ],
+                        by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
+oppfolging <- merge(oppfolging_kir, oppfolging_med, by = "MCEID", suffixes = c("_kir", "_med"), all = T)
+
+allevar <- merge(preintervention, preinterventiondoctor[!(names(preinterventiondoctor) %in%
+                                                            intersect(names(preintervention), names(preinterventiondoctor)[-1]))], by = "MCEID")
+allevar <- merge(allevar, intervention[, !(names(intervention) %in% intersect(names(allevar), names(intervention)[-1]))], by = "MCEID")
+allevar <- merge(allevar, registration[, !(names(registration) %in% intersect(names(allevar), names(registration)[-1]))], by = "MCEID")
+allevar <- merge(allevar, oppfolging, by = "MCEID", suffixes = c("", "_oppf"), all.x = T)
+allevar$Sykehusnavn <- centre$CENTRESHORTNAME[match(allevar$CENTREID, centre$ID)]
+allevar <- merge(allevar, ForlopsOversikt_ny[, c("ForlopsID", "AvdRESH", "BasisRegStatus", "HovedDato",
+                                                 "PasientAlder", "OppflgRegStatus", "ForlopsType1", "ForlopsType1Num",
+                                                 "ForlopsType2", "ForlopsType2Num", "ErMann", "SykehusNavn", "PasientID",
+                                                 "UtdanningSSB", "KryptertFnr")],
+                 by.x = "MCEID", by.y = "ForlopsID")
+allevar$BMI <- allevar$WEIGHT/(allevar$HIGHT/100)^2
+allevar$MCEID <- allevar$MCEID + 10000
+allevar$PasientID <- allevar$PasientID + 10000
+allevar$PasientID[!is.na(RegData$PasientID[match(allevar$KryptertFnr, RegData$KryptertFnr)])] <-
+  RegData$PasientID[match(allevar$KryptertFnr, RegData$KryptertFnr)][!is.na(RegData$PasientID[match(allevar$KryptertFnr, RegData$KryptertFnr)])]
+
+RegData_ny <- allevar[, c("MCEID", "AGE_ABSCESS", "UtdanningSSB", "SURGERY", "MEDICATION_HISTORY_HS",
+                          "SMOKING", "WORK", "BMI", "DLQISUM", "VASSCORE", "HURLEY_SCORE", "TYPE_INTERVENTION",
+                          "SURGERY_TYPE_EXCISION_SUTUR", "SURGERY_TYPE_EXCISION_GRANUL", "SURGERY_TYPE_EXCISION_TRANSPLANT",
+                          "SURGERY_TYPE_LASER", "SURGERY_TYPE_DEROOFING", "SURGERY_TYPE_OTHER", "BIOLOGICAL_TREATMENT",
+                          "SYSTEMIC_ANTIBIOTIC_THERAPY", "ANTIINFLAMMATORY_TREATMENT", "ANALGESICS", "BASED_MEDICAL_TREATMENT",
+                          "AKSILLE", "LYSKE", "PUBIS", "GENITALT", "PERIALT", "GLUTEALT", "MAMMAE", "OTHER_SURGERY",
+                          "RIFAMPICIN_CLINDAMYCIN", "TETRACYCLIN_LYMECYCLIN", "AMOXICILIN", "SYSTEMIC_ANTIBIOTIC_THERAPY_OTHER",
+                          "INTRALESIONAL_CORTICOSTEROID_INJECTION", "ACELACIC_ACID", "CLINDAMYCIN", "RESORCINOL",
+                          "AvdRESH", "KryptertFnr", "BasisRegStatus", "HovedDato",
+                          "PasientAlder", "OppflgRegStatus", "ForlopsType1", "ForlopsType1Num",
+                          "ForlopsType2", "ForlopsType2Num", "ErMann", "SykehusNavn", "PasientID",
+                          "INFECTION_kir", "INFECTION_med", "DELAYED_WOUND_HEALING_kir", "DELAYED_WOUND_HEALING_med",
+                          "STRIKTURER_kir", "STRIKTURER_med", "NERVEDAMAGE_kir", "NERVEDAMAGE_med",
+                          "BLOODPOISEN_kir", "BLOODPOISEN_med", "BLEEDING_kir", "BLEEDING_med",
+                          "OTHER_COMPLICATIONS_ID_kir", "OTHER_COMPLICATIONS_ID_med", "DLQISUM_kir", "DLQISUM_med",
+                          "VASSCORE_kir", "VASSCORE_med", "HURLEY_SCORE_kir", "HURLEY_SCORE_med", "ADALIMUMAB_BIOSIMILAR",
+                          "INFLIXIMAB_BIOSIMILAR", "BIOLOGICAL_TREATMENT_OTHER", "ACITRETIN", "DAPSON", "CICLOSPORIN",
+                          "PREDNISOLON", "ISOTRETINOIN", "METFORMIN", "ANTIINFLAMMATORY_TREATMENT_OTHER")]
+
+shus <- data.frame(AvdRESH = unique(RegData_ny$AvdRESH),
+                   SykehusNavn = RegData_ny$SykehusNavn[match(unique(RegData_ny$AvdRESH), RegData_ny$AvdRESH)])
+shus$SykehusNavn <- trimws(shus$SykehusNavn)
+RegData <- dplyr::bind_rows(RegData_gml, RegData_ny)
+RegData$SykehusNavn <- shus$SykehusNavn[match(RegData$AvdRESH, shus$AvdRESH)]
+
+RegData$DLQISUM_POST <- NA;
+RegData$DLQISUM_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+  RegData$DLQISUM_kir[RegData$ForlopsType1Num %in% c(1,3)]
+RegData$DLQISUM_POST[which(RegData$ForlopsType1Num == 2)] <-
+  RegData$DLQISUM_med[which(RegData$ForlopsType1Num == 2)]
+
+RegData$HURLEY_SCORE_POST <- NA;
+RegData$HURLEY_SCORE_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+  RegData$HURLEY_SCORE_kir[RegData$ForlopsType1Num %in% c(1,3)]
+RegData$HURLEY_SCORE_POST[which(RegData$ForlopsType1Num == 2)] <-
+  RegData$HURLEY_SCORE_med[which(RegData$ForlopsType1Num == 2)]
+
+RegData$VASSCORE_POST <- NA;
+RegData$VASSCORE_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+  RegData$VASSCORE_kir[RegData$ForlopsType1Num %in% c(1,3)]
+RegData$VASSCORE_POST[which(RegData$ForlopsType1Num == 2)] <-
+  RegData$VASSCORE_med[which(RegData$ForlopsType1Num == 2)]
+
+rm(list = c("allevar", "centre", "doctorcontrol", "Followups", "ForlopsData", "ForlopsOversikt_ny", "intervention",
+            "mce", "mcelist", "oppfolging", "oppfolging_kir", "oppfolging_med", "patient", "patientcontrol", "preintervention",
+            "preinterventiondoctor", "registration", "SkjemaOversikt_ny", "RegData_gml", "RegData_ny", "shus"))
+
+RegData <- RegData[RegData$BasisRegStatus==1, ]
+RegData$HovedDato <- as.Date(RegData$HovedDato, format="%Y-%m-%d") # Ordne datoformat
+RegData <- RegData[!is.na(RegData$HovedDato), ]
+RegData$Aar <- as.numeric(format(RegData$HovedDato, "%Y"))
+RegData$SykehusNavn <- as.factor(RegData$SykehusNavn)
+
+RegData$Intervensjon <- NA
+RegData$Intervensjon[RegData$ForlopsType1=="Kirurgisk intervensjon"] <- 1
+RegData$Intervensjon[RegData$ForlopsType1=="Medisinsk intervensjon"] <- 2
+RegData$Intervensjon[RegData$ForlopsType1=="Kirurgisk og medisinsk intervensjon"] <- 3
+RegData$Intervensjon <- factor(RegData$Intervensjon, levels = 1:3, labels = c('Kirugisk', 'Medisinsk', 'Kir. og. med.'))
+
 rapp_aar <- 2020
 
-datoFra='2012-01-01'
+# datoFra='2012-01-01'
+datoFra=paste0(rapp_aar-4, '-01-01')
 datoTil=paste0(rapp_aar, '-12-31')
 reshID <- 601031
 minald=0
@@ -94,29 +186,33 @@ tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
 \clearpage
 
 <<'Tabell:RegistrerendeAvd', results='asis', echo=FALSE, eval=T, warning=FALSE>>=
-
+# ant_aar <- 5
 tmp <- RegData[order(RegData$HovedDato, decreasing = FALSE), ]
-tmp <- tmp[tmp$HovedDato <= datoTil, ]
+tmp <- tmp[tmp$HovedDato <= datoTil & tmp$HovedDato >= datoFra, ]
 Tabell1 <- addmargins(table(as.character(tmp$SykehusNavn), tmp$Aar, useNA = 'no'))
 
 write.csv2(Tabell1, 'C:/GIT/hisreg/doc/tabell2.csv')
 
 print(xtable::xtable(Tabell1, digits=0, align=c('l', rep('r', ncol(Tabell1))),
-                     caption='Antall forløp startet i angitte år, norske sykehus'),
+                     caption='Antall forløp startet siste 5 år'),
       include.rownames=TRUE,
       include.colnames=TRUE,
       add.to.row = list(pos=list(nrow(Tabell1)-1),
                         command=c('\\midrule\n')))
 
-tmp <- tmp[match(unique(tmp$PasientID), tmp$PasientID), ]
+# tmp <- tmp[match(unique(tmp$PasientID), tmp$PasientID), ]
 
-Tabell2 <- addmargins(table(as.character(tmp$SykehusNavn), tmp$Aar, useNA = 'no'))
+# Tabell2 <- addmargins(table(as.character(tmp$SykehusNavn), tmp$Aar, useNA = 'no'))
+Tabell2 <- tmp %>% group_by(SykehusNavn, Aar) %>% summarise(N = length(unique(PasientID))) %>%
+  spread(key = "Aar", value = "N", fill = 0) %>% mutate(SykehusNavn = as.character(SykehusNavn))
+total <- bind_rows(c("SykehusNavn"="Sum", colSums(Tabell2[,-1]))) %>% mutate_at(vars(2:6), as.numeric)
+Tabell2 <- bind_rows(Tabell2, total)
 
-write.csv2(Tabell2, 'C:/GIT/hisreg/doc/tabell3.csv')
+write.csv2(Tabell2, 'C:/GIT/hisreg/doc/tabell3.csv', row.names = F)
 
-print(xtable::xtable(Tabell2, digits=0, align=c('l', rep('r', ncol(Tabell2))),
-                     caption='Antall unike pasienter. Pasienter telles kun med inklusjonsåret. Norske sykehus'),
-      include.rownames=TRUE,
+print(xtable::xtable(Tabell2, digits=0, align=c('l', 'l', rep('r', ncol(Tabell2)-1)),
+                     caption='Antall unike pasienter per år'),
+      include.rownames=FALSE,
       include.colnames=TRUE,
       add.to.row = list(pos=list(nrow(Tabell2)-1),
                         command=c('\\midrule\n')))
@@ -124,7 +220,7 @@ print(xtable::xtable(Tabell2, digits=0, align=c('l', rep('r', ncol(Tabell2))),
 
 
 <<'Sykehusfig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
-datoFra <- paste0(rapp_aar, '-01-01')  #'2017-01-01'
+datoFra <- paste0(rapp_aar, '-01-01')
 outfile <- 'RegAvd.pdf'
 hisregFigAndeler(RegData=RegData, valgtVar='SykehusNavn', datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
@@ -166,8 +262,10 @@ if (annet_format_ut) {
 
 <<'Andelsfig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
 
-varname2 <- c('PasientAlder', 'pre_smoking', 'pre_work','i_type', 'i_surgery_type',
-              'MedisinskBeh', 'i_biological_treatment')
+# varname2 <- c('PasientAlder', 'pre_smoking', 'pre_work','i_type', 'i_surgery_type',
+#               'MedisinskBeh', 'i_biological_treatment')
+varname2 <- c('PasientAlder', 'SMOKING', 'WORK','TYPE_INTERVENTION', 'type_kirurgi',
+              'MedisinskBeh_v2', 'BiologiskBeh')
 
 for (p in varname2) {
   outfile <- paste0(p, '.pdf')
@@ -185,24 +283,6 @@ for (p in varname2) {
 @
 
 \clearpage
-
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname1[1], '.pdf')}}
-% \caption{Alder ved første abscess}
-% \end{figure}
-
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname1[2], '.pdf')}}
-% \caption{Utdanningsnivå}
-% \end{figure}
-%
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname1[3], '.pdf')}}
-% \caption{Tidligere behandling}
-% \end{figure}
 
 \begin{figure}[ht]
 \centering
@@ -241,10 +321,17 @@ for (p in varname2) {
 \caption{Type medisinsk behandling}
 \end{figure}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname2[7], '.pdf')}}
+\caption{Type biologisk behandling}
+\end{figure}
+
 \clearpage
 
 <<'GjsnPrefig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
-varname <- c('pre_bmi', 'pre_dlqisum', 'pre_vasscore', 'pre_hsscoresum')
+# varname <- c('pre_bmi', 'pre_dlqisum', 'pre_vasscore', 'pre_hsscoresum')
+varname <- c('BMI', "DLQISUM", "VASSCORE")
 gr_var <- 'SykehusNavn'
 
 for (p in varname) {
@@ -260,18 +347,6 @@ for (p in varname) {
   }
 }
 
-for (p in varname) {
-  outfile <- paste0(p, '_preShusFraStart.pdf')
-  hisregFigGjsnGrVar(RegData=RegData, valgtVar=p, datoFra='2011-01-01', datoTil=datoTil, reshID=reshID,
-                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                     preprosess=preprosess, hentData=hentData, gr_var = gr_var, fjern_sjeldne = 1)
-  if (annet_format_ut) {
-    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigGjsnGrVar(RegData=RegData, valgtVar=p, datoFra='2011-01-01', datoTil=datoTil, reshID=reshID,
-                       minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                       preprosess=preprosess, hentData=hentData, gr_var = gr_var, fjern_sjeldne = 1)
-  }
-}
 
 gr_var <- 'Intervensjon'
 
@@ -288,18 +363,6 @@ for (p in varname) {
   }
 }
 
-for (p in varname) {
-  outfile <- paste0(p, '_preBehandlFraStart.pdf')
-  hisregFigGjsnGrVar(RegData=RegData, valgtVar=p, datoFra='2011-01-01', datoTil=datoTil, reshID=reshID,
-                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                     preprosess=preprosess, hentData=hentData, gr_var = gr_var, fjern_sjeldne = 0)
-  if (annet_format_ut) {
-    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigGjsnGrVar(RegData=RegData, valgtVar=p, datoFra='2011-01-01', datoTil=datoTil, reshID=reshID,
-                       minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                       preprosess=preprosess, hentData=hentData, gr_var = gr_var, fjern_sjeldne = 0)
-  }
-}
 
 
 @
@@ -323,36 +386,12 @@ for (p in varname) {
 \caption{Gjennomsnittlig VAS-score ved innkomst}
 \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[4], '_preShus.pdf')}}
-\caption{Gjennomsnittlig HS-score (Sartorius) ved innkomst}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[1], '_preShusFraStart.pdf')}}
-\caption{Gjennomsnittlig BMI ved innkomst}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[2], '_preShusFraStart.pdf')}}
-\caption{Gjennomsnittlig DLQI-sum ved innkomst}
-\end{figure}
-
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[3], '_preShusFraStart.pdf')}}
-\caption{Gjennomsnittlig VAS-score ved innkomst}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[4], '_preShusFraStart.pdf')}}
-\caption{Gjennomsnittlig HS-score (Sartorius) ved innkomst}
-\end{figure}
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[4], '_preShus.pdf')}}
+% \caption{Gjennomsnittlig HS-score (Sartorius) ved innkomst}
+% \end{figure}
+%
 
 \begin{figure}[ht]
 \centering
@@ -373,41 +412,17 @@ for (p in varname) {
 \caption{Gjennomsnittlig VAS-score ved innkomst}
 \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[4], '_preBehandl.pdf')}}
-\caption{Gjennomsnittlig HS-score (Sartorius) ved innkomst}
-\end{figure}
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[4], '_preBehandl.pdf')}}
+% \caption{Gjennomsnittlig HS-score (Sartorius) ved innkomst}
+% \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[1], '_preBehandlFraStart.pdf')}}
-\caption{Gjennomsnittlig BMI ved innkomst}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[2], '_preBehandlFraStart.pdf')}}
-\caption{Gjennomsnittlig DLQI-sum ved innkomst}
-\end{figure}
-
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[3], '_preBehandlFraStart.pdf')}}
-\caption{Gjennomsnittlig VAS-score ved innkomst}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[4], '_preBehandlFraStart.pdf')}}
-\caption{Gjennomsnittlig HS-score (Sartorius) ved innkomst}
-\end{figure}
 
 \clearpage
 
 <<'PrePostfig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
-varnameAndelPrePost <- c('DLQI_PrePost', 'Hurley_PrePost')
+varnameAndelPrePost <- c('DLQISUM_PrePost', 'HURLEY_SCORE_PrePost')
 
 for (p in varnameAndelPrePost) {
   outfile <- paste0(p, '.pdf')
@@ -430,8 +445,8 @@ for (p in varnameAndelPrePost) {
   if (annet_format_ut) {
     outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
     hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                          minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
-                          enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
+                            enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   }
 }
 
@@ -443,12 +458,13 @@ for (p in varnameAndelPrePost) {
   if (annet_format_ut) {
     outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
     hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                          minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
-                          enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
+                            enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   }
 }
 
-varnameGjSnittPrePost <- c('DLQI_PrePost', 'Vas_PrePost', 'HS_PrePost')
+# varnameGjSnittPrePost <- c('DLQI_PrePost', 'Vas_PrePost', 'HS_PrePost')
+varnameGjSnittPrePost <- c('DLQI_PrePost_ny', 'Vas_PrePost_ny')
 gr_var <- 'SykehusNavn'
 
 for (p in varnameGjSnittPrePost) {
@@ -459,36 +475,36 @@ for (p in varnameGjSnittPrePost) {
   if (annet_format_ut) {
     outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
     hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                            preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+                              minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                              preprosess=preprosess, hentData=hentData, gr_var = gr_var)
   }
 }
 
-for (p in varnameGjSnittPrePost) {
-  outfile <- paste0(p, '_gjsnSykehus_Kirurgisk.pdf')
-  hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
-                            preprosess=preprosess, hentData=hentData, gr_var = gr_var)
-  if (annet_format_ut) {
-    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
-                            preprosess=preprosess, hentData=hentData, gr_var = gr_var)
-  }
-}
-
-for (p in varnameGjSnittPrePost) {
-  outfile <- paste0(p, '_gjsnSykehus_Medisinsk.pdf')
-  hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
-                            preprosess=preprosess, hentData=hentData, gr_var = gr_var)
-  if (annet_format_ut) {
-    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
-                            preprosess=preprosess, hentData=hentData, gr_var = gr_var)
-  }
-}
+# for (p in varnameGjSnittPrePost) {
+#   outfile <- paste0(p, '_gjsnSykehus_Kirurgisk.pdf')
+#   hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+#                             minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
+#                             preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+#   if (annet_format_ut) {
+#     outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+#     hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+#                               minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
+#                               preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+#   }
+# }
+#
+# for (p in varnameGjSnittPrePost) {
+#   outfile <- paste0(p, '_gjsnSykehus_Medisinsk.pdf')
+#   hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+#                             minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
+#                             preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+#   if (annet_format_ut) {
+#     outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+#     hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+#                               minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
+#                               preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+#   }
+# }
 
 
 gr_var <- 'Intervensjon'
@@ -500,8 +516,8 @@ for (p in varnameGjSnittPrePost) {
   if (annet_format_ut) {
     outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
     hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                            preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+                              minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                              preprosess=preprosess, hentData=hentData, gr_var = gr_var)
   }
 }
 @
@@ -556,51 +572,38 @@ for (p in varnameGjSnittPrePost) {
 \caption{Gj. sn. VAS før og etter fordelt på sykehus}
 \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[3], '_gjsnSykehus.pdf')}}
-\caption{Gj. sn. HS-score (Sartorius) før og etter fordelt på sykehus}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[1], '_gjsnSykehus_Kirurgisk.pdf')}}
-\caption{Gj. sn. DLQI før og etter fordelt på sykehus}
-\end{figure}
-
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[1], '_gjsnSykehus_Kirurgisk.pdf')}}
+% \caption{Gj. sn. DLQI før og etter fordelt på sykehus}
+% \end{figure}
+%
 \clearpage
+%
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[2], '_gjsnSykehus_Kirurgisk.pdf')}}
+% \caption{Gj. sn. VAS før og etter fordelt på sykehus}
+% \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[2], '_gjsnSykehus_Kirurgisk.pdf')}}
-\caption{Gj. sn. VAS før og etter fordelt på sykehus}
-\end{figure}
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[3], '_gjsnSykehus_Kirurgisk.pdf')}}
+% \caption{Gj. sn. HS-score (Sartorius) før og etter fordelt på sykehus}
+% \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[3], '_gjsnSykehus_Kirurgisk.pdf')}}
-\caption{Gj. sn. HS-score (Sartorius) før og etter fordelt på sykehus}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[1], '_gjsnSykehus_Medisinsk.pdf')}}
-\caption{Gj. sn. DLQI før og etter fordelt på sykehus}
-\end{figure}
-
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[2], '_gjsnSykehus_Medisinsk.pdf')}}
-\caption{Gj. sn. VAS før og etter fordelt på sykehus}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[3], '_gjsnSykehus_Medisinsk.pdf')}}
-\caption{Gj. sn. HS-score (Sartorius) før og etter fordelt på sykehus}
-\end{figure}
-
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[1], '_gjsnSykehus_Medisinsk.pdf')}}
+% \caption{Gj. sn. DLQI før og etter fordelt på sykehus}
+% \end{figure}
+%
+%
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[2], '_gjsnSykehus_Medisinsk.pdf')}}
+% \caption{Gj. sn. VAS før og etter fordelt på sykehus}
+% \end{figure}
 
 \begin{figure}[ht]
 \centering
@@ -615,15 +618,10 @@ for (p in varnameGjSnittPrePost) {
 \caption{Gj. sn. VAS før og etter fordelt på intervensjonstype}
 \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[3], '_gjsnIntervensjon')}}
-\caption{Gj. sn. HS-score (Sartorius) før og etter fordelt på intervensjonstype}
-\end{figure}
-
 
 <<'PostOp', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
-varname <- c('KirurgiLokalisering', 'KomplKir')
+# varname <- c('KirurgiLokalisering', 'KomplKir')
+varname <- c('KomplKir_v2')
 
 for (p in varname) {
   outfile <- paste0(p, '_post.pdf')
@@ -633,134 +631,77 @@ for (p in varname) {
   if (annet_format_ut) {
     outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
     hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   }
 }
 @
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[1], '_post.pdf')}}
+% \caption{Lokalisering av kirurgisk behandling}
+% \end{figure}
+
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[1], '_post.pdf')}}
-\caption{Lokalisering av kirurgisk behandling}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[2], '_post.pdf')}}
 \caption{Komplikasjoner ved kirurgisk behandling}
 \end{figure}
 
-
-
-<<'NyeFig_pkt2', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
-varname <- 'MedisinskBeh'
-
-shusnavn <- as.character(unique(RegData$SykehusNavn))
-reshID <- RegData$AvdRESH[match(shusnavn, RegData$SykehusNavn)]
-
-for (p in reshID) {
-  outfile <- paste0('MedisinskBeh', p, '.pdf')
-  hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=p,
-                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                   enhetsUtvalg=2, preprosess=preprosess, hentData=hentData)
-  if (annet_format_ut) {
-    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=p,
-                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                   enhetsUtvalg=2, preprosess=preprosess, hentData=hentData)
-  }
-}
-@
-
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0('MedisinskBeh', reshID[1], '.pdf')}}
-\caption{Type medisinsk behandling}
-\end{figure}
-
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0('MedisinskBeh', reshID[2], '.pdf')}}
-\caption{Type medisinsk behandling}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0('MedisinskBeh', reshID[3], '.pdf')}}
-\caption{Type medisinsk behandling}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0('MedisinskBeh', reshID[4], '.pdf')}}
-\caption{Type medisinsk behandling}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0('MedisinskBeh', reshID[5], '.pdf')}}
-\caption{Type medisinsk behandling}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0('MedisinskBeh', reshID[6], '.pdf')}}
-\caption{Type medisinsk behandling}
-\end{figure}
 
 \clearpage
 
 
 <<'NyeFig_pkt3', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
-varname <- 'i_biological_treatment'
+# varname <- 'i_biological_treatment'
+varname <- "BiologiskBeh"
 outfile <- 'i_biological_treatment.pdf'
 hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                  enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
 if (annet_format_ut) {
-    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
-  }
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+}
 
-varname <- 'Antibiotisk'
+varname <- 'Antibiotisk_v2'
 outfile <- 'Antibiotisk.pdf'
 hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                  enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
 if (annet_format_ut) {
-    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
-  }
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+}
 
-varname <- 'i_antiinflammatory_treatment'
+# varname <- 'i_antiinflammatory_treatment'
+varname <- "AntiinflammatoriskBeh"
 outfile <- 'i_antiinflammatory_treatment.pdf'
 hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                  enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
 if (annet_format_ut) {
-    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
-  }
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+}
 
-varname <- 'LokalisertMedisinsk'
+varname <- 'LokalisertMedisinsk_v2'
 outfile <- 'LokalisertMedisinsk.pdf'
 hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                  enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
 if (annet_format_ut) {
-    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
-                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
-                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
-  }
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+}
 @
 
 
@@ -789,7 +730,8 @@ if (annet_format_ut) {
 \end{figure}
 
 <<'NyeFig_avdvis', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
-varname <- 'i_type'
+# varname <- 'i_type'
+varname <- "TYPE_INTERVENTION"
 outfile <- 'i_type_avd.pdf'
 hisregFigAndelerGrVar(RegData=RegData, valgtVar=varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                       minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1,
@@ -801,7 +743,8 @@ if (annet_format_ut) {
                         forlop2 = forlop2, enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
 }
 
-varname <- 'i_surgery_type'
+# varname <- 'i_surgery_type'
+varname <- "type_kirurgi_gr"
 outfile <- 'i_surgery_type_avd.pdf'
 hisregFigAndelerGrVar(RegData=RegData, valgtVar=varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                       minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1,
@@ -813,7 +756,8 @@ if (annet_format_ut) {
                         forlop2 = forlop2, enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
 }
 
-varname <- 'TypeMedBeh'
+# varname <- 'TypeMedBeh'
+varname <- "MedisinskBeh_gr"
 outfile <- 'TypeMedBeh_avd.pdf'
 hisregFigAndelerGrVar(RegData=RegData, valgtVar=varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
                       minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1,

@@ -111,7 +111,7 @@ admtab <- function(input, output, session, skjemaoversikt){
       table() %>%
       addmargins(1) %>%
       as.data.frame.matrix() %>%
-      as_tibble(rownames = "Sykehusnavn")
+      tidyr::as_tibble(rownames = "Sykehusnavn")
     ant_skjema <- ant_skjema[, c("Sykehusnavn", "Registrering", "Preinterv pasient", "Preinterv lege", "Intervensjon",
                                  "Kontroll pas 3mnd", "Kontroll lege 3mnd", "Kontroll pas 6mnd", "Kontroll lege 6mnd")]
 
@@ -208,7 +208,7 @@ andre_adm_tab <- function() {
                           '2' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==1 & aux$statusoppf==0) , c('Sykehusnavn', 'mnd')]))),
                           # '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==1 & is.na(aux$statusoppf)) , c('Sykehusnavn', 'mnd')]))),
                           '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==0) , c('Sykehusnavn', 'mnd')])))
-    ) %>% as_tibble(rownames = 'Sykehusnavn')
+    ) %>% tidyr::as_tibble(rownames = 'Sykehusnavn')
   }
 
   if (input$adm_tidsenhet == 2) {
@@ -225,7 +225,7 @@ andre_adm_tab <- function() {
                           '2' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==1 & aux$SkjemaStatus_oppf==0) , c('Sykehusnavn', 'mnd')]))),
                           # '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==1 & is.na(aux$SkjemaStatus_oppf)) , c('Sykehusnavn', 'mnd')]))),
                           '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==0) , c('Sykehusnavn', 'mnd')])))
-    ) %>% as_tibble(rownames = 'Sykehusnavn')
+    ) %>% tidyr::as_tibble(rownames = 'Sykehusnavn')
   }
 
   sketch <- htmltools::withTags(table(

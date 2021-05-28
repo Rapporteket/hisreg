@@ -4,7 +4,7 @@
 \alias{hisregHentTabell}
 \title{Fetch chosen table for Hisreg}
 \usage{
-hisregHentTabell(tabnavn, registryName = "hisreg2")
+hisregHentTabell(tabnavn, registryName = "hisreg")
 }
 \arguments{
 \item{tabnavn}{Name of requested table}
