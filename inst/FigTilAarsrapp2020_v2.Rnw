@@ -118,7 +118,8 @@ RegData_ny <- allevar[, c("MCEID", "AGE_ABSCESS", "UtdanningSSB", "SURGERY", "ME
                           "OTHER_COMPLICATIONS_ID_kir", "OTHER_COMPLICATIONS_ID_med", "DLQISUM_kir", "DLQISUM_med",
                           "VASSCORE_kir", "VASSCORE_med", "HURLEY_SCORE_kir", "HURLEY_SCORE_med", "ADALIMUMAB_BIOSIMILAR",
                           "INFLIXIMAB_BIOSIMILAR", "BIOLOGICAL_TREATMENT_OTHER", "ACITRETIN", "DAPSON", "CICLOSPORIN",
-                          "PREDNISOLON", "ISOTRETINOIN", "METFORMIN", "ANTIINFLAMMATORY_TREATMENT_OTHER")]
+                          "PREDNISOLON", "ISOTRETINOIN", "METFORMIN", "ANTIINFLAMMATORY_TREATMENT_OTHER", "IHS4SCORE",
+                          "IHS4SCORE_kir", "IHS4SCORE_med")]
 
 shus <- data.frame(AvdRESH = unique(RegData_ny$AvdRESH),
                    SykehusNavn = RegData_ny$SykehusNavn[match(unique(RegData_ny$AvdRESH), RegData_ny$AvdRESH)])
@@ -143,6 +144,12 @@ RegData$VASSCORE_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
   RegData$VASSCORE_kir[RegData$ForlopsType1Num %in% c(1,3)]
 RegData$VASSCORE_POST[which(RegData$ForlopsType1Num == 2)] <-
   RegData$VASSCORE_med[which(RegData$ForlopsType1Num == 2)]
+
+RegData$IHS4SCORE_POST <- NA;
+RegData$IHS4SCORE_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+  RegData$IHS4SCORE_kir[RegData$ForlopsType1Num %in% c(1,3)]
+RegData$IHS4SCORE_POST[which(RegData$ForlopsType1Num == 2)] <-
+  RegData$IHS4SCORE_med[which(RegData$ForlopsType1Num == 2)]
 
 rm(list = c("allevar", "centre", "doctorcontrol", "Followups", "ForlopsData", "ForlopsOversikt_ny", "intervention",
             "mce", "mcelist", "oppfolging", "oppfolging_kir", "oppfolging_med", "patient", "patientcontrol", "preintervention",
@@ -176,7 +183,7 @@ preprosess=F
 hentData=F
 # gr_var <- 'Intervensjon'
 annet_format_ut <- T
-utformat <- 'png'
+utformat <- 'wmf'
 
 figstr <- 1
 tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
@@ -331,7 +338,7 @@ for (p in varname2) {
 
 <<'GjsnPrefig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
 # varname <- c('pre_bmi', 'pre_dlqisum', 'pre_vasscore', 'pre_hsscoresum')
-varname <- c('BMI', "DLQISUM", "VASSCORE")
+varname <- c('BMI', "DLQISUM", "VASSCORE", "IHS4SCORE")
 gr_var <- 'SykehusNavn'
 
 for (p in varname) {
@@ -370,53 +377,53 @@ for (p in varname) {
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[1], '_preShus.pdf')}}
-\caption{Gjennomsnittlig BMI ved innkomst}
+\caption{Gjennomsnittlig BMI ved preintervensjon}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[2], '_preShus.pdf')}}
-\caption{Gjennomsnittlig DLQI-sum ved innkomst}
+\caption{Gjennomsnittlig DLQI-sum ved preintervensjon}
 \end{figure}
 
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[3], '_preShus.pdf')}}
-\caption{Gjennomsnittlig VAS-score ved innkomst}
+\caption{Gjennomsnittlig VAS-score ved preintervensjon}
 \end{figure}
 
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[4], '_preShus.pdf')}}
-% \caption{Gjennomsnittlig HS-score (Sartorius) ved innkomst}
-% \end{figure}
-%
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[4], '_preShus.pdf')}}
+\caption{Gjennomsnittlig IHS4-score ved preintervensjon}
+\end{figure}
+
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[1], '_preBehandl.pdf')}}
-\caption{Gjennomsnittlig BMI ved innkomst}
+\caption{Gjennomsnittlig BMI ved preintervensjon}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[2], '_preBehandl.pdf')}}
-\caption{Gjennomsnittlig DLQI-sum ved innkomst}
+\caption{Gjennomsnittlig DLQI-sum ved preintervensjon}
 \end{figure}
 
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[3], '_preBehandl.pdf')}}
-\caption{Gjennomsnittlig VAS-score ved innkomst}
+\caption{Gjennomsnittlig VAS-score ved preintervensjon}
 \end{figure}
 
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[4], '_preBehandl.pdf')}}
-% \caption{Gjennomsnittlig HS-score (Sartorius) ved innkomst}
-% \end{figure}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varname[4], '_preBehandl.pdf')}}
+\caption{Gjennomsnittlig IHS4-score ved preintervensjon}
+\end{figure}
 
 
 \clearpage
@@ -464,7 +471,7 @@ for (p in varnameAndelPrePost) {
 }
 
 # varnameGjSnittPrePost <- c('DLQI_PrePost', 'Vas_PrePost', 'HS_PrePost')
-varnameGjSnittPrePost <- c('DLQI_PrePost_ny', 'Vas_PrePost_ny')
+varnameGjSnittPrePost <- c('DLQI_PrePost_ny', 'Vas_PrePost_ny', 'IHS4SCORE')
 gr_var <- 'SykehusNavn'
 
 for (p in varnameGjSnittPrePost) {
@@ -570,6 +577,12 @@ for (p in varnameGjSnittPrePost) {
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[2], '_gjsnSykehus.pdf')}}
 \caption{Gj. sn. VAS før og etter fordelt på sykehus}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(varnameGjSnittPrePost[3], '_gjsnSykehus.pdf')}}
+\caption{Gj. sn. IHS4-score før og etter fordelt på sykehus}
 \end{figure}
 
 % \begin{figure}[ht]

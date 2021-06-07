@@ -55,7 +55,8 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
                'pre_hsscoresum' = 'HS-score, preintervensjon',
                'BMI' = 'BMI, preintervensjon',
                'DLQISUM' = 'DLQI-sum, preintervensjon',
-               'VASSCORE' = 'VAS-score, preintervensjon'
+               'VASSCORE' = 'VAS-score, preintervensjon',
+               'IHS4SCORE' = 'IHS4-score, preintervensjon'
   )
   xaksetxt <- switch(valgtVar,
                      'pre_bmi' = 'BMI',
@@ -64,7 +65,8 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
                      'pre_hsscoresum' = 'HS-score',
                      'BMI' = 'BMI',
                      'DLQISUM' = 'DLQI-sum',
-                     'VASSCORE' = 'VAS-score'
+                     'VASSCORE' = 'VAS-score',
+                     'IHS4SCORE' = 'IHS4-score'
 
   )
 

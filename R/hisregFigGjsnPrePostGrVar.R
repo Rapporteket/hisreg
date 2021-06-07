@@ -55,7 +55,8 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
                        HS_PrePost = c('pre_hsscoresum', 'c_hsscoresum'),
                        Vas_PrePost = c('pre_vasscore', 'c_vasscore'),
                        DLQI_PrePost_ny = c('DLQISUM', 'DLQISUM_POST'),
-                       Vas_PrePost_ny = c('VASSCORE', 'VASSCORE_POST'))
+                       Vas_PrePost_ny = c('VASSCORE', 'VASSCORE_POST'),
+                       IHS4SCORE = c('IHS4SCORE', 'IHS4SCORE_POST'))
 
 
   #   PrePostVar <- switch(valgtVar,
@@ -138,7 +139,8 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
                    'HS_PrePost' = 'HS score sum før og etter intervensjon',
                    'Vas_PrePost' = c('Hvor plaget er pasienten?', 'Visuell analog skala (VAS) fra 0-10'),
                    'DLQI_PrePost_ny' = 'DLQI før og etter intervensjon',
-                   'Vas_PrePost_ny' = c('Hvor plaget er pasienten?', 'Visuell analog skala (VAS) fra 0-10')
+                   'Vas_PrePost_ny' = c('Hvor plaget er pasienten?', 'Visuell analog skala (VAS) fra 0-10'),
+                   'IHS4SCORE' = 'IHS4-score før og etter intervensjon'
   )
 
   tittel <- c(tittel, 'med 95% konfidensintervall')

@@ -30,7 +30,10 @@ hisregKonverterData <- function(RegData, ForlopsData, Followups) {
                          "i_amoxicilin", "i_sys_antibiotic_other",
                          "i_corticosteroid_injection",
                          "i_acelacic_acid", "i_clindamycin",
-                         "i_resorcinol")]
+                         "i_resorcinol", "pre_hiscr_boils",
+                         "pre_hiscr_inflamed", "pre_hiscr_draining")]
+  RegData$IHS4SCORE <- RegData$pre_hiscr_inflamed + RegData$pre_hiscr_boils*2 + RegData$pre_hiscr_draining*4
+  RegData <- RegData[, -which(names(RegData) %in% c("pre_hiscr_boils", "pre_hiscr_inflamed", "pre_hiscr_draining"))]
   # Fjerner Oppfølging ikke mulig
   Followups <- Followups[Followups$c_possible != 2, ]
   # Fjerner oppfølginger uten pasientid
@@ -42,7 +45,10 @@ hisregKonverterData <- function(RegData, ForlopsData, Followups) {
                              "c_bloodpoisoning", "c_bleeding",
                              "c_other_complications", "c_dlqisum",
                              "c_vasscore",
-                             "c_hurley_score")]
+                             "c_hurley_score", "c_hiscr_boils", "c_hiscr_inflamed", "c_hiscr_draining")]
+  Followups$IHS4SCORE <- Followups$c_hiscr_inflamed + Followups$c_hiscr_boils*2 + Followups$c_hiscr_draining*4
+  Followups <- Followups[, -which(names(Followups) %in% c("c_hiscr_boils", "c_hiscr_inflamed", "c_hiscr_draining"))]
+
   # Beholder kun 3- og 6-mnd oppfølging
   Followups_tilpasset <- Followups[Followups$c_do_month <9, ]
   Followups_tilpasset <- merge(Followups_tilpasset[Followups_tilpasset$c_do_month == 3, ],
