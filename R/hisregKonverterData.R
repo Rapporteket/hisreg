@@ -31,7 +31,8 @@ hisregKonverterData <- function(RegData, ForlopsData, Followups) {
                          "i_corticosteroid_injection",
                          "i_acelacic_acid", "i_clindamycin",
                          "i_resorcinol", "pre_hiscr_boils",
-                         "pre_hiscr_inflamed", "pre_hiscr_draining")]
+                         "pre_hiscr_inflamed", "pre_hiscr_draining",
+                         "p_age_specialist", "p_age_doctor", "p_time_specialist")]
   RegData$IHS4SCORE <- RegData$pre_hiscr_inflamed + RegData$pre_hiscr_boils*2 + RegData$pre_hiscr_draining*4
   RegData <- RegData[, -which(names(RegData) %in% c("pre_hiscr_boils", "pre_hiscr_inflamed", "pre_hiscr_draining"))]
   # Fjerner Oppfølging ikke mulig
@@ -44,10 +45,27 @@ hisregKonverterData <- function(RegData, ForlopsData, Followups) {
                              "c_stricturer", "c_nervedamage",
                              "c_bloodpoisoning", "c_bleeding",
                              "c_other_complications", "c_dlqisum",
-                             "c_vasscore",
-                             "c_hurley_score", "c_hiscr_boils", "c_hiscr_inflamed", "c_hiscr_draining")]
+                             "c_vasscore", "c_date",
+                             "c_hurley_score", "c_hiscr_boils", "c_hiscr_inflamed", "c_hiscr_draining",
+                             "c_medical_treatment",
+                             "c_systemic_antibiotic_therapy_stop", "c_antiinflammatory_treatment_stop", "c_analgesics_stop",
+                             "c_corticosteroid_injection_stop","c_acelacic_acid_stop", "c_clindamycin_stop",
+                             "c_resorcinol_stop", "c_other_medication_stop")]
   Followups$IHS4SCORE <- Followups$c_hiscr_inflamed + Followups$c_hiscr_boils*2 + Followups$c_hiscr_draining*4
-  Followups <- Followups[, -which(names(Followups) %in% c("c_hiscr_boils", "c_hiscr_inflamed", "c_hiscr_draining"))]
+  Followups$alvorlig_med_bivirkning <- NA
+  Followups$alvorlig_med_bivirkning[Followups$c_medical_treatment %in% 1:2 | Followups$c_systemic_antibiotic_therapy_stop %in% 1:2 |
+                                      Followups$c_antiinflammatory_treatment_stop %in% 1:2 | Followups$c_acelacic_acid_stop %in% 1:2 |
+                                      Followups$c_clindamycin_stop %in% 1:2 | Followups$c_resorcinol_stop %in% 1:2 |
+                                      Followups$c_other_medication_stop %in% 1:2] <- 0
+  Followups$alvorlig_med_bivirkning[Followups$c_medical_treatment==1 | Followups$c_systemic_antibiotic_therapy_stop==1 |
+                                      Followups$c_antiinflammatory_treatment_stop==1 | Followups$c_analgesics_stop==1 |
+                                      Followups$c_corticosteroid_injection_stop==1 | Followups$c_acelacic_acid_stop==1 |
+                                      Followups$c_clindamycin_stop==1 | Followups$c_resorcinol_stop==1 |
+                                      Followups$c_other_medication_stop==1] <- 1
+  Followups <- Followups[, -which(names(Followups) %in% c("c_hiscr_boils", "c_hiscr_inflamed", "c_hiscr_draining", "c_medical_treatment",
+                                                          "c_systemic_antibiotic_therapy_stop", "c_antiinflammatory_treatment_stop", "c_analgesics_stop",
+                                                          "c_corticosteroid_injection_stop","c_acelacic_acid_stop", "c_clindamycin_stop",
+                                                          "c_resorcinol_stop", "c_other_medication_stop"))]
 
   # Beholder kun 3- og 6-mnd oppfølging
   Followups_tilpasset <- Followups[Followups$c_do_month <9, ]
@@ -137,10 +155,12 @@ hisregKonverterData <- function(RegData, ForlopsData, Followups) {
   names(RegData)[match(c("m_mceid", "p_age_abscess", "pre_smoking", "pre_work", "pre_bmi", "pre_dlqisum",
                          "pre_vasscore", "pre_hurley_score", "i_type", "i_rifampicin_clindamycin",
                          "i_tetracyclin_lymecyclin", "i_amoxicilin", "i_sys_antibiotic_other", "i_corticosteroid_injection",
-                         "i_acelacic_acid", "i_clindamycin", "i_resorcinol"), names(RegData))] <-
+                         "i_acelacic_acid", "i_clindamycin", "i_resorcinol", "p_age_specialist", "p_age_doctor", "p_time_specialist",
+                         "c_date_med", "c_date_kir"), names(RegData))] <-
     c("MCEID", "AGE_ABSCESS", "SMOKING", "WORK", "BMI", "DLQISUM", "VASSCORE", "HURLEY_SCORE", "TYPE_INTERVENTION",
       "RIFAMPICIN_CLINDAMYCIN", "TETRACYCLIN_LYMECYCLIN", "AMOXICILIN", "SYSTEMIC_ANTIBIOTIC_THERAPY_OTHER",
-      "INTRALESIONAL_CORTICOSTEROID_INJECTION", "ACELACIC_ACID", "CLINDAMYCIN", "RESORCINOL")
+      "INTRALESIONAL_CORTICOSTEROID_INJECTION", "ACELACIC_ACID", "CLINDAMYCIN", "RESORCINOL", "AGE_SPECIALIST", "AGE_DOCTOR",
+      "TIME_SPECIALIST", "CONTROL_DATE_dokt_med", "CONTROL_DATE_dokt_kir")
 
 
   RegData[, c("c_infection_med", "c_delayed_wound_healing_med", "c_stricturer_med", "c_nervedamage_med",

@@ -47,6 +47,18 @@ hisregPrepVar <- function(RegData, valgtVar)
     retn <- 'H'
   }
 
+  if (valgtVar=='AGE_ABSCESS') {# per pasient
+    RegData$Variabel <- RegData[, valgtVar]
+    RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
+    RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
+    tittel <- 'Alder ved første byll'
+    gr <- c(0, seq(10, 80, 10), 120)
+    RegData$VariabelGr <- cut(RegData$Variabel, breaks=gr, include.lowest=TRUE, right=FALSE)
+    grtxt <- c('<10', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '>=80')
+    subtxt <- 'Aldersgrupper'
+    retn <- 'H'
+  }
+
   if (valgtVar=='ErMann') {# per pasient
     gr <- c(0,1)
     grtxt <- c('Kvinne', 'Mann')
