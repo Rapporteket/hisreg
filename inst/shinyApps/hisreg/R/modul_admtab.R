@@ -218,13 +218,12 @@ andre_adm_tab <- function() {
     aux <- skjemaoversikt_forlop
     aux <- aux[aux$HovedDato >= fraDato & aux$HovedDato <= tilDato, ]
 
-    aux$mnd <- factor(format(aux$HovedDato, format='%Y'), levels = format(seq(as.Date(fraDato),as.Date(input$datovalg_adm_tid_aar), by="year"), "%Y"))
-
+    # aux$mnd <- factor(format(aux$HovedDato, format='%Y'), levels = format(seq(as.Date(fraDato),as.Date(input$datovalg_adm_tid_aar), by="year"), "%Y"))
+    aux$mnd <- factor(format(aux$HovedDato, format='%Y'), levels = format(seq(fraDato, tilDato, by="year"), "%Y"))
     ant_skjema <- switch (input$regstatus_tid,
-                          '1' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==1 & aux$SkjemaStatus_oppf==1) , c('Sykehusnavn', 'mnd')]))),
-                          '2' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==1 & aux$SkjemaStatus_oppf==0) , c('Sykehusnavn', 'mnd')]))),
-                          # '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==1 & is.na(aux$SkjemaStatus_oppf)) , c('Sykehusnavn', 'mnd')]))),
-                          '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$SkjemaStatus==0) , c('Sykehusnavn', 'mnd')])))
+                          '1' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==1 & aux$statusoppf==1) , c('Sykehusnavn', 'mnd')]))),
+                          '2' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==1 & aux$statusoppf==0) , c('Sykehusnavn', 'mnd')]))),
+                          '3' = as.data.frame.matrix(addmargins(table(aux[which(aux$statusbasis ==0) , c('Sykehusnavn', 'mnd')])))
     ) %>% tidyr::as_tibble(rownames = 'Sykehusnavn')
   }
 
