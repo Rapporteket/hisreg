@@ -25,7 +25,8 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
     RegData <- hisregPreprosess(RegData=RegData)
   }
 
-  RegData$Variabel <- RegData[, valgtVar]
+  # RegData$Variabel <- RegData[, valgtVar]
+  RegData$Variabel <- RegData[[valgtVar]]
   RegData <- RegData[!is.na(RegData$Variabel), ]
 
   ## Gjør utvalg basert på brukervalg (LibUtvalg)
@@ -37,9 +38,9 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
 
   smltxt <- 'alle sykehus'
 
-  RegData[ ,gr_var] <- as.factor(as.character(RegData[ ,gr_var]))
+  RegData[[gr_var]] <- as.factor(as.character(RegData[[gr_var]]))
   N <- dim(RegData)[1]
-  if(N > 0) {Ngr <- table(RegData[ ,gr_var])}	else {Ngr <- 0}
+  if(N > 0) {Ngr <- table(RegData[[gr_var]])}	else {Ngr <- 0}
 
   Ngrense <- 10		#Minste antall registreringer for at ei gruppe skal bli vist
 
@@ -87,8 +88,8 @@ hisregFigGjsnGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil=
     if ( outfile != '') {dev.off()}
   } else {
     dummy0 <- -0.001
-    Gjsn <- tapply(RegData$Variabel, RegData[ ,gr_var], mean, na.rm=T)
-    SE <- tapply(RegData$Variabel, RegData[ ,gr_var], sd, na.rm=T)/sqrt(Ngr)
+    Gjsn <- tapply(RegData$Variabel, RegData[[gr_var]], mean, na.rm=T)
+    SE <- tapply(RegData$Variabel, RegData[[gr_var]], sd, na.rm=T)/sqrt(Ngr)
     if (fjern_sjeldne == 1) {
       if (indGrUt !=0) {
         Gjsn <- Gjsn[-indGrUt]

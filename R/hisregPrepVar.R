@@ -18,7 +18,8 @@ hisregPrepVar <- function(RegData, valgtVar)
 
 
   if (valgtVar=='PasientAlder') { # per pasient
-    RegData$Variabel <- RegData[, valgtVar]
+    # RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[!is.na(RegData$Variabel), ]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
@@ -32,7 +33,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='p_age_abscess') {# per pasient
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Alder ved første byll'
@@ -48,7 +49,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='AGE_ABSCESS') {# per pasient
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Alder ved første byll'
@@ -64,14 +65,14 @@ hisregPrepVar <- function(RegData, valgtVar)
     grtxt <- c('Kvinne', 'Mann')
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
-    RegData$Variabel <- as.character(RegData[, valgtVar])
+    RegData$Variabel <- as.character(RegData[[valgtVar]])
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
     tittel <- 'Kjønnsfordeling HISREG'
     retn <- 'H'
   }
 
   if (valgtVar=='SykehusNavn') {
-    RegData$Variabel <- as.character(RegData[, valgtVar])
+    RegData$Variabel <- as.character(RegData[[valgtVar]])
     RegData$VariabelGr <- factor(RegData$Variabel, levels = names(table(RegData$Variabel)[order(table(RegData$Variabel), decreasing = T)]))
     grtxt <- levels(RegData$VariabelGr)
     tittel <- 'Andel registrert av deltagende avdelinger'
@@ -91,7 +92,7 @@ hisregPrepVar <- function(RegData, valgtVar)
 
 
   if (valgtVar=='p_education') {
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Pasientgruppens utdanningsnivå'
@@ -104,7 +105,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='pre_smoking') {
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Pasientgruppens røykevaner'
@@ -116,7 +117,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='SMOKING') {
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Pasientgruppens røykevaner'
@@ -130,7 +131,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='pre_work') {  # Per pasient, nyeste registrering
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Arbeidsstatus preintervensjon'
@@ -143,7 +144,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='WORK') {  # Per pasient, nyeste registrering
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Arbeidsstatus preintervensjon'
@@ -156,7 +157,7 @@ hisregPrepVar <- function(RegData, valgtVar)
 
 
   if (valgtVar=='i_type') {
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData$Variabel[RegData$Variabel %in% 5:6] <- 4  # Intill videre skal 'Ingen intervention bestemt av lege',
     # "Ingen intervention bestemt av pasient" og 'Ikke møtt' slås sammen
     tittel <- 'Type intervensjon'
@@ -169,7 +170,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='ForlopsType1Num') {
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData$Variabel[RegData$Variabel %in% 5:6] <- 4  # Intill videre skal 'Ingen intervention bestemt av lege',
     # "Ingen intervention bestemt av pasient" og 'Ikke møtt' slås sammen
     tittel <- 'Type intervensjon'
@@ -183,7 +184,7 @@ hisregPrepVar <- function(RegData, valgtVar)
 
 
   if (valgtVar=='TYPE_INTERVENTION') {
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData$Variabel[RegData$Variabel %in% 5:6] <- 4  # Intill videre skal 'Ingen intervention bestemt av lege',
     # "Ingen intervention bestemt av pasient" og 'Ikke møtt' slås sammen
     tittel <- 'Type intervensjon'
@@ -196,7 +197,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='i_surgery_type') {
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[RegData$i_type %in% c(1,3), ]
     tittel <- 'Type kirurgi'
     gr <- c(1:5)
@@ -241,7 +242,7 @@ hisregPrepVar <- function(RegData, valgtVar)
 
   if (valgtVar=='i_biological_treatment') {
     RegData <- RegData[which(RegData$i_type %in% c(2,3)), ]
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[which(RegData$Variabel != 1), ]
     # RegData$Variabel[is.na(RegData$Variabel)] <- 99
     tittel <- 'Biologiske legemidler'
@@ -308,7 +309,7 @@ hisregPrepVar <- function(RegData, valgtVar)
 
   if (valgtVar=='i_antiinflammatory_treatment') {
     RegData <- RegData[which(RegData$i_type %in% c(2,3)), ]
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[which(RegData$Variabel != 1), ]
     tittel <- 'Antiinflammatorisk behandling'
     gr <- c(4,5,6,8,3)
@@ -580,7 +581,7 @@ hisregPrepVar <- function(RegData, valgtVar)
 
 
   if (valgtVar=='pre_hurley_score') {
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     gr <- 1:3
     RegData <- RegData[which(RegData$Variabel %in% gr), ]
     RegData <- RegData[order(RegData$HovedDato, decreasing = F), ]
@@ -592,7 +593,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='pre_bmi') {
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[!is.na(RegData$Variabel), ]
     RegData <- RegData[order(RegData$HovedDato, decreasing = T), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
@@ -607,7 +608,7 @@ hisregPrepVar <- function(RegData, valgtVar)
   }
 
   if (valgtVar=='BMI') { # NY
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[!is.na(RegData$Variabel), ]
     RegData <- RegData[order(RegData$HovedDato, decreasing = T), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]

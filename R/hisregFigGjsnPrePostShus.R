@@ -27,7 +27,7 @@ hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', da
   }
 
   RegData <- RegData[which(RegData$OppflgRegStatus >= 1), ]
-  RegData$Gr_var <- RegData[, gr_var]
+  RegData$Gr_var <- RegData[[gr_var]]
 
   # Denne figurtypen krever at oppfølginger finnes
   RegData <- RegData[RegData$OppflgRegStatus >= 1, ]
@@ -53,8 +53,8 @@ hisregFigGjsnPrePostShus <- function(RegData, valgtVar, datoFra='2000-01-01', da
   #                        DLQI_PrePost = c('DLQI alvorlighetsgrad', 'før og etter behandling'),
   #                        Hurley_PrePost = c('Hurley score', 'før og etter behandling'))
 
-  RegData$VarPre <- RegData[ ,PrePostVar[1]]
-  RegData$VarPost <- RegData[ ,PrePostVar[2]]
+  RegData$VarPre <- RegData[[PrePostVar[1]]]
+  RegData$VarPost <- RegData[[PrePostVar[2]]]
   RegData <- RegData[!is.na(RegData$VarPre) & !is.na(RegData$VarPost), ]
 
   ## Gjør utvalg basert på brukervalg (LibUtvalg)
