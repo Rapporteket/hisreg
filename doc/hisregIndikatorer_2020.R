@@ -84,7 +84,8 @@ RegData_ny <- allevar[, c("MCEID", "AGE_ABSCESS", "UtdanningSSB", "SURGERY", "ME
                           "PREDNISOLON", "ISOTRETINOIN", "METFORMIN", "ANTIINFLAMMATORY_TREATMENT_OTHER", "IHS4SCORE",
                           "IHS4SCORE_kir", "IHS4SCORE_med", "AGE_SPECIALIST", "AGE_DOCTOR", "TIME_SPECIALIST",
                           "CONTROL_DATE_dokt_kir", "CONTROL_DATE_dokt_med", "SEPONERT_kir", "SEPONERT_med",
-                          "SEPONERT_BIVIRKNING_kir", "SEPONERT_BIVIRKNING_med", "TREATMENT_med", "TREATMENT_kir")]
+                          "SEPONERT_BIVIRKNING_kir", "SEPONERT_BIVIRKNING_med", "TREATMENT_med", "TREATMENT_kir",
+                          "SATISFACTION_kir", "SATISFACTION_med")]
 
 
 shus <- data.frame(AvdRESH = unique(RegData_ny$AvdRESH),
@@ -175,21 +176,12 @@ indikator1 <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "tid_almlege_spes_kombo")
 indikator1$Variabel <- 0
 indikator1$Variabel[indikator1$tid_almlege_spes_kombo == 0] <- 1
 indikator1 <- indikator1[indikator1$Aar %in% 2015:rapp_aar, ]
-Ind1 <- indikator1[, -c(2,4)]
-names(Ind1) <- c('Aar', 'ReshId', 'Teller Ind1')
-Ind1[, 'Nevner Ind1'] <- 1
-Ind1$Indikator <- 'Ind1'
-Ind1$AarID <- paste0(Ind1$Aar, Ind1$ReshId)
-Ind1 <- Ind1[, c(1,5,4,3,2,6)]
+indikator1$ind_id <- "hisreg_henvist_spesialist_1aar"
 
 outfile <- "C:/GIT/hisreg/doc/henvist_spes.pdf"
 hisregIndikator(indikatordata = indikator1, tittel=c("Andel henvist til hudspesialist innen", "1 år av første besøk hos allmennlege"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                             legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                             lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
-
-
-# write.csv2(Ind1, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator1_tid_almlege_spes.csv",
-#            row.names = F)
 
 tmp <- indikator1 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                andel = sum(Variabel)/n()*100,
@@ -207,21 +199,14 @@ aux$hurley_diff <- aux$HURLEY_SCORE - aux$HURLEY_SCORE_POST
 indikator4 <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "hurley_diff")]
 indikator4$Variabel <- 0
 indikator4$Variabel[indikator4$hurley_diff > 0] <- 1
-Ind4 <- indikator4[, -c(2,4)]
-names(Ind4) <- c('Aar', 'ReshId', 'Teller Ind4')
-Ind4[, 'Nevner Ind4'] <- 1
-Ind4$Indikator <- 'Ind4'
-Ind4$AarID <- paste0(Ind4$Aar, Ind4$ReshId)
-Ind4 <- Ind4[, c(1,5,4,3,2,6)]
+indikator4$ind_id <- "hisreg_reduksjon_hurley"
+Indikatorer <- dplyr::bind_rows(indikator1[, c("Aar", "AvdRESH", "Variabel", "ind_id")],
+                                indikator4[, c("Aar", "AvdRESH", "Variabel", "ind_id")])
 
 outfile <- "C:/GIT/hisreg/doc/hurley_red.pdf"
 hisregIndikator(indikatordata = indikator4, tittel=c("Reduksjon i Hurley score ", "ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
-
-
-# write.csv2(Ind4, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator4_hurley.csv",
-#            row.names = F)
 
 tmp <- indikator4 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                andel = sum(Variabel)/n()*100,
@@ -239,20 +224,13 @@ aux$dlqisum_diff <- aux$DLQISUM - aux$DLQISUM_POST
 indikator5 <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "dlqisum_diff")]
 indikator5$Variabel <- 0
 indikator5$Variabel[indikator5$dlqisum_diff >= 4] <- 1
-Ind5 <- indikator5[, -c(2,4)]
-names(Ind5) <- c('Aar', 'ReshId', 'Teller Ind5')
-Ind5[, 'Nevner Ind5'] <- 1
-Ind5$Indikator <- 'Ind5'
-Ind5$AarID <- paste0(Ind5$Aar, Ind5$ReshId)
-Ind5 <- Ind5[, c(1,5,4,3,2,6)]
+indikator5$ind_id <- "hisreg_reduksjon_dlqi"
+Indikatorer <- dplyr::bind_rows(Indikatorer, indikator5[, c("Aar", "AvdRESH", "Variabel", "ind_id")])
 
 outfile <- "C:/GIT/hisreg/doc/dlqi_red.pdf"
 hisregIndikator(indikatordata = indikator5, tittel=c("Endring i livskvalitet (DLQI)"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
-
-# write.csv2(Ind5, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator5_dlqi.csv",
-#            row.names = F)
 
 tmp <- indikator5 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                andel = sum(Variabel)/n()*100,
@@ -271,21 +249,13 @@ aux$vasscore_diff_pst <- (aux$VASSCORE - aux$VASSCORE_POST)/aux$VASSCORE*100
 indikator6 <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "vasscore_diff_pst")]
 indikator6$Variabel <- 0
 indikator6$Variabel[indikator6$vasscore_diff_pst > 30] <- 1
-Ind6 <- indikator6[, -c(2,4)]
-names(Ind6) <- c('Aar', 'ReshId', 'Teller Ind6')
-Ind6[, 'Nevner Ind6'] <- 1
-Ind6$Indikator <- 'Ind6'
-Ind6$AarID <- paste0(Ind6$Aar, Ind6$ReshId)
-Ind6 <- Ind6[, c(1,5,4,3,2,6)]
+indikator6$ind_id <- "hisreg_reduksjon_vas"
+Indikatorer <- dplyr::bind_rows(Indikatorer, indikator6[, c("Aar", "AvdRESH", "Variabel", "ind_id")])
 
 outfile <- "C:/GIT/hisreg/doc/vas_red.pdf"
 hisregIndikator(indikatordata = indikator6, tittel=c("Endring i smerteskala (VAS)"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
-
-
-# write.csv2(Ind6, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator6_vas.csv",
-#            row.names = F)
 
 tmp <- indikator6 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                    andel = sum(Variabel)/n()*100,
@@ -309,20 +279,13 @@ Indikator7_med <- aux %>% group_by(Aar, AvdRESH, MCEID) %>%
   summarise(Variabel = max(Variabel))
 
 Indikator7_med$SykehusNavn <- RegData$SykehusNavn[match(Indikator7_med$AvdRESH, RegData$AvdRESH)]
-Ind7 <- Indikator7_med[, -c(3,5)]
-names(Ind7) <- c('Aar', 'ReshId', 'Teller Ind7')
-Ind7[, 'Nevner Ind7'] <- 1
-Ind7$Indikator <- 'Ind7'
-Ind7$AarID <- paste0(Ind7$Aar, Ind7$ReshId)
-Ind7 <- Ind7[, c(1,5,4,3,2,6)]
+Indikator7_med$ind_id <- "hisreg_kontr_3mnd_med"
+Indikatorer <- dplyr::bind_rows(Indikatorer, Indikator7_med[, c("Aar", "AvdRESH", "Variabel", "ind_id")])
 
 outfile <- "C:/GIT/hisreg/doc/andel_oppf_med.pdf"
 hisregIndikator(indikatordata = Indikator7_med, tittel=c("Utført kontroll etter medisinsk behandling"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
-
-# write.csv2(Ind7, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator7_kontr_3mnd_med.csv",
-#            row.names = F)
 
 tmp <- Indikator7_med %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                    andel = sum(Variabel)/n()*100,
@@ -346,20 +309,13 @@ Indikator8_kir <- aux %>% group_by(Aar, AvdRESH, MCEID) %>%
   summarise(Variabel = max(Variabel))
 
 Indikator8_kir$SykehusNavn <- RegData$SykehusNavn[match(Indikator8_kir$AvdRESH, RegData$AvdRESH)]
-Ind8 <- Indikator8_kir[, -c(3,5)]
-names(Ind8) <- c('Aar', 'ReshId', 'Teller Ind8')
-Ind8[, 'Nevner Ind8'] <- 1
-Ind8$Indikator <- 'Ind8'
-Ind8$AarID <- paste0(Ind8$Aar, Ind8$ReshId)
-Ind8 <- Ind8[, c(1,5,4,3,2,6)]
+Indikator8_kir$ind_id <- "hisreg_kontr_6mnd_kir"
+Indikatorer <- dplyr::bind_rows(Indikatorer, Indikator8_kir[, c("Aar", "AvdRESH", "Variabel", "ind_id")])
 
 outfile <- "C:/GIT/hisreg/doc/andel_oppf_kir.pdf"
 hisregIndikator(indikatordata = Indikator8_kir, tittel=c("Utført kontroll etter kirurgisk behandling"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
-
-# write.csv2(Ind8, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/Indikator8_kontr_6mnd_kir.csv",
-#            row.names = F)
 
 tmp <- Indikator8_kir %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                    andel = sum(Variabel)/n()*100,
@@ -372,17 +328,7 @@ Ind8_kontroll_hudlege_kirbeh <- tmp[, -(3:5)] %>% spread(key=Aar, value = verdi,
 # Inkluderer kun forløp der "c_infection", "c_delayed_wound_healing", "c_stricturer", "c_nervedamage", "c_bloodpoisoning",
 #   "c_bleeding" eller "c_other_complications" har blitt krysset av for Ja eller Nei.
 #################################################################
-# c("c_infection", "c_delayed_wound_healing", "c_stricturer", "c_nervedamage", "c_bloodpoisoning",
-#   "c_bleeding", "c_other_complications")
 
-# Indikator9 <- RegData[(RegData$c_infection %in% c(1,2) | RegData$c_delayed_wound_healing %in% c(1,2) |
-#                         RegData$c_stricturer %in% c(1,2) | RegData$c_nervedamage %in% c(1,2) |
-#                         RegData$c_bloodpoisoning %in% c(1,2) | RegData$c_bleeding %in% c(1,2) |
-#                         RegData$c_other_complications %in% c(1,2)) & RegData$ForlopsType1Num %in% c(1,3) &
-#                         RegData$c_do_month == 6 & RegData$OppflgRegStatus >= 1, ] %>%
-#   group_by(AvdRESH, Aar, m_mceid) %>%
-#   summarise(Variabel = c_infection==1 | c_delayed_wound_healing==1 | c_stricturer==1 |
-#               c_nervedamage==1 | c_bloodpoisoning==1 | c_bleeding==1 | c_other_complications==1)
 Indikator9 <- RegData[(RegData$INFECTION_kir %in% 0:1 | RegData$DELAYED_WOUND_HEALING_kir %in% 0:1 |
                          RegData$STRIKTURER_kir %in% 0:1 | RegData$NERVEDAMAGE_kir %in% 0:1 |
                          RegData$BLOODPOISEN_kir %in% 0:1 | RegData$BLEEDING_kir %in% 0:1 |
@@ -396,21 +342,13 @@ Indikator9 <- RegData[(RegData$INFECTION_kir %in% 0:1 | RegData$DELAYED_WOUND_HE
 Indikator9$Variabel[is.na(Indikator9$Variabel)] <- FALSE
 Indikator9$Variabel <- as.numeric(Indikator9$Variabel)
 Indikator9$SykehusNavn <- RegData$SykehusNavn[match(Indikator9$AvdRESH, RegData$AvdRESH)]
-Ind9 <- Indikator9[, -c(3,5)]
-names(Ind9) <- c( 'ReshId', 'Aar', 'Teller Ind9')
-Ind9[, 'Nevner Ind9'] <- 1
-Ind9$Indikator <- 'Ind9'
-Ind9$AarID <- paste0(Ind9$Aar, Ind9$ReshId)
-Ind9 <- Ind9[, c(2,5,4,3,1,6)]
-
+Indikator9$ind_id <- "hisreg_kompl_kir"
+Indikatorer <- dplyr::bind_rows(Indikatorer, Indikator9[, c("Aar", "AvdRESH", "Variabel", "ind_id")])
 
 # outfile <- "C:/GIT/hisreg/doc/kompl_kir.pdf"
 # hisregIndikator(indikatordata = Indikator9, tittel=c("Komplikasjoner etter kirurgi"), terskel=10, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
 #                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
 #                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
-
-# write.csv2(Ind9, "Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/7. HisReg/Indikatorer/indikator9_kompl_kir.csv",
-#            row.names = F)
 
 tmp <- Indikator9 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                     andel = sum(Variabel)/n()*100,
@@ -419,6 +357,40 @@ tmp$verdi <- paste0(round(tmp$andel, 1), '% (', tmp$N, ')')
 Ind9_kompl_kir <- tmp[, -(3:5)] %>% spread(key=Aar, value = verdi, fill = '')
 # write.csv2(Ind9_kompl_kir, "I:/hisreg/Ind9_kompl_kir.csv", row.names = F)
 
+
+table(Indikatorer$ind_id, useNA = 'ifany')
+
+kobl_resh_navn <- RegData[match(unique(RegData$AvdRESH), RegData$AvdRESH), c("AvdRESH", "SykehusNavn")]
+kobl_resh_navn$dg_navn <- c("Universitetssykehuset Nord-Norge HF", "St. Olavs Hospital HF",
+                            "Helse Stavanger HF", "Haugesund sanitetsforenings revmatismesykehus",
+                            "Oslo universitetssykehus HF", "Helse Bergen HF", "",
+                            "Nordlandssykehuset HF", "Helse Førde HF")
+kobl_resh_navn$orgnr <- c(974795787, 974749025, 974703300, 973156829, 874716782, 974557746,
+                          974754118, 974795361, 974744570)
+
+Indikatorer$orgnr <- kobl_resh_navn$orgnr[match(Indikatorer$AvdRESH, kobl_resh_navn$AvdRESH)]
+names(Indikatorer)[match(c("Variabel", "Aar"), names(Indikatorer))] <- c("var", "year")
+Indikatorer$denominator <- 1
+
+dg <- read.csv2("I:/hisreg/DG_HISREG_2019.csv")
+dg$Variabel <- dg$Begge + dg$Kun_hisreg
+dg$AvdRESH <- kobl_resh_navn$AvdRESH[match(dg$HF.ideelt.sykehus, kobl_resh_navn$dg_navn)]
+dg$orgnr <- kobl_resh_navn$orgnr[match(dg$HF.ideelt.sykehus, kobl_resh_navn$dg_navn)]
+dg$orgnr[dg$HF.ideelt.sykehus == "Vestre Viken HF"] <- 894166762
+dg$orgnr[dg$HF.ideelt.sykehus == "Helse Møre og Romsdal HF"] <- 997005562
+dg$orgnr[dg$HF.ideelt.sykehus == "Helgelandssykehuset HF"] <- 983974929
+dg$orgnr[dg$HF.ideelt.sykehus == "Finnmarkssykehuset HF"] <- 983974880
+
+dg$year <- 2019
+dg$ind_id <- "hisreg_dg"
+names(dg)[match(c("Variabel", "Total"), names(dg))] <- c("var", "denominator")
+
+Indikatorer <- dplyr::bind_rows(Indikatorer[, c("orgnr", "year", "var", "denominator", "ind_id")],
+                                dg[, c("orgnr", "year", "var", "denominator", "ind_id")])
+Indikatorer$context <- "caregiver"
+
+write.csv2(Indikatorer, "I:/hisreg/indikatorer_m_dg_hisreg_2021_06_23.csv", row.names = F,
+           fileEncoding = "UTF-8")
 
 ########### Indikator 10: Andel pasienter med bivirkninger rapportert av pasienter ved ################
 ########### kontroll 3 måneder etter startet medisinsk behandling                   ################
