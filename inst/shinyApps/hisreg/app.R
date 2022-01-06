@@ -85,6 +85,17 @@ ui <- shiny::tagList(
              admtab_UI("tab_ny")),
     tabPanel(
       "Datadump", dataDumpUI("dataDumpHisreg")
+    ),
+    shiny::tabPanel(
+      "Eksport",
+      shiny::sidebarLayout(
+        shiny::sidebarPanel(
+          rapbase::exportUCInput("hisregExport")
+        ),
+        shiny::mainPanel(
+          rapbase::exportGuideUI("hisregExportGuide")
+        )
+      )
     )
 
 
@@ -134,6 +145,16 @@ server <-  function(input, output, session) {
   shiny::callModule(admtab, "tab_ny", skjemaoversikt=SkjemaOversikt_ny) # , skjemaoversikt=SkjemaOversikt_ny
   shiny::callModule(dataDump, "dataDumpHisreg", mainSession = session,
                     reshID = reshID(), userRole = userRole())
+
+  ##########################################################################################################
+  # Eksport  ###############################################################################################
+  # brukerkontroller
+  rapbase::exportUCServer("hisregExport", "hisreg")
+
+  ## veileding
+  rapbase::exportGuideServer("hisregExportGuide", "hisreg")
+
+  ##########################################################################################################
 
   #Navbarwidget
   output$appUserName <- shiny::renderText(rapbase::getUserFullName(session))
