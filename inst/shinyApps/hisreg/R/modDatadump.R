@@ -145,7 +145,7 @@ dataDump <- function(input, output, session, userRole, reshID, mainSession){
   )
   shinyjs::onclick(
     "dataDumpNedLasting",
-    raplog::repLogger(
+    rapbase::repLogger(
       session = mainSession,
       msg = paste0(
         "Hisreg: datadump ", input$ddselect, " ",

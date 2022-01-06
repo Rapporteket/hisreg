@@ -389,7 +389,7 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
           input$varSel
         )
       }
-      raplog::repLogger(
+      rapbase::repLogger(
         session = ss,
         msg = mld
       )
@@ -403,14 +403,14 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
       )
       shinyjs::onclick(
         "lastNedBilde",
-        raplog::repLogger(
+        rapbase::repLogger(
           session = ss,
           msg = mldNLF
         )
       )
       shinyjs::onclick(
         "lastNedTab",
-        raplog::repLogger(
+        rapbase::repLogger(
           ss,
           msg = mldNLT
         )

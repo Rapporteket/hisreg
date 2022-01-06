@@ -268,7 +268,7 @@ tabell <- function(input, output, session, ss) {
           "Hisreg: tabell - skjematabell"
         )
       }
-      raplog::repLogger(
+      rapbase::repLogger(
         session = ss,
         msg = mld
       )
@@ -281,14 +281,14 @@ tabell <- function(input, output, session, ss) {
       )
       shinyjs::onclick(
         "lastNedTabell1",
-        raplog::repLogger(
+        rapbase::repLogger(
           session = ss,
           msg = mldNlFol
         )
       )
       shinyjs::onclick(
         "lastNedTabell2",
-        raplog::repLogger(
+        rapbase::repLogger(
           ss,
           msg = mldNlSkj
         )
