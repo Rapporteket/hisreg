@@ -89,8 +89,6 @@ hisregPrepVar <- function(RegData, valgtVar)
     retn <- 'H'
   }
 
-
-
   if (valgtVar=='p_education') {
     RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
@@ -99,6 +97,25 @@ hisregPrepVar <- function(RegData, valgtVar)
     gr <- c(1:5, 9)
     grtxt <- c('Grunnskole 7-10 år', 'Yrkesfaglig videregående, yrkesskoler, \neller realskole', 'Allmennfaglig videregående skole \neller gymnas',
                'Høgskole eller universitetet \n(mindre enn 4 år)', 'Høgskole eller universitet \n(mer enn, eller 4 år)', 'Ukjent')
+    RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    subtxt <- 'Utdanningsnivå'
+    retn <- 'H'
+  }
+
+  if (valgtVar=='UtdanningSSB') {
+    RegData$Variabel <- RegData[[valgtVar]]
+    RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
+    RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
+    tittel <- 'Pasientgruppens utdanningsnivå'
+    gr <- c("01 Grunnskolenivå", "02a Videregående skolenivå",
+               "03a Universitets- og høgskolenivå kort",
+               "04a Universitets- og høgskolenivå lang",
+               "09a Uoppgitt eller ingen fullført utdanning")
+    grtxt <- c("01 Grunnskole", "02a Videregående skole",
+               "03a Universitets- og \n høgskolenivå kort",
+               "04a Universitets- og \n høgskolenivå lang",
+               "09a Uoppgitt eller ingen \n fullført utdanning")
+
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
     subtxt <- 'Utdanningsnivå'
     retn <- 'H'
@@ -121,10 +138,10 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Pasientgruppens røykevaner'
-    gr <- klokebok_hisreg$listeverdier[which(klokebok_hisreg$fysisk_feltnavn %in% valgtVar)]
-    grtxt <- klokebok_hisreg$listetekst[which(klokebok_hisreg$fysisk_feltnavn %in% valgtVar)]
-    # gr <- c(1:3, 9)
-    # grtxt <- c('Røyker nå', 'Røykte tidligere, \nmen sluttet', 'Aldri røykt', 'Ukjent')
+    # gr <- klokebok_hisreg$listeverdier[which(klokebok_hisreg$fysisk_feltnavn %in% valgtVar)]
+    # grtxt <- klokebok_hisreg$listetekst[which(klokebok_hisreg$fysisk_feltnavn %in% valgtVar)]
+    gr <- c(1:3, 9)
+    grtxt <- c('Røyker nå', 'Røykte tidligere, \nmen sluttet', 'Aldri røykt', 'Ukjent')
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
     subtxt <- 'Røykevaner'
     retn <- 'H'
@@ -148,8 +165,12 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     tittel <- 'Arbeidsstatus preintervensjon'
-    gr <- klokebok_hisreg$listeverdier[which(klokebok_hisreg$fysisk_feltnavn %in% valgtVar)]
-    grtxt <- klokebok_hisreg$listetekst[which(klokebok_hisreg$fysisk_feltnavn %in% valgtVar)]
+    # gr <- klokebok_hisreg$listeverdier[which(klokebok_hisreg$fysisk_feltnavn %in% valgtVar)]
+    # grtxt <- klokebok_hisreg$listetekst[which(klokebok_hisreg$fysisk_feltnavn %in% valgtVar)]
+    gr <- c(1:6, 9)
+    grtxt <- c("Fullt arbeid/student", "Sykemeldt (fullt eller gradert)",
+            "Uførepensjon (fullt eller gradert)", "Arbeidsavklaring",
+            "Alderspensjon", "Arbeidsledig", "Vet ikke")
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
     subtxt <- 'Yrkesstatus'
     retn <- 'H'
@@ -158,7 +179,7 @@ hisregPrepVar <- function(RegData, valgtVar)
 
   if (valgtVar=='i_type') {
     RegData$Variabel <- RegData[[valgtVar]]
-    RegData$Variabel[RegData$Variabel %in% 5:6] <- 4  # Intill videre skal 'Ingen intervention bestemt av lege',
+    RegData$Variabel[RegData$Variabel %in% 5:6] <- 4  # Inntil videre skal 'Ingen intervention bestemt av lege',
     # "Ingen intervention bestemt av pasient" og 'Ikke møtt' slås sammen
     tittel <- 'Type intervensjon'
     gr <- c(1:4)
@@ -507,9 +528,9 @@ hisregPrepVar <- function(RegData, valgtVar)
 
   if (valgtVar=='TidlBeh_v2') {
     SamletPrPID <- RegData %>% group_by(PasientID) %>%
-      summarise(Kirurgisk = if (1 %in% SURGERY | 1 %in% p_surgery) {1} else {if (0 %in% SURGERY | 2 %in% p_surgery) {0} else {9}},
-                Medisinsk = if (1 %in% MEDICATION_HISTORY_HS | 1 %in% p_antibiotics) {1} else
-                  {if (0 %in% MEDICATION_HISTORY_HS | 2 %in% p_antibiotics) {0} else {9}},
+      summarise(Kirurgisk = if (1 %in% SURGERY) {1} else {if (0 %in% SURGERY) {0} else {9}},
+                Medisinsk = if (1 %in% MEDICATION_HISTORY_HS) {1} else
+                  {if (0 %in% MEDICATION_HISTORY_HS) {0} else {9}},
                 Begge = if (Kirurgisk == 1 & Medisinsk == 1) {1} else {0},
                 Ingen = if (Kirurgisk == 0 & Medisinsk == 0) {1} else {0},
                 N = n())
@@ -525,10 +546,10 @@ hisregPrepVar <- function(RegData, valgtVar)
     RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
     RegData <- merge(RegData, SamletPrPID[, c("PasientID", "Variabel")], by = "PasientID")
     gr <- 1:5
-    grtxt <- c("Kun kirurgisk", "Kun medisinsk", "Kirurgisk og medisinsk", "Ingen", "Ukjent")
+    grtxt <- c("Kun kirurgisk", "Kun medisinsk", "Kirurgisk og \n medisinsk", "Ingen", "Ukjent")
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
     retn <- 'H'
-    tittel <- 'Tidligere behandling ved inklusjon'
+    tittel <- 'Tidligere behandling \n ved inklusjon'
   }
 
 #   if (valgtVar=='Anamnese') {
@@ -581,6 +602,18 @@ hisregPrepVar <- function(RegData, valgtVar)
 
 
   if (valgtVar=='pre_hurley_score') {
+    RegData$Variabel <- RegData[[valgtVar]]
+    gr <- 1:3
+    RegData <- RegData[which(RegData$Variabel %in% gr), ]
+    RegData <- RegData[order(RegData$HovedDato, decreasing = F), ]
+    RegData <- RegData[match(unique(RegData$PasientID), RegData$PasientID), ]
+    tittel <- c('Hurley-score ved inklusjon')
+    grtxt <- as.character(gr)
+    RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    subtxt <- 'Hurley-score'
+  }
+
+  if (valgtVar=='HURLEY_SCORE') {
     RegData$Variabel <- RegData[[valgtVar]]
     gr <- 1:3
     RegData <- RegData[which(RegData$Variabel %in% gr), ]

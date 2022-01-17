@@ -377,7 +377,7 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
     }
   )
   shiny::observe({
-    if (onServer) {
+    if (rapbase::isRapContext()) {
       if (input$tabs == "fig") {
         mld <- paste(
           "Hisreg: figur - gjennomsnitt.", fun, " variabel -",

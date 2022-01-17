@@ -49,7 +49,7 @@ system.file(
 
 ui <- shiny::tagList(
   shinyjs::useShinyjs(),
-  shinyalert::useShinyalert(),
+  # shinyalert::useShinyalert(),
   shiny::navbarPage(
     title = div(a(includeHTML(system.file("www/logo.svg",
                                           package = "rapbase"))),
@@ -109,12 +109,12 @@ server <-  function(input, output, session) {
   # print(dim(allevar))
 
   reshID <- reactive({
-    ifelse(onServer,as.numeric(rapbase::getUserReshId(session)),601031)
+    ifelse(rapbase::isRapContext(),as.numeric(rapbase::getUserReshId(session)),601031)
   })
   userRole <- reactive({
-    ifelse(onServer, rapbase::getUserRole(session), 'SC')
+    ifelse(rapbase::isRapContext(), rapbase::getUserRole(session), 'SC')
   })
-  if (onServer){
+  if (rapbase::isRapContext()){
     rapbase::appLogger(session, msg = "Hisreg: Shiny app starter")
   }
 

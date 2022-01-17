@@ -258,7 +258,7 @@ tabell <- function(input, output, session, ss) {
     )
   })
   shiny::observe({
-    if (onServer) {
+    if (rapbase::isRapContext()) {
       if (input$tab == "forlPas") {
         mld <- paste(
           "Hisreg: tabell", input$skjemarad

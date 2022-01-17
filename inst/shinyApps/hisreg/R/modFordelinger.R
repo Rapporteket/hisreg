@@ -239,7 +239,7 @@ modFordelinger <- function(input, output, session, rID, role, ss) {
   )
   #logging
   shiny::observe({
-    if (onServer) {
+    if (rapbase::isRapContext()) {
       if (input$tabs == "fig") {
         mld <- paste(
           "Hisreg: figur - fordeling. variabel -",

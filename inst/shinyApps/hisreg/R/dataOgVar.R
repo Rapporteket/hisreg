@@ -14,13 +14,16 @@ logoWidget <- tags$script(shiny::HTML(logoCode))
 #------------------Data-------------------------------------
 
 if (rapbase::isRapContext()) {
-  RegData <- hisreg::hisregHentRegData()
-  SkjemaOversikt <- rapbase::LoadRegData(
-    registryName = "hisreg",
-    dbType = "mysql",
-    query = "SELECT *
-             FROM SkjemaOversikt_v1"
-  )
+  ForlopsData <- hisreg::hisregHentTabell("ForlopsOversikt_v1")
+  RegData <- hisreg::hisregHentTabell("AlleVarNum")
+  Followups <- hisreg::hisregHentTabell("FollowupsNum")
+
+  hisreg_old<-list(RegData=RegData, ForlopsData=ForlopsData, Followups=Followups)
+
+  RegData_gml <- hisreg::hisregKonverterData(RegData=RegData, ForlopsData=ForlopsData, Followups=Followups)
+  RegData_gml <- RegData_gml[RegData_gml$AvdRESH != 999002, ] # Fjerner Roskilde
+
+
   preinterventiondoctor <- hisreg::hisregHentTabell("preinterventiondoctor")
   registration <- hisreg::hisregHentTabell("registration")
   intervention <- hisreg::hisregHentTabell("intervention")
@@ -34,133 +37,133 @@ if (rapbase::isRapContext()) {
   ForlopsOversikt_ny <- hisreg::hisregHentTabell("ForlopsOversikt")
   SkjemaOversikt_ny <- hisreg::hisregHentTabell("SkjemaOversikt")
 
-} else {
-  ############## GAMMEL DATA ####################
-ForlopsData <- read.table("I:/hisreg/ForlopsOversikt_v12021-04-08 16-25-45.txt",
-                          header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
+  names(ForlopsOversikt_ny)[names(ForlopsOversikt_ny)=="erMann"] <- "ErMann"
 
-RegData <- read.table("I:/hisreg/AlleVarNum2021-04-08 16-25-45.txt",
-                      header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
+  SkjemaOversikt_ny$HovedDato <- as.Date(SkjemaOversikt_ny$HovedDato)
+  SkjemaOversikt_ny$Skjemanavn <- as.factor(SkjemaOversikt_ny$Skjemanavn)
+  SkjemaOversikt_ny <- merge(SkjemaOversikt_ny,
+                             ForlopsOversikt_ny[, c("ForlopsID", "ForlopsType1", "ForlopsType1Num")],
+                             by = "ForlopsID", all.x = T)
+  preinterventiondoctor <- preinterventiondoctor[preinterventiondoctor$STATUS == 1, ]
+  registration <- registration[registration$STATUS == 1, ]
+  intervention <- intervention[intervention$STATUS == 1, ]
+  mcelist <- mcelist[mcelist$REGISTRATION_STATUS == 1, ]
+  patientcontrol <- patientcontrol[patientcontrol$STATUS == 1, ]
+  preintervention <- preintervention[preintervention$STATUS == 1, ]
+  doctorcontrol <- doctorcontrol[doctorcontrol$STATUS == 1, ]
+  oppfolging_kir <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 1, ],
+                          doctorcontrol[doctorcontrol$CONTROLTYPE == 1, ],
+                          by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
+  oppfolging_med <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 2, ],
+                          doctorcontrol[doctorcontrol$CONTROLTYPE == 2, ],
+                          by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
+  oppfolging <- merge(oppfolging_kir, oppfolging_med, by = "MCEID", suffixes = c("_kir", "_med"), all = T)
 
-SkjemaOversikt <- read.table("I:/hisreg/SkjemaOversikt_v12021-04-08 16-25-45.txt",
-                             header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
+  allevar <- merge(preintervention, preinterventiondoctor[!(names(preinterventiondoctor) %in%
+                                                              intersect(names(preintervention), names(preinterventiondoctor)[-1]))], by = "MCEID")
+  allevar <- merge(allevar, intervention[, !(names(intervention) %in% intersect(names(allevar), names(intervention)[-1]))], by = "MCEID")
+  allevar <- merge(allevar, registration[, !(names(registration) %in% intersect(names(allevar), names(registration)[-1]))], by = "MCEID")
+  allevar <- merge(allevar, oppfolging, by = "MCEID", suffixes = c("", "_oppf"), all.x = T)
+  allevar$Sykehusnavn <- centre$CENTRESHORTNAME[match(allevar$CENTREID, centre$ID)]
+  allevar <- merge(allevar, ForlopsOversikt_ny[, c("ForlopsID", "AvdRESH", "BasisRegStatus", "HovedDato",
+                                                   "PasientAlder", "OppflgRegStatus", "ForlopsType1", "ForlopsType1Num",
+                                                   "ForlopsType2", "ForlopsType2Num", "ErMann", "SykehusNavn", "PasientID",
+                                                   "UtdanningSSB", "KryptertFnr")],
+                   by.x = "MCEID", by.y = "ForlopsID")
+  allevar$BMI <- allevar$WEIGHT/(allevar$HIGHT/100)^2
+  allevar$MCEID <- allevar$MCEID + 10000
+  allevar$PasientID <- as.numeric(allevar$PasientID) + 10000
+  allevar$PasientID[!is.na(RegData$PasientID[match(allevar$KryptertFnr, RegData$KryptertFnr)])] <-
+    RegData$PasientID[match(allevar$KryptertFnr, RegData$KryptertFnr)][!is.na(RegData$PasientID[match(allevar$KryptertFnr, RegData$KryptertFnr)])]
 
-RegDataLabel <- read.table("I:/hisreg/AlleVar2021-04-08 16-25-45.txt",
-                           header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
+  RegData_ny <- allevar[, c("MCEID", "AGE_ABSCESS", "UtdanningSSB", "SURGERY", "MEDICATION_HISTORY_HS",
+                            "SMOKING", "WORK", "BMI", "DLQISUM", "VASSCORE", "HURLEY_SCORE", "TYPE_INTERVENTION",
+                            "SURGERY_TYPE_EXCISION_SUTUR", "SURGERY_TYPE_EXCISION_GRANUL", "SURGERY_TYPE_EXCISION_TRANSPLANT",
+                            "SURGERY_TYPE_LASER", "SURGERY_TYPE_DEROOFING", "SURGERY_TYPE_OTHER", "BIOLOGICAL_TREATMENT",
+                            "SYSTEMIC_ANTIBIOTIC_THERAPY", "ANTIINFLAMMATORY_TREATMENT", "ANALGESICS", "BASED_MEDICAL_TREATMENT",
+                            "AKSILLE", "LYSKE", "PUBIS", "GENITALT", "PERIALT", "GLUTEALT", "MAMMAE", "OTHER_SURGERY",
+                            "RIFAMPICIN_CLINDAMYCIN", "TETRACYCLIN_LYMECYCLIN", "AMOXICILIN", "SYSTEMIC_ANTIBIOTIC_THERAPY_OTHER",
+                            "INTRALESIONAL_CORTICOSTEROID_INJECTION", "ACELACIC_ACID", "CLINDAMYCIN", "RESORCINOL",
+                            "AvdRESH", "KryptertFnr", "BasisRegStatus", "HovedDato",
+                            "PasientAlder", "OppflgRegStatus", "ForlopsType1", "ForlopsType1Num",
+                            "ForlopsType2", "ForlopsType2Num", "ErMann", "SykehusNavn", "PasientID",
+                            "INFECTION_kir", "INFECTION_med", "DELAYED_WOUND_HEALING_kir", "DELAYED_WOUND_HEALING_med",
+                            "STRIKTURER_kir", "STRIKTURER_med", "NERVEDAMAGE_kir", "NERVEDAMAGE_med",
+                            "BLOODPOISEN_kir", "BLOODPOISEN_med", "BLEEDING_kir", "BLEEDING_med",
+                            "OTHER_COMPLICATIONS_ID_kir", "OTHER_COMPLICATIONS_ID_med", "DLQISUM_kir", "DLQISUM_med",
+                            "VASSCORE_kir", "VASSCORE_med", "HURLEY_SCORE_kir", "HURLEY_SCORE_med", "ADALIMUMAB_BIOSIMILAR",
+                            "INFLIXIMAB_BIOSIMILAR", "BIOLOGICAL_TREATMENT_OTHER", "ACITRETIN", "DAPSON", "CICLOSPORIN",
+                            "PREDNISOLON", "ISOTRETINOIN", "METFORMIN", "ANTIINFLAMMATORY_TREATMENT_OTHER", "IHS4SCORE",
+                            "IHS4SCORE_kir", "IHS4SCORE_med", "AGE_SPECIALIST", "AGE_DOCTOR", "TIME_SPECIALIST",
+                            "CONTROL_DATE_dokt_kir", "CONTROL_DATE_dokt_med")]
 
-Followups <- read.table("I:/hisreg/FollowupsNum2021-04-08 16-25-45.txt",
-                           header = TRUE, sep = ";", fileEncoding = "UTF-8-BOM")
+  shus <- data.frame(AvdRESH = unique(RegData_ny$AvdRESH),
+                     SykehusNavn = RegData_ny$SykehusNavn[match(unique(RegData_ny$AvdRESH), RegData_ny$AvdRESH)])
+  shus$SykehusNavn <- trimws(shus$SykehusNavn)
+  RegData_ny <- RegData_ny %>% mutate_at(c("BasisRegStatus", 'ErMann'), as.numeric)
+  RegData <- dplyr::bind_rows(RegData_gml, RegData_ny)
+  RegData$SykehusNavn <- shus$SykehusNavn[match(RegData$AvdRESH, shus$AvdRESH)]
 
+  RegData$c_date <- NA;
+  RegData$c_date[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$CONTROL_DATE_dokt_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$c_date[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$CONTROL_DATE_dokt_med[which(RegData$ForlopsType1Num == 2)]
+  RegData$c_date[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_kir)] <-
+    RegData$CONTROL_DATE_dokt_kir[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_kir)]
+  RegData$c_date[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_med)] <-
+    RegData$CONTROL_DATE_dokt_med[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_med)]
 
-RegData <- RegData[, c("m_mceid", "p_age_abscess",
-                       "p_education", "p_surgery",
-                       "p_antibiotics", "pre_smoking",
-                       "pre_work", "pre_bmi", "pre_dlqisum",
-                       "pre_hsscoresum", "pre_vasscore",
-                       "pre_hurley_score", "i_type",
-                       "i_surgery_type",
-                       "i_biological_treatment",
-                       "i_antibiotic_therapy",
-                       "i_antiinflammatory_treatment",
-                       "i_analgesics",
-                       "i_localized_med_treatment",
-                       "i_aksille", "i_lyske", "i_pubis",
-                       "i_genitalt", "i_peritalt", "i_glutealt",
-                       "i_mammae", "i_other_location",
-                       "i_rifampicin_clindamycin",
-                       "i_tetracyclin_lymecyclin",
-                       "i_amoxicilin", "i_sys_antibiotic_other",
-                       "i_corticosteroid_injection",
-                       "i_acelacic_acid", "i_clindamycin",
-                       "i_resorcinol",
-                       "i_medical_other")]
+  RegData$DLQISUM_POST <- NA;
+  RegData$DLQISUM_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$DLQISUM_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$DLQISUM_POST[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$DLQISUM_med[which(RegData$ForlopsType1Num == 2)]
 
-# Fjerner Oppfølging ikke mulig
-Followups <- Followups[Followups$c_possible != 2, ]
-# Fjerner oppfølginger uten pasientid
-Followups <- Followups[!is.na(Followups$c_mceid), ]
-Followups <- Followups[order(Followups$c_do_month,
-                             decreasing = FALSE), ]
-# Velg første oppfølging
-Followups <- Followups[match(unique(Followups$c_mceid),
-                             Followups$c_mceid), ]
-Followups <- Followups[, c("c_mceid", "c_do_month",
-                           "c_infection", "c_delayed_wound_healing",
-                           "c_stricturer", "c_nervedamage",
-                           "c_bloodpoisoning", "c_bleeding",
-                           "c_other_complications", "c_dlqisum",
-                           "c_hsscoresum", "c_vasscore",
-                           "c_hurley_score")]
+  RegData$HURLEY_SCORE_POST <- NA;
+  RegData$HURLEY_SCORE_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$HURLEY_SCORE_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$HURLEY_SCORE_POST[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$HURLEY_SCORE_med[which(RegData$ForlopsType1Num == 2)]
 
+  RegData$VASSCORE_POST <- NA;
+  RegData$VASSCORE_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$VASSCORE_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$VASSCORE_POST[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$VASSCORE_med[which(RegData$ForlopsType1Num == 2)]
 
-ForlopsData <- ForlopsData[, c("ForlopsID", "AvdRESH",
-                               "BasisRegStatus", "HovedDato",
-                               "PasientAlder", "OppflgRegStatus",
-                               "ForlopsType1", "ForlopsType1Num",
-                               "ForlopsType2", "ForlopsType2Num",
-                               "ErMann", "SykehusNavn", "PasientID")]
+  RegData$IHS4SCORE_POST <- NA;
+  RegData$IHS4SCORE_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$IHS4SCORE_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$IHS4SCORE_POST[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$IHS4SCORE_med[which(RegData$ForlopsType1Num == 2)]
 
+  rm(list = c("allevar", "centre", "doctorcontrol", "Followups", "ForlopsData",
+              "ForlopsOversikt_ny", "intervention", "mce", "mcelist", "oppfolging",
+              "oppfolging_kir", "oppfolging_med", "patient", "patientcontrol",
+              "preintervention", "preinterventiondoctor", "registration",
+              "RegData_gml", "RegData_ny", "shus"))
 
+  RegData <- RegData[RegData$BasisRegStatus==1, ]
+  RegData$HovedDato <- as.Date(RegData$HovedDato, format="%Y-%m-%d") # Ordne datoformat
+  RegData <- RegData[!is.na(RegData$HovedDato), ]
+  RegData$Aar <- as.numeric(format(RegData$HovedDato, "%Y"))
+  RegData$SykehusNavn <- as.factor(RegData$SykehusNavn)
 
-RegData <- merge(RegData,
-                 ForlopsData,
-                 by.x = "m_mceid",
-                 by.y = "ForlopsID")
-RegData <- merge(RegData, Followups,
-                 by.x = "m_mceid",
-                 by.y = "c_mceid",
-                 all.x = T)
-############## NY DATA ####################
-# Les data:
-# preinterventiondoctor <- read.table('I:/hisreg/preinterventiondoctor2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-# registration <- read.table('I:/hisreg/registration2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-# intervention <- read.table('I:/hisreg/intervention2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-# mce <- read.table('I:/hisreg/mce2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-# mcelist <- read.table('I:/hisreg/mcelist2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-# patient <- read.table('I:/hisreg/patient2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-# patientcontrol <- read.table('I:/hisreg/patientcontrol2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-# preintervention <- read.table('I:/hisreg/preintervention2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-# centre <- read.table('I:/hisreg/centre2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-# doctorcontrol <- read.table('I:/hisreg/doctorcontrol2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-ForlopsOversikt_ny <- read.table('I:/hisreg/ForlopsOversikt2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
-SkjemaOversikt_ny <- read.table('I:/hisreg/SkjemaOversikt2021-04-08 16-25-45.txt', header=TRUE, sep=";", fileEncoding = 'UTF-8')
+  RegData$Intervensjon <- NA
+  RegData$Intervensjon[RegData$ForlopsType1=="Kirurgisk intervensjon"] <- 1
+  RegData$Intervensjon[RegData$ForlopsType1=="Medisinsk intervensjon"] <- 2
+  RegData$Intervensjon[RegData$ForlopsType1=="Kirurgisk og medisinsk intervensjon"] <- 3
+  RegData$Intervensjon <- factor(RegData$Intervensjon, levels = 1:3, labels = c('Kirugisk', 'Medisinsk', 'Kir. og. med.'))
+
 }
 
-RegData <- hisreg::hisregPreprosess(RegData)
-RegDataAll <- RegData[which(RegData$AvdRESH == 999002), ]
+# RegData <- hisreg::hisregPreprosess(RegData) # tas ut foreløpig, mye av koden ovenfor skal inn etter hvert
 # Roskilde skal ikke inngå blant de nasjonale tallene.
 RegData <- RegData[RegData$AvdRESH != 999002, ]
-RegData$SykehusNavn <- as.factor(as.character(RegData$SykehusNavn))
-RegDataAll$SykehusNavn <- as.factor(as.character(RegDataAll$SykehusNavn))
-# RegData$HovedDato <- as.POSIXct.POSIXlt(RegData$HovedDato)
 
-#### NY ######
-# Bearbeid data:
-SkjemaOversikt_ny$HovedDato <- as.Date(SkjemaOversikt_ny$HovedDato)
-SkjemaOversikt_ny$Skjemanavn <- as.factor(SkjemaOversikt_ny$Skjemanavn)
-SkjemaOversikt_ny <- merge(SkjemaOversikt_ny,
-                           ForlopsOversikt_ny[, c("ForlopsID", "ForlopsType1", "ForlopsType1Num")],
-                           by = "ForlopsID", all.x = T)
-# preinterventiondoctor <- preinterventiondoctor[preinterventiondoctor$STATUS == 1, ]
-# registration <- registration[registration$STATUS == 1, ]
-# intervention <- intervention[intervention$STATUS == 1, ]
-# mcelist <- mcelist[mcelist$REGISTRATION_STATUS == 1, ]
-# patientcontrol <- patientcontrol[patientcontrol$STATUS == 1, ]
-# preintervention <- preintervention[preintervention$STATUS == 1, ]
-# doctorcontrol <- doctorcontrol[doctorcontrol$STATUS == 1, ]
-# oppfolging_kir <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 1, ], doctorcontrol[doctorcontrol$CONTROLTYPE == 1, ],
-#                         by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
-# oppfolging_med <- merge(patientcontrol[patientcontrol$CONTROLTYPE == 2, ], doctorcontrol[doctorcontrol$CONTROLTYPE == 2, ],
-#                         by = "MCEID",  suffixes = c("_pas", "_dokt"), all = TRUE)
-# oppfolging <- merge(oppfolging_kir, oppfolging_med, by = "MCEID", suffixes = c("_kir", "_med"), all = T)
-#
-# allevar <- merge(preintervention, preinterventiondoctor[!(names(preinterventiondoctor) %in% intersect(names(preintervention), names(preinterventiondoctor)[-1]))], by = "MCEID")
-# allevar <- merge(allevar, intervention[!(names(intervention) %in% intersect(names(allevar), names(intervention)[-1]))], by = "MCEID")
-# allevar <- merge(allevar, registration[!(names(registration) %in% intersect(names(allevar), names(registration)[-1]))], by = "MCEID")
-# allevar <- merge(allevar, oppfolging, by = "MCEID", suffixes = c("", "_oppf"), all.x = T)
-# allevar$Sykehusnavn <- centre$CENTRESHORTNAME[match(allevar$CENTREID, centre$ID)]
 
-###################
+
 
 #------------------Variabel valg-------------------------------------
 
@@ -168,21 +171,21 @@ avdValg <- unique(RegData$AvdRESH)
 names(avdValg) <- unique(RegData$SykehusNavn)
 
 varValgFordeling <- c("Alder" = "PasientAlder",
-                      "Alder ved første byll" = "p_age_abscess",
+                      "Alder ved første byll" = "AGE_ABSCESS",
                       "Kjønn" = "ErMann",
-                      "Utdanning" = "p_education",
-                      "Røykevaner" = "pre_smoking",
-                      "Arbeidsstatus preintervensjon" = "pre_work",
-                      "Type intervensjon" = "i_type",
-                      "Type Kirurgi" = "i_surgery_type",
-                      "Biologiske legemidler" = "i_biological_treatment",
-                      "Type medisinsk behandling" = "MedisinskBeh",
-                      "Lokalisasjon av kirurgisk inngrep" =
-                      "KirurgiLokalisering",
-                      "Komplikasjoner kirurgi" = "KomplKir",
-                      "Tidligere behandling" = "TidlBeh",
-                      "BMI" = "pre_bmi",
-                      "Hurley-score ved inklusjon" = "pre_hurley_score")
+                      "Utdanning" = "UtdanningSSB",
+                      "Røykevaner" = "SMOKING",
+                      "Arbeidsstatus preintervensjon" = "WORK",
+                      "Type intervensjon" = "ForlopsType1Num",
+                      "Type Kirurgi" = "type_kirurgi",
+                      "Biologiske legemidler" = "BiologiskBeh",
+                      "Type medisinsk behandling" = "MedisinskBeh_v2",
+                      # "Lokalisasjon av kirurgisk inngrep" =
+                      # "KirurgiLokalisering",
+                      "Komplikasjoner kirurgi" = "KomplKir_v2",
+                      "Tidligere behandling" = "TidlBeh_v2",
+                      "BMI" = "BMI",
+                      "Hurley-score ved inklusjon" = "HURLEY_SCORE")
 
 typInt <- c("---" = 99,
             "Kirurgisk" = 1,

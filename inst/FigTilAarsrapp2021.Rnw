@@ -168,7 +168,7 @@ rm(list = c("allevar", "centre", "doctorcontrol", "Followups", "ForlopsData",
             "ForlopsOversikt_ny", "intervention", "mce", "mcelist", "oppfolging",
             "oppfolging_kir", "oppfolging_med", "patient", "patientcontrol",
             "preintervention", "preinterventiondoctor", "registration",
-            "SkjemaOversikt_ny", "RegData_gml", "RegData_ny", "shus"))
+            "RegData_gml", "RegData_ny", "shus"))
 
 RegData <- RegData[RegData$BasisRegStatus==1, ]
 RegData$HovedDato <- as.Date(RegData$HovedDato, format="%Y-%m-%d") # Ordne datoformat
