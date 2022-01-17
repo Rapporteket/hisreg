@@ -68,7 +68,7 @@ hisregHentRegData <- function() {
                   INNER JOIN AlleVar ON AlleVarNum.m_mceid = AlleVar.m_mceid
                   LEFT JOIN FollowupsNum ON AlleVarNum.m_mceid = FollowupsNum.c_mceid")
 
-  RegData <- rapbase::LoadRegData(registryName, query, dbType)
+  RegData <- rapbase::loadRegData(registryName, query, dbType)
 
   return(RegData)
 }
@@ -88,7 +88,7 @@ hisregHentTabell <- function(tabnavn, registryName="hisreg") {
 
   query <- paste0("SELECT * FROM ", tabnavn)
 
-  RegData <- rapbase::LoadRegData(registryName, query, dbType)
+  RegData <- rapbase::loadRegData(registryName, query, dbType)
 
   return(RegData)
 }

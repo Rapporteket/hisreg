@@ -28,7 +28,7 @@ Imports:
 Suggests:
     knitr,
     rmarkdown
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Remotes: 
     Rapporteket/rapbase,
     Rapporteket/rapFigurer,

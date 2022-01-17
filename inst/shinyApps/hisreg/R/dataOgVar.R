@@ -13,9 +13,7 @@ logoWidget <- tags$script(shiny::HTML(logoCode))
 
 #------------------Data-------------------------------------
 
-context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-onServer <- context == "TEST" | context == "QA" | context == "PRODUCTION" | context == "DEV"
-if (onServer) {
+if (rapbase::isRapContext()) {
   RegData <- hisreg::hisregHentRegData()
   SkjemaOversikt <- rapbase::LoadRegData(
     registryName = "hisreg",
@@ -23,16 +21,16 @@ if (onServer) {
     query = "SELECT *
              FROM SkjemaOversikt_v1"
   )
-  # preinterventiondoctor <- hisreg::hisregHentTabell("preinterventiondoctor")
-  # registration <- hisreg::hisregHentTabell("registration")
-  # intervention <- hisreg::hisregHentTabell("intervention")
-  # mce <- hisreg::hisregHentTabell("mce")
-  # mcelist <- hisreg::hisregHentTabell("mcelist")
-  # patient <- hisreg::hisregHentTabell("patient")
-  # patientcontrol <- hisreg::hisregHentTabell("patientcontrol")
-  # preintervention <- hisreg::hisregHentTabell("preintervention")
-  # centre <- hisreg::hisregHentTabell("centre")
-  # doctorcontrol <- hisreg::hisregHentTabell("doctorcontrol")
+  preinterventiondoctor <- hisreg::hisregHentTabell("preinterventiondoctor")
+  registration <- hisreg::hisregHentTabell("registration")
+  intervention <- hisreg::hisregHentTabell("intervention")
+  mce <- hisreg::hisregHentTabell("mce")
+  mcelist <- hisreg::hisregHentTabell("mcelist")
+  patient <- hisreg::hisregHentTabell("patient")
+  patientcontrol <- hisreg::hisregHentTabell("patientcontrol")
+  preintervention <- hisreg::hisregHentTabell("preintervention")
+  centre <- hisreg::hisregHentTabell("centre")
+  doctorcontrol <- hisreg::hisregHentTabell("doctorcontrol")
   ForlopsOversikt_ny <- hisreg::hisregHentTabell("ForlopsOversikt")
   SkjemaOversikt_ny <- hisreg::hisregHentTabell("SkjemaOversikt")
 
