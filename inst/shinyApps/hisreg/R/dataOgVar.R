@@ -17,6 +17,7 @@ if (rapbase::isRapContext()) {
   ForlopsData <- hisreg::hisregHentTabell("ForlopsOversikt_v1")
   RegData <- hisreg::hisregHentTabell("AlleVarNum")
   Followups <- hisreg::hisregHentTabell("FollowupsNum")
+  SkjemaOversikt <- hisreg::hisregHentTabell("SkjemaOversikt_v1")
 
   hisreg_old<-list(RegData=RegData, ForlopsData=ForlopsData, Followups=Followups)
 
@@ -73,8 +74,12 @@ if (rapbase::isRapContext()) {
   allevar$BMI <- allevar$WEIGHT/(allevar$HIGHT/100)^2
   allevar$MCEID <- allevar$MCEID + 10000
   allevar$PasientID <- as.numeric(allevar$PasientID) + 10000
-  allevar$PasientID[!is.na(RegData$PasientID[match(allevar$KryptertFnr, RegData$KryptertFnr)])] <-
-    RegData$PasientID[match(allevar$KryptertFnr, RegData$KryptertFnr)][!is.na(RegData$PasientID[match(allevar$KryptertFnr, RegData$KryptertFnr)])]
+  # Der det finnes et KryptertFnr i nytt datasett som matcher KryptertFnr i gammelt
+  # datasett: Bruk PasientID fra gammelt
+  allevar$PasientID[!is.na(RegData_gml$PasientID[match(allevar$KryptertFnr, RegData_gml$KryptertFnr)])] <-
+    RegData_gml$PasientID[match(allevar$KryptertFnr,
+                                RegData_gml$KryptertFnr)][!is.na(RegData_gml$PasientID[match(allevar$KryptertFnr,
+                                                                                             RegData_gml$KryptertFnr)])]
 
   RegData_ny <- allevar[, c("MCEID", "AGE_ABSCESS", "UtdanningSSB", "SURGERY", "MEDICATION_HISTORY_HS",
                             "SMOKING", "WORK", "BMI", "DLQISUM", "VASSCORE", "HURLEY_SCORE", "TYPE_INTERVENTION",
@@ -199,11 +204,11 @@ kjoenn <- c("Begge kjønn" = 99,
             "Kvinne" = 0,
             "Mann" = 1)
 
-varValgGjenPer <- c("BMI, preintervensjon" = "pre_bmi",
-                    "DLQI-sum, preintervensjon" = "pre_dlqisum",
-                    "VAS-score, preintervensjon" = "pre_vasscore",
-                    "HS-score, preintervensjon" = "pre_hsscoresum")
+varValgGjenPer <- c("BMI, preintervensjon" = "BMI",
+                    "DLQI-sum, preintervensjon" = "DLQISUM",
+                    "VAS-score, preintervensjon" = "VASSCORE",
+                    "IHS4-score, preintervensjon" = "IHS4SCORE")
 
-varValgGjenFE <- c("DLQI" = "DLQI_PrePost",
-                    "HS-score" = "HS_PrePost",
-                    "VAS" = "Vas_PrePost")
+varValgGjenFE <- c("DLQI" = "DLQI_PrePost_ny",
+                    "IHS4-score" = "IHS4SCORE",
+                    "VAS" = "Vas_PrePost_ny")

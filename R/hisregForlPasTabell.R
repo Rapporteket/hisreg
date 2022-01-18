@@ -53,7 +53,7 @@ hisregForlPasTabell <- function(RegDt ,
 
   tabData <- RegDt %>%
     dplyr::select(PasientID,
-                  m_mceid,
+                  MCEID,
                   SykehusNavn,
                   HovedDato,
                   ErMann,
@@ -71,7 +71,7 @@ hisregForlPasTabell <- function(RegDt ,
                                                              as.Date(tidTil)),
                        PasientAlder %>% dplyr::between(aldmin, aldmax),
                        ErMann %in% kjoen, ForlopsType1Num %in% frlType) %>%
-          dplyr::select(PasientID, m_mceid, SykehusNavn, maaned, aar, underEtAar) %>%
+          dplyr::select(PasientID, MCEID, SykehusNavn, maaned, aar, underEtAar) %>%
             dplyr::arrange(aar, maaned)
 
   tabData <- tabData %>% dplyr::filter(!duplicated(tabData[[IDType]]))

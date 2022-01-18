@@ -166,7 +166,7 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
 
     }else if (fun == "FEPS") {
       output$figur <- shiny::renderPlot({
-        hisreg::hisregFigGjsnPrePostShus(RegData,
+        hisreg::hisregFigGjsnPrePostGrVar(RegData,
                                        valgtVar = req(input$varSel),
                                        datoFra = min(req(input$dateRan)),
                                        datoTil = max(req(input$dateRan)),

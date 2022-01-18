@@ -81,7 +81,7 @@ tabell <- function(input, output, session, ss) {
 
           shiny::radioButtons(ns("skjemarad"),
                           "",
-                          choices = c("Forløp" = "m_mceid",
+                          choices = c("Forløp" = "MCEID",
                                       "Pasient" = "PasientID"),
                           inline = TRUE))
     }else if (input$tab ==  "skjema") {
@@ -121,7 +121,7 @@ tabell <- function(input, output, session, ss) {
   })
   forloptxt <- reactive({
 
-      if (req(input$skjemarad) == "m_mceid") {
+      if (req(input$skjemarad) == "MCEID") {
         "registrerte pasientforløp"
       } else {
         "unike pasienter"
