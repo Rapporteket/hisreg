@@ -1,8 +1,8 @@
 Package: hisreg
 Type: Package
 Title: Resultatrapporter for HISREG
-Version: 2.1.3
-Date: 2016-06-17
+Version: 3.0.0
+Date: 2022-01-18
 Author: Kevin Thon
 Maintainer: Kevin Thon <kevin.thon@skde.no>
 Description: Pakke for generering av resultatrapporter for HISREG

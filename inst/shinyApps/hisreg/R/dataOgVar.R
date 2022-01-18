@@ -12,6 +12,7 @@ logoWidget <- tags$script(shiny::HTML(logoCode))
 
 
 #------------------Data-------------------------------------
+library(tidyverse)
 
 if (rapbase::isRapContext()) {
   ForlopsData <- hisreg::hisregHentTabell("ForlopsOversikt_v1")
