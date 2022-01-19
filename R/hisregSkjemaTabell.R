@@ -35,6 +35,8 @@ hisregSkjemaTabell <- function(df,
                 .data[[typeDato]] %>% as.Date() %>%
                   dplyr::between(as.Date(tidFra), as.Date(tidTil)))
 
+  if (dim(skjemaData)[1] != 0) {
+
   lev <- c("Preintervensjon",
            "Intervensjon",
            "Kontroll 3 mnd",
@@ -56,6 +58,9 @@ hisregSkjemaTabell <- function(df,
   utData <- stats::addmargins(table(skjemaData[["Sykehusnavn"]],
                         skjemaData[["Skjemanavn"]] ))
   utData <- as.data.frame.matrix(utData)
+  } else {
+    utData <- NULL
+  }
   return( utData)
 }
 

@@ -228,6 +228,7 @@ tabell <- function(input, output, session, ss) {
     }
   )
   observe({
+    if (!is.null(tabellData())) {
     cont <- headerFooter(tabellData())
     subS <- dim(tabellData())[1] - 1
     output$Tabell1 <-  renderDT(
@@ -240,9 +241,10 @@ tabell <- function(input, output, session, ss) {
                          fixedHeader = TRUE,
                          lengthChange = FALSE,
                          dom = "t"))
-    )
+    )}
    })
   observe({
+    if (!is.null(tabellData())) {
     cont <- headerFooter(tabellData())
     subS <- dim(tabellData())[1] - 1
     output$Tabell2 <-  renderDT(
@@ -255,7 +257,7 @@ tabell <- function(input, output, session, ss) {
                          fixedHeader = TRUE,
                          lengthChange = FALSE,
                          dom = "t"))
-    )
+    )}
   })
   shiny::observe({
     if (rapbase::isRapContext()) {
