@@ -79,7 +79,9 @@ hisregFigAndeler <- function(RegData, valgtVar, datoFra='2000-01-01', datoTil='2
   Andeler <- list(Hoved = 0, Rest =0)
   Nrest <- 0
 
-  if (valgtVar %in% c('TidlBeh', 'MedisinskBeh', 'KomplKir', 'KirurgiLokalisering', 'Antibiotisk', 'LokalisertMedisinsk')) {
+  if (valgtVar %in% c('TidlBeh', 'MedisinskBeh', 'KomplKir', 'KirurgiLokalisering', 'Antibiotisk',
+                      'LokalisertMedisinsk', 'type_kirurgi', 'MedisinskBeh_v2', "BiologiskBeh", "KomplKir_v2",
+                      "Antibiotisk_v2", "AntiinflammatoriskBeh", "LokalisertMedisinsk_v2")) {
     flerevar <- 1
   } else {
     flerevar <- 0

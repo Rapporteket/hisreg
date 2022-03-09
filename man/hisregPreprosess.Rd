@@ -4,7 +4,7 @@
 \alias{hisregPreprosess}
 \title{Preprosesser hisregdata}
 \usage{
-hisregPreprosess(RegData)
+hisregPreprosess(RegData, versjon = 1)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

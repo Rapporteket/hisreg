@@ -239,7 +239,7 @@ modFordelinger <- function(input, output, session, rID, role, ss) {
   )
   #logging
   shiny::observe({
-    if (onServer) {
+    if (rapbase::isRapContext()) {
       if (input$tabs == "fig") {
         mld <- paste(
           "Hisreg: figur - fordeling. variabel -",
@@ -251,7 +251,7 @@ modFordelinger <- function(input, output, session, rID, role, ss) {
           input$varSel
         )
       }
-      raplog::repLogger(
+      rapbase::repLogger(
         session = ss,
         msg = mld
       )
@@ -265,14 +265,14 @@ modFordelinger <- function(input, output, session, rID, role, ss) {
       )
       shinyjs::onclick(
         "lastNedBilde",
-        raplog::repLogger(
+        rapbase::repLogger(
           session = ss,
           msg = mldNLF
         )
       )
       shinyjs::onclick(
         "lastNed",
-        raplog::repLogger(
+        rapbase::repLogger(
           ss,
           msg = mldNLT
         )

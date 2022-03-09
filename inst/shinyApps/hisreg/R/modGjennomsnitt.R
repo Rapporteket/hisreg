@@ -166,7 +166,7 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
 
     }else if (fun == "FEPS") {
       output$figur <- shiny::renderPlot({
-        hisreg::hisregFigGjsnPrePostShus(RegData,
+        hisreg::hisregFigGjsnPrePostGrVar(RegData,
                                        valgtVar = req(input$varSel),
                                        datoFra = min(req(input$dateRan)),
                                        datoTil = max(req(input$dateRan)),
@@ -377,7 +377,7 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
     }
   )
   shiny::observe({
-    if (onServer) {
+    if (rapbase::isRapContext()) {
       if (input$tabs == "fig") {
         mld <- paste(
           "Hisreg: figur - gjennomsnitt.", fun, " variabel -",
@@ -389,7 +389,7 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
           input$varSel
         )
       }
-      raplog::repLogger(
+      rapbase::repLogger(
         session = ss,
         msg = mld
       )
@@ -403,14 +403,14 @@ modGjennomsnitt <- function(input, output, session, rID = 601031,
       )
       shinyjs::onclick(
         "lastNedBilde",
-        raplog::repLogger(
+        rapbase::repLogger(
           session = ss,
           msg = mldNLF
         )
       )
       shinyjs::onclick(
         "lastNedTab",
-        raplog::repLogger(
+        rapbase::repLogger(
           ss,
           msg = mldNLT
         )

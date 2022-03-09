@@ -27,7 +27,7 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
   }
 
   RegData <- RegData[which(RegData$OppflgRegStatus >= 1), ]
-  RegData$Gr_var <- RegData[, gr_var]
+  RegData$Gr_var <- RegData[[gr_var]]
 
   # Denne figurtypen krever at oppfølginger finnes
   RegData <- RegData[RegData$OppflgRegStatus >= 1, ]
@@ -53,15 +53,18 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
   PrePostVar <- switch(valgtVar,
                        DLQI_PrePost = c('pre_dlqisum', 'c_dlqisum'),
                        HS_PrePost = c('pre_hsscoresum', 'c_hsscoresum'),
-                       Vas_PrePost = c('pre_vasscore', 'c_vasscore'))
+                       Vas_PrePost = c('pre_vasscore', 'c_vasscore'),
+                       DLQI_PrePost_ny = c('DLQISUM', 'DLQISUM_POST'),
+                       Vas_PrePost_ny = c('VASSCORE', 'VASSCORE_POST'),
+                       IHS4SCORE = c('IHS4SCORE', 'IHS4SCORE_POST'))
 
 
   #   PrePostVar <- switch(valgtVar,
   #                        DLQI_PrePost = c('DLQI alvorlighetsgrad', 'før og etter behandling'),
   #                        Hurley_PrePost = c('Hurley score', 'før og etter behandling'))
 
-  RegData$VarPre <- RegData[ ,PrePostVar[1]]
-  RegData$VarPost <- RegData[ ,PrePostVar[2]]
+  RegData$VarPre <- RegData[[PrePostVar[1]]]
+  RegData$VarPost <- RegData[[PrePostVar[2]]]
   RegData <- RegData[!is.na(RegData$VarPre) & !is.na(RegData$VarPost), ]
 
   ## Gjør utvalg basert på brukervalg (LibUtvalg)
@@ -134,7 +137,10 @@ hisregFigGjsnPrePostGrVar <- function(RegData, valgtVar, datoFra='2000-01-01', d
   tittel <- switch(valgtVar,
                    'DLQI_PrePost' = 'DLQI før og etter intervensjon',
                    'HS_PrePost' = 'HS score sum før og etter intervensjon',
-                   'Vas_PrePost' = c('Hvor plaget er pasienten?', 'Visuell analog skala (VAS) fra 0-10')
+                   'Vas_PrePost' = c('Hvor plaget er pasienten?', 'Visuell analog skala (VAS) fra 0-10'),
+                   'DLQI_PrePost_ny' = 'DLQI før og etter intervensjon',
+                   'Vas_PrePost_ny' = c('Hvor plaget er pasienten?', 'Visuell analog skala (VAS) fra 0-10'),
+                   'IHS4SCORE' = 'IHS4-score før og etter intervensjon'
   )
 
   tittel <- c(tittel, 'med 95% konfidensintervall')

@@ -81,7 +81,7 @@ tabell <- function(input, output, session, ss) {
 
           shiny::radioButtons(ns("skjemarad"),
                           "",
-                          choices = c("Forløp" = "m_mceid",
+                          choices = c("Forløp" = "MCEID",
                                       "Pasient" = "PasientID"),
                           inline = TRUE))
     }else if (input$tab ==  "skjema") {
@@ -121,7 +121,7 @@ tabell <- function(input, output, session, ss) {
   })
   forloptxt <- reactive({
 
-      if (req(input$skjemarad) == "m_mceid") {
+      if (req(input$skjemarad) == "MCEID") {
         "registrerte pasientforløp"
       } else {
         "unike pasienter"
@@ -228,6 +228,7 @@ tabell <- function(input, output, session, ss) {
     }
   )
   observe({
+    if (!is.null(tabellData())) {
     cont <- headerFooter(tabellData())
     subS <- dim(tabellData())[1] - 1
     output$Tabell1 <-  renderDT(
@@ -240,9 +241,10 @@ tabell <- function(input, output, session, ss) {
                          fixedHeader = TRUE,
                          lengthChange = FALSE,
                          dom = "t"))
-    )
+    )}
    })
   observe({
+    if (!is.null(tabellData())) {
     cont <- headerFooter(tabellData())
     subS <- dim(tabellData())[1] - 1
     output$Tabell2 <-  renderDT(
@@ -255,10 +257,10 @@ tabell <- function(input, output, session, ss) {
                          fixedHeader = TRUE,
                          lengthChange = FALSE,
                          dom = "t"))
-    )
+    )}
   })
   shiny::observe({
-    if (onServer) {
+    if (rapbase::isRapContext()) {
       if (input$tab == "forlPas") {
         mld <- paste(
           "Hisreg: tabell", input$skjemarad
@@ -268,7 +270,7 @@ tabell <- function(input, output, session, ss) {
           "Hisreg: tabell - skjematabell"
         )
       }
-      raplog::repLogger(
+      rapbase::repLogger(
         session = ss,
         msg = mld
       )
@@ -281,14 +283,14 @@ tabell <- function(input, output, session, ss) {
       )
       shinyjs::onclick(
         "lastNedTabell1",
-        raplog::repLogger(
+        rapbase::repLogger(
           session = ss,
           msg = mldNlFol
         )
       )
       shinyjs::onclick(
         "lastNedTabell2",
-        raplog::repLogger(
+        rapbase::repLogger(
           ss,
           msg = mldNlSkj
         )
