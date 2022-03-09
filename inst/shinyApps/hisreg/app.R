@@ -49,8 +49,7 @@ system.file(
 
 ui <- shiny::tagList(
   shinyjs::useShinyjs(),
-  # shinyalert::useShinyalert(),
-  shiny::navbarPage(
+  shiny::navbarPage(id = "hisreg_app_id",
     title = div(a(includeHTML(system.file("www/logo.svg",
                                           package = "rapbase"))),
                 regTitle),
@@ -85,16 +84,53 @@ ui <- shiny::tagList(
     tabPanel(
       "Datadump", dataDumpUI("dataDumpHisreg")
     ),
-    shiny::tabPanel(
-      "Eksport",
-      shiny::sidebarLayout(
-        shiny::sidebarPanel(
-          rapbase::exportUCInput("hisregExport")
-        ),
-        shiny::mainPanel(
-          rapbase::exportGuideUI("hisregExportGuide")
-        )
-      )
+    # shiny::tabPanel(
+    #   "Eksport",
+    #   shiny::sidebarLayout(
+    #     shiny::sidebarPanel(
+    #       rapbase::exportUCInput("hisregExport")
+    #     ),
+    #     shiny::mainPanel(
+    #       rapbase::exportGuideUI("hisregExportGuide")
+    #     )
+    #   )
+    # )
+    shiny::navbarMenu("Verktøy",
+                      # shiny::tabPanel(
+                      #   "Utsending",
+                      #   shiny::sidebarLayout(
+                      #     shiny::sidebarPanel(
+                      #       rapbase::autoReportOrgInput("hisregDispatch"),
+                      #       rapbase::autoReportInput("hisregDispatch")
+                      #     ),
+                      #     shiny::mainPanel(
+                      #       rapbase::autoReportUI("hisregDispatch")
+                      #     )
+                      #   )
+                      # ),
+
+                      shiny::tabPanel(
+                        "Eksport",
+                        shiny::sidebarLayout(
+                          shiny::sidebarPanel(
+                            rapbase::exportUCInput("hisregExport")
+                          ),
+                          shiny::mainPanel(
+                            rapbase::exportGuideUI("hisregExportGuide")
+                          )
+                        )
+                      ),
+
+                      shiny::tabPanel(
+                        "Bruksstatistikk",
+                        shiny::sidebarLayout(
+                          shiny::sidebarPanel(rapbase::statsInput("hisregStats")),
+                          shiny::mainPanel(
+                            rapbase::statsUI("hisregStats"),
+                            rapbase::statsGuideUI("hisregStatsGuide")
+                          )
+                        )
+                      )
     )
 
 
@@ -105,53 +141,56 @@ ui <- shiny::tagList(
 
 server <-  function(input, output, session) {
 
-  # print(names(allevar))
-  # print(dim(allevar))
 
-  reshID <- reactive({
-    ifelse(rapbase::isRapContext(),as.numeric(rapbase::getUserReshId(session)),601031)
-  })
-  userRole <- reactive({
-    ifelse(rapbase::isRapContext(), rapbase::getUserRole(session), 'SC')
-  })
-  if (rapbase::isRapContext()){
-    rapbase::appLogger(session, msg = "Hisreg: Shiny app starter")
+  if (rapbase::isRapContext()) {
+    rapbase::appLogger(session = session, msg = 'Hisreg: Shiny app starter')
+    reshID <- rapbase::getUserReshId(session)
+    userRole <- rapbase::getUserRole(session)
+  } else {
+    reshID <- 601031
+    userRole <- 'SC'
   }
 
-  observe(
-    if (userRole() != "SC") {
-      shinyjs::hide(
-        selector =  ".dropdown-menu li:nth-child(1)")
-      shinyjs::hide(
-        selector =  ".dropdown-menu li:nth-child(3)")
-    } else {
-      shiny::callModule(modGjennomsnitt, "mod2", rID = reshID(), ss = session,
-                        add_int = TRUE, add_enh = FALSE, fun = "PS")
-      shiny::callModule(modGjennomsnitt, "mod4", rID = reshID(), ss = session,
-                        add_int = TRUE, add_enh = FALSE, fun = "FEPS")
-    }
-  )
-  shiny::callModule(startside, "startside", usrRole=userRole())
-  shiny::callModule(modFordelinger, "mod1", rID = reshID(), role = userRole(),
+  # observe(
+  if (userRole != "SC") {
+    shinyjs::hide(
+      selector =  ".dropdown-menu li:nth-child(1)")
+    shinyjs::hide(
+      selector =  ".dropdown-menu li:nth-child(3)")
+    shiny::hideTab("hisreg_app_id", target = "Verktøy")
+  } else {
+    shiny::callModule(modGjennomsnitt, "mod2", rID = reshID, ss = session,
+                      add_int = TRUE, add_enh = FALSE, fun = "PS")
+    shiny::callModule(modGjennomsnitt, "mod4", rID = reshID, ss = session,
+                      add_int = TRUE, add_enh = FALSE, fun = "FEPS")
+  }
+  # )
+  shiny::callModule(startside, "startside", usrRole=userRole)
+  shiny::callModule(modFordelinger, "mod1", rID = reshID, role = userRole,
                     ss = session)
 
-  shiny::callModule(modGjennomsnitt, "mod3", rID = reshID(), ss = session,
+  shiny::callModule(modGjennomsnitt, "mod3", rID = reshID, ss = session,
                     add_int = FALSE, add_enh = FALSE, fun = "PI")
 
-  shiny::callModule(modGjennomsnitt, "mod5", rID = reshID(), ss = session,
+  shiny::callModule(modGjennomsnitt, "mod5", rID = reshID, ss = session,
                     add_int = FALSE, add_enh = TRUE, fun = "FEPI")
   shiny::callModule(tabell, "tab", ss = session)
   shiny::callModule(admtab, "tab_ny", skjemaoversikt=SkjemaOversikt_ny) # , skjemaoversikt=SkjemaOversikt_ny
   shiny::callModule(dataDump, "dataDumpHisreg", mainSession = session,
-                    reshID = reshID(), userRole = userRole())
+                    reshID = reshID, userRole = userRole)
 
   ##########################################################################################################
   # Eksport  ###############################################################################################
   # brukerkontroller
   rapbase::exportUCServer("hisregExport", "hisreg")
-
   ## veileding
   rapbase::exportGuideServer("hisregExportGuide", "hisreg")
+
+  ## Stats
+  rapbase::statsServer("hisregStats", registryName = "hisreg",
+                       eligible = (userRole == "SC"))
+  rapbase::statsGuideServer("hisregStatsGuide", registryName = "hisreg")
+
 
   ##########################################################################################################
 
