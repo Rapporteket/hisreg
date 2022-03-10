@@ -141,6 +141,7 @@ ui <- shiny::tagList(
 
 server <-  function(input, output, session) {
 
+  # hisregdata <- hisreg::lastShinyHisreg()
 
   if (rapbase::isRapContext()) {
     rapbase::appLogger(session = session, msg = 'Hisreg: Shiny app starter')
@@ -160,22 +161,22 @@ server <-  function(input, output, session) {
     shiny::hideTab("hisreg_app_id", target = "Verktøy")
   } else {
     shiny::callModule(modGjennomsnitt, "mod2", rID = reshID, ss = session,
-                      add_int = TRUE, add_enh = FALSE, fun = "PS")
+                      add_int = TRUE, add_enh = FALSE, fun = "PS", RegData = hisregdata$RegData)
     shiny::callModule(modGjennomsnitt, "mod4", rID = reshID, ss = session,
-                      add_int = TRUE, add_enh = FALSE, fun = "FEPS")
+                      add_int = TRUE, add_enh = FALSE, fun = "FEPS", RegData = hisregdata$RegData)
   }
   # )
   shiny::callModule(startside, "startside", usrRole=userRole)
   shiny::callModule(modFordelinger, "mod1", rID = reshID, role = userRole,
-                    ss = session, RegData = RegData)
+                    ss = session, RegData = hisregdata$RegData)
 
   shiny::callModule(modGjennomsnitt, "mod3", rID = reshID, ss = session,
-                    add_int = FALSE, add_enh = FALSE, fun = "PI", RegData = RegData)
+                    add_int = FALSE, add_enh = FALSE, fun = "PI", RegData = hisregdata$RegData)
 
   shiny::callModule(modGjennomsnitt, "mod5", rID = reshID, ss = session,
-                    add_int = FALSE, add_enh = TRUE, fun = "FEPI", RegData = RegData)
-  shiny::callModule(tabell, "tab", ss = session, SkjemaOversikt=SkjemaOversikt, RegData=RegData)
-  shiny::callModule(admtab, "tab_ny", skjemaoversikt=SkjemaOversikt_ny) # , skjemaoversikt=SkjemaOversikt_ny
+                    add_int = FALSE, add_enh = TRUE, fun = "FEPI", RegData = hisregdata$RegData)
+  shiny::callModule(tabell, "tab", ss = session, SkjemaOversikt=hisregdata$SkjemaOversikt, RegData=hisregdata$RegData)
+  shiny::callModule(admtab, "tab_ny", skjemaoversikt=hisregdata$SkjemaOversikt_ny)
   shiny::callModule(dataDump, "dataDumpHisreg", mainSession = session,
                     reshID = reshID, userRole = userRole)
 
