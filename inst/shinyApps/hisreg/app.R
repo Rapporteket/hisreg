@@ -9,6 +9,17 @@ library(htmltools)
 library(rapbase)
 library(lubridate)
 
+addResourcePath("rap", system.file("www", package = "rapbase"))
+regTitle <-  "RAPPORTEKET FOR HISREG"
+logo <- includeHTML(system.file("www/logo.svg", package = "rapbase"))
+logoCode <- paste0("var header = $('.navbar> .container-fluid');\n",
+                   "header.append('<div class=\"navbar-brand\"
+                   style=\"float:left;font-size:75%\">",
+                   logo,
+                   "</div>');\n",
+                   "console.log(header)")
+logoWidget <- tags$script(shiny::HTML(logoCode))
+
 system.file(
   "shinyApps/hisreg/R/startside.R",
   package = "hisreg"
@@ -34,13 +45,13 @@ system.file(
   package = "hisreg"
 ) %>%
   source(encoding = "UTF-8")
-# system.file(
-#   "shinyApps/hisreg/R/ModTabeller.R",
-#   package = "hisreg"
-# ) %>%
-#   source(encoding = "UTF-8")
 system.file(
   "shinyApps/hisreg/R/modul_admtab.R",
+  package = "hisreg"
+) %>%
+  source(encoding = "UTF-8")
+system.file(
+  "shinyApps/hisreg/R/modDatadump.R",
   package = "hisreg"
 ) %>%
   source(encoding = "UTF-8")
@@ -84,17 +95,6 @@ ui <- shiny::tagList(
     tabPanel(
       "Datadump", dataDumpUI("dataDumpHisreg")
     ),
-    # shiny::tabPanel(
-    #   "Eksport",
-    #   shiny::sidebarLayout(
-    #     shiny::sidebarPanel(
-    #       rapbase::exportUCInput("hisregExport")
-    #     ),
-    #     shiny::mainPanel(
-    #       rapbase::exportGuideUI("hisregExportGuide")
-    #     )
-    #   )
-    # )
     shiny::navbarMenu("Verktøy",
                       # shiny::tabPanel(
                       #   "Utsending",
@@ -167,14 +167,14 @@ server <-  function(input, output, session) {
   # )
   shiny::callModule(startside, "startside", usrRole=userRole)
   shiny::callModule(modFordelinger, "mod1", rID = reshID, role = userRole,
-                    ss = session)
+                    ss = session, RegData = RegData)
 
   shiny::callModule(modGjennomsnitt, "mod3", rID = reshID, ss = session,
-                    add_int = FALSE, add_enh = FALSE, fun = "PI")
+                    add_int = FALSE, add_enh = FALSE, fun = "PI", RegData = RegData)
 
   shiny::callModule(modGjennomsnitt, "mod5", rID = reshID, ss = session,
-                    add_int = FALSE, add_enh = TRUE, fun = "FEPI")
-  shiny::callModule(tabell, "tab", ss = session)
+                    add_int = FALSE, add_enh = TRUE, fun = "FEPI", RegData = RegData)
+  shiny::callModule(tabell, "tab", ss = session, SkjemaOversikt=SkjemaOversikt, RegData=RegData)
   shiny::callModule(admtab, "tab_ny", skjemaoversikt=SkjemaOversikt_ny) # , skjemaoversikt=SkjemaOversikt_ny
   shiny::callModule(dataDump, "dataDumpHisreg", mainSession = session,
                     reshID = reshID, userRole = userRole)

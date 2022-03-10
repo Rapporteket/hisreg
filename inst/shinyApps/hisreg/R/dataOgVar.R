@@ -1,14 +1,14 @@
 #------------tittel og logo-------
-addResourcePath("rap", system.file("www", package = "rapbase"))
-regTitle <-  "RAPPORTEKET FOR HISREG"
-logo <- includeHTML(system.file("www/logo.svg", package = "rapbase"))
-logoCode <- paste0("var header = $('.navbar> .container-fluid');\n",
-                   "header.append('<div class=\"navbar-brand\"
-                   style=\"float:left;font-size:75%\">",
-                   logo,
-                   "</div>');\n",
-                   "console.log(header)")
-logoWidget <- tags$script(shiny::HTML(logoCode))
+# addResourcePath("rap", system.file("www", package = "rapbase"))
+# regTitle <-  "RAPPORTEKET FOR HISREG"
+# logo <- includeHTML(system.file("www/logo.svg", package = "rapbase"))
+# logoCode <- paste0("var header = $('.navbar> .container-fluid');\n",
+#                    "header.append('<div class=\"navbar-brand\"
+#                    style=\"float:left;font-size:75%\">",
+#                    logo,
+#                    "</div>');\n",
+#                    "console.log(header)")
+# logoWidget <- tags$script(shiny::HTML(logoCode))
 
 
 #------------------Data-------------------------------------
@@ -106,7 +106,7 @@ if (rapbase::isRapContext()) {
   shus <- data.frame(AvdRESH = unique(RegData_ny$AvdRESH),
                      SykehusNavn = RegData_ny$SykehusNavn[match(unique(RegData_ny$AvdRESH), RegData_ny$AvdRESH)])
   shus$SykehusNavn <- trimws(shus$SykehusNavn)
-  RegData_ny <- RegData_ny %>% mutate_at(c("BasisRegStatus", 'ErMann'), as.numeric)
+  RegData_ny <- RegData_ny %>% dplyr::mutate_at(c("BasisRegStatus", 'ErMann'), as.numeric)
   RegData <- dplyr::bind_rows(RegData_gml, RegData_ny)
   RegData$SykehusNavn <- shus$SykehusNavn[match(RegData$AvdRESH, shus$AvdRESH)]
 

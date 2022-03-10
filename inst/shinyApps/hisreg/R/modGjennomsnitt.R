@@ -89,7 +89,7 @@ modGjennomsnittUI <- function(id, varValg = varValgGjenPer) {
 
 
 modGjennomsnitt <- function(input, output, session, rID = 601031,
-                        add_int = T, add_enh = T, fun = "PS", ss) {
+                        add_int = T, add_enh = T, fun = "PS", ss, RegData) {
 
   output$figfil <- shiny::renderUI({
     ns <- session$ns
