@@ -1,5 +1,14 @@
 
-hisregdata <- hisreg::lastShinyHisreg()
+if (rapbase::isRapContext()) {
+  # RegData <- rapbase::loadStagingData("hisreg", "RegData") #Benyttes i appen
+  # SkjemaOversikt <- rapbase::loadStagingData("hisreg", "SkjemaOversikt") #Benyttes i appen
+  # SkjemaOversikt_ny <- rapbase::loadStagingData("hisreg", "SkjemaOversikt_ny") #Benyttes i appen
+  # hisregdata <- list(RegData=RegData, SkjemaOversikt=SkjemaOversikt, SkjemaOversikt_ny=SkjemaOversikt_ny)
+  #
+  # if (isFALSE(RegData) | isFALSE(SkjemaOversikt) | isFALSE(SkjemaOversikt_ny)) {
+  hisregdata <- hisreg::lastShinyHisreg()
+  #   }
+}
 
 #------------------Variabel valg-------------------------------------
 
