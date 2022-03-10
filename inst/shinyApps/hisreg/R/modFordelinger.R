@@ -82,7 +82,7 @@ modFordelingerUI <- function(id, varValg = varValgFordeling) {
 
 #moduleserver
 
-modFordelinger <- function(input, output, session, rID, role, ss) {
+modFordelinger <- function(input, output, session, rID, role, ss, RegData) {
 
   output$figfil <- shiny::renderUI({
     ns <- session$ns

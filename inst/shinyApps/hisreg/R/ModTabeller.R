@@ -51,7 +51,7 @@ tabellUI <- function(id, datoStart = "2008-01-01",
   )
 }
 
-tabell <- function(input, output, session, ss) {
+tabell <- function(input, output, session, ss, SkjemaOversikt, RegData) {
   output$tabui <- shiny::renderUI({
     ns <- session$ns
     if (input$tab == "forlPas") {

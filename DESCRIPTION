@@ -1,7 +1,7 @@
 Package: hisreg
 Type: Package
 Title: Resultatrapporter for HISREG
-Version: 3.0.0
+Version: 3.0.1
 Date: 2022-01-18
 Author: Kevin Thon
 Maintainer: Kevin Thon <kevin.thon@skde.no>
@@ -13,8 +13,7 @@ Depends:
     R (>= 3.0.2)
 Imports:
     xtable,
-    plotrix,
-    rapFigurer (>= 0.1.0),
+    rapFigurer,
     magrittr,
     DT,
     kableExtra,
@@ -32,4 +31,3 @@ RoxygenNote: 7.1.2
 Remotes: 
     Rapporteket/rapbase,
     Rapporteket/rapFigurer,
-    Rapporteket/raplog
