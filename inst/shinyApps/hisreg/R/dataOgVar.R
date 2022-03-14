@@ -7,6 +7,9 @@ if (rapbase::isRapContext()) {
   #
   # if (isFALSE(RegData) | isFALSE(SkjemaOversikt) | isFALSE(SkjemaOversikt_ny)) {
   hisregdata <- hisreg::lastShinyHisreg()
+  # rapbase::saveStagingData("hisreg", "RegData", hisregdata$RegData)
+  # rapbase::saveStagingData("hisreg", "SkjemaOversikt", hisregdata$SkjemaOversikt)
+  # rapbase::saveStagingData("hisreg", "SkjemaOversikt_ny", hisregdata$SkjemaOversikt_ny)
   #   }
 }
 

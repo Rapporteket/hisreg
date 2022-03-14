@@ -7,13 +7,6 @@
 #' @export
 lastShinyHisreg <- function() {
 
-  # if (rapbase::isRapContext()) {
-  #   RegData <- rapbase::loadStagingData("hisreg", "RegData") #Benyttes i appen
-  #   SkjemaOversikt <- rapbase::loadStagingData("hisreg", "SkjemaOversikt") #Benyttes i appen
-  #   SkjemaOversikt_ny <- rapbase::loadStagingData("hisreg", "SkjemaOversikt_ny") #Benyttes i appen
-  #
-  #   if (isFALSE(RegData) | isFALSE(SkjemaOversikt) | isFALSE(SkjemaOversikt_ny)) {
-
   ForlopsData <- hisreg::hisregHentTabell("ForlopsOversikt_v1")
   RegData <- hisreg::hisregHentTabell("AlleVarNum")
   Followups <- hisreg::hisregHentTabell("FollowupsNum")
@@ -162,13 +155,6 @@ lastShinyHisreg <- function() {
   RegData$Intervensjon <- factor(RegData$Intervensjon, levels = 1:3, labels = c('Kirugisk', 'Medisinsk', 'Kir. og. med.'))
   RegData <- RegData[RegData$AvdRESH != 999002, ]
 
-  rapbase::saveStagingData("hisreg", "RegData", RegData)
-  rapbase::saveStagingData("hisreg", "SkjemaOversikt", SkjemaOversikt)
-  rapbase::saveStagingData("hisreg", "SkjemaOversikt_ny", SkjemaOversikt_ny)
-
   return(invisible(list(RegData=RegData, SkjemaOversikt=SkjemaOversikt, SkjemaOversikt_ny=SkjemaOversikt_ny)))
 }
 
-# }
-# return(invisible(list(RegData=RegData, SkjemaOversikt=SkjemaOversikt, SkjemaOversikt_ny=SkjemaOversikt_ny)))
-# }

@@ -29,5 +29,5 @@ Suggests:
     rmarkdown
 RoxygenNote: 7.1.2
 Remotes: 
-    Rapporteket/rapbase,
+    Rapporteket/rapbase@*release,
     Rapporteket/rapFigurer,
