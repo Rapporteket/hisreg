@@ -8,7 +8,7 @@
 \usepackage{amssymb}
 \usepackage[a4paper]{geometry}
 
-\title{Figurer og tabeller for årsrapport Hisreg 2020}
+\title{Figurer og tabeller for årsrapport Hisreg 2021}
 \author{Hisreg}
 
 \renewcommand\thempfootnote{\fnsymbol{mpfootnote}}
@@ -49,6 +49,8 @@ rapp_aar <- 2021
 # datoFra='2012-01-01'
 datoFra=paste0(rapp_aar-4, '-01-01')
 datoTil=paste0(rapp_aar, '-12-31')
+datoFra_oppf=paste0(rapp_aar-1, '-07-01')
+datoTil_oppf=paste0(rapp_aar, '-06-30')
 reshID <- 601031
 minald=0
 maxald=120
