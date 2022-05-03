@@ -56,7 +56,7 @@ hisregIndikator <- function(indikatordata, tittel='', terskel=5, minstekrav = NA
   andeler[as.vector(N[, dim(andeler)[2]]<terskel), 2:3] <- NA
 
   # Beregn konfidensintervaller
-  KI <- nnrr::binomkonf(purrr::as_vector(AntTilfeller[rekkefolge, dim(andeler)[2]]),
+  KI <- hisreg::binomkonf(purrr::as_vector(AntTilfeller[rekkefolge, dim(andeler)[2]]),
                   purrr::as_vector(N[, dim(andeler)[2]]))*100
   KI[, is.na(andeler[, dim(andeler)[2]])] <- NA
 
@@ -161,7 +161,7 @@ hisregIndikator <- function(indikatordata, tittel='', terskel=5, minstekrav = NA
   }
 
   axis(1,cex.axis=0.9)
-  mtext( muskel::wrap.it(andeler$SykehusNavn, 15), side=2, line=0.2, las=1, at=ypos, col=1, cex=.9)
+  mtext( hisreg::wrap.it(andeler$SykehusNavn, 15), side=2, line=0.2, las=1, at=ypos, col=1, cex=.9)
   antAar <- dim(andeler)[2]-1
 
   # if (antAar==2) {
