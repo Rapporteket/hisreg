@@ -104,13 +104,18 @@ lastShinyHisreg <- function() {
 
   RegData$c_date <- NA;
   RegData$c_date[RegData$ForlopsType1Num %in% c(1,3)] <-
-    RegData$CONTROL_DATE_dokt_kir[RegData$ForlopsType1Num %in% c(1,3)]
+    format(RegData$CONTROL_DATE_dokt_kir[RegData$ForlopsType1Num %in% c(1,3)], "%Y-%m-%d")
+    # RegData$CONTROL_DATE_dokt_kir[RegData$ForlopsType1Num %in% c(1,3)]
   RegData$c_date[which(RegData$ForlopsType1Num == 2)] <-
-    RegData$CONTROL_DATE_dokt_med[which(RegData$ForlopsType1Num == 2)]
+    format(RegData$CONTROL_DATE_dokt_med[RegData$ForlopsType1Num %in% 2], "%Y-%m-%d")
+    # RegData$CONTROL_DATE_dokt_med[which(RegData$ForlopsType1Num == 2)]
   RegData$c_date[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_kir)] <-
-    RegData$CONTROL_DATE_dokt_kir[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_kir)]
+    format(RegData$CONTROL_DATE_dokt_kir[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_kir)], "%Y-%m-%d")
+    # RegData$CONTROL_DATE_dokt_kir[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_kir)]
   RegData$c_date[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_med)] <-
-    RegData$CONTROL_DATE_dokt_med[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_med)]
+    format(RegData$CONTROL_DATE_dokt_med[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_med)], "%Y-%m-%d")
+    # RegData$CONTROL_DATE_dokt_med[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_med)]
+  RegData$c_date <- as.Date(RegData$c_date)
 
   RegData$DLQISUM_POST <- NA;
   RegData$DLQISUM_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
