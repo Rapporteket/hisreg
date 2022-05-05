@@ -73,6 +73,8 @@ lastShinyHisreg <- function() {
     RegData_gml$PasientID[match(allevar$KryptertFnr,
                                 RegData_gml$KryptertFnr)][!is.na(RegData_gml$PasientID[match(allevar$KryptertFnr,
                                                                                              RegData_gml$KryptertFnr)])]
+  allevar$IMPOSSIBLE_REASON_med <- pmax(allevar$IMPOSSIBLE_REASON_pas_med, allevar$IMPOSSIBLE_REASON_dokt_med, na.rm = T)
+  allevar$IMPOSSIBLE_REASON_kir <- pmax(allevar$IMPOSSIBLE_REASON_pas_kir, allevar$IMPOSSIBLE_REASON_dokt_kir, na.rm = T)
 
   RegData_ny <- allevar[, c("MCEID", "AGE_ABSCESS", "UtdanningSSB", "SURGERY", "MEDICATION_HISTORY_HS",
                             "SMOKING", "WORK", "BMI", "DLQISUM", "VASSCORE", "HURLEY_SCORE", "TYPE_INTERVENTION",
@@ -93,7 +95,10 @@ lastShinyHisreg <- function() {
                             "INFLIXIMAB_BIOSIMILAR", "BIOLOGICAL_TREATMENT_OTHER", "ACITRETIN", "DAPSON", "CICLOSPORIN",
                             "PREDNISOLON", "ISOTRETINOIN", "METFORMIN", "ANTIINFLAMMATORY_TREATMENT_OTHER", "IHS4SCORE",
                             "IHS4SCORE_kir", "IHS4SCORE_med", "AGE_SPECIALIST", "AGE_DOCTOR", "TIME_SPECIALIST",
-                            "CONTROL_DATE_dokt_kir", "CONTROL_DATE_dokt_med")]
+                            "CONTROL_DATE_dokt_kir", "CONTROL_DATE_dokt_med", "SATISFACTION_kir", "SATISFACTION_med",
+                            "RETREATMENT_kir", "RETREATMENT_med", "RECOMMENDATION_kir", "RECOMMENDATION_med",
+                            "IMPOSSIBLE_REASON_med", "IMPOSSIBLE_REASON_kir", "HISCR_kir", "HISCR_med",
+                            "HISCR_CATEGORY_kir", "HISCR_CATEGORY_med", "TREATMENT_med", "SEPONERT_med", "CONTROL_POSSIBLE_pas_med")]
 
   shus <- data.frame(AvdRESH = unique(RegData_ny$AvdRESH),
                      SykehusNavn = RegData_ny$SykehusNavn[match(unique(RegData_ny$AvdRESH), RegData_ny$AvdRESH)])
@@ -116,6 +121,42 @@ lastShinyHisreg <- function() {
     format(RegData$CONTROL_DATE_dokt_med[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_med)], "%Y-%m-%d")
     # RegData$CONTROL_DATE_dokt_med[is.na(RegData$c_date) & !is.na(RegData$CONTROL_DATE_dokt_med)]
   RegData$c_date <- as.Date(RegData$c_date)
+
+  RegData$HISCR_CATEGORY <- NA;
+  RegData$HISCR_CATEGORY[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$HISCR_CATEGORY_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$HISCR_CATEGORY[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$HISCR_CATEGORY_med[which(RegData$ForlopsType1Num == 2)]
+
+  RegData$HISCR <- NA;
+  RegData$HISCR[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$HISCR_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$HISCR[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$HISCR_med[which(RegData$ForlopsType1Num == 2)]
+
+  RegData$IMPOSSIBLE_REASON <- NA;
+  RegData$IMPOSSIBLE_REASON[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$IMPOSSIBLE_REASON_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$IMPOSSIBLE_REASON[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$IMPOSSIBLE_REASON_med[which(RegData$ForlopsType1Num == 2)]
+
+  RegData$RETREATMENT <- NA;
+  RegData$RETREATMENT[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$RETREATMENT_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$RETREATMENT[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$RETREATMENT_med[which(RegData$ForlopsType1Num == 2)]
+
+  RegData$RECOMMENDATION <- NA;
+  RegData$RECOMMENDATION[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$RECOMMENDATION_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$RECOMMENDATION[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$RECOMMENDATION_med[which(RegData$ForlopsType1Num == 2)]
+
+  RegData$SATISFACTION <- NA;
+  RegData$SATISFACTION[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$SATISFACTION_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$SATISFACTION[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$SATISFACTION_med[which(RegData$ForlopsType1Num == 2)]
 
   RegData$DLQISUM_POST <- NA;
   RegData$DLQISUM_POST[RegData$ForlopsType1Num %in% c(1,3)] <-

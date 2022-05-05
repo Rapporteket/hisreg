@@ -324,12 +324,12 @@ varnameAndelPrePost <- c('DLQISUM_PrePost', 'HURLEY_SCORE_PrePost')
 
 for (p in varnameAndelPrePost) {
   outfile <- paste0(p, '.pdf')
-  hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+  hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                           minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                           enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   if (annet_format_ut) {
     outfile <- paste0("figfolder/", substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+    hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                             minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                             enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   }
@@ -337,12 +337,12 @@ for (p in varnameAndelPrePost) {
 
 for (p in varnameAndelPrePost) {
   outfile <- paste0(p, '_Kirurgisk.pdf')
-  hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+  hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                           minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
                           enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   if (annet_format_ut) {
     outfile <- paste0("figfolder/", substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+    hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                             minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
                             enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   }
@@ -350,12 +350,12 @@ for (p in varnameAndelPrePost) {
 
 for (p in varnameAndelPrePost) {
   outfile <- paste0(p, '_Medisinsk.pdf')
-  hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+  hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                           minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
                           enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   if (annet_format_ut) {
     outfile <- paste0("figfolder/", substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+    hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                             minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
                             enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   }
@@ -367,12 +367,12 @@ gr_var <- 'SykehusNavn'
 
 for (p in varnameGjSnittPrePost) {
   outfile <- paste0(p, '_gjsnSykehus.pdf')
-  hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+  hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                             minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                             preprosess=preprosess, hentData=hentData, gr_var = gr_var)
   if (annet_format_ut) {
     outfile <- paste0("figfolder/", substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+    hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                               minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                               preprosess=preprosess, hentData=hentData, gr_var = gr_var)
   }
@@ -408,12 +408,12 @@ for (p in varnameGjSnittPrePost) {
 gr_var <- 'Intervensjon'
 for (p in varnameGjSnittPrePost) {
   outfile <- paste0(p, '_gjsnIntervensjon.pdf')
-  hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+  hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                             minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                             preprosess=preprosess, hentData=hentData, gr_var = gr_var)
   if (annet_format_ut) {
     outfile <- paste0("figfolder/", substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+    hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                               minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                               preprosess=preprosess, hentData=hentData, gr_var = gr_var)
   }
@@ -529,16 +529,61 @@ varname <- c('KomplKir_v2')
 
 for (p in varname) {
   outfile <- paste0(p, '_post.pdf')
-  hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+  hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                    minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                    enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   if (annet_format_ut) {
     outfile <- paste0("figfolder/", substr(outfile, 1,nchar(outfile)-3), utformat)
-    hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+    hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
                      minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
                      enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
   }
 }
+
+outfile <- "SATISFACTION.pdf"
+hisregFigAndeler(RegData=RegData, valgtVar= "SATISFACTION", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+    outfile <- paste0("figfolder/", substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndeler(RegData=RegData, valgtVar= "SATISFACTION", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+outfile <- "RETREATMENT.pdf"
+hisregFigAndeler(RegData=RegData, valgtVar= "RETREATMENT", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+    outfile <- paste0("figfolder/", substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndeler(RegData=RegData, valgtVar= "RETREATMENT", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+outfile <- "RECOMMENDATION.pdf"
+hisregFigAndeler(RegData=RegData, valgtVar= "RECOMMENDATION", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+    outfile <- paste0("figfolder/", substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndeler(RegData=RegData, valgtVar= "RECOMMENDATION", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+outfile <- "IMPOSSIBLE_REASON.pdf"
+hisregFigAndeler(RegData=RegData, valgtVar= "IMPOSSIBLE_REASON", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+    outfile <- paste0("figfolder/", substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndeler(RegData=RegData, valgtVar= "IMPOSSIBLE_REASON", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
 @
 % \begin{figure}[ht]
 % \centering
@@ -552,6 +597,30 @@ for (p in varname) {
 \caption{Komplikasjoner ved kirurgisk behandling}
 \end{figure}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{SATISFACTION.pdf}
+\caption{Pasienttilfredshet}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{RETREATMENT.pdf}
+\caption{Ville du takket ja til samme behandling på nytt?}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{RECOMMENDATION.pdf}
+\caption{Ville du anbefalt behandlingen til et familiemedlem eller en nær venn?}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{IMPOSSIBLE_REASON.pdf}
+\caption{Hvorfor kan ikke oppfølgingsskjemaet fylles ut?}
+\end{figure}
 
 \clearpage
 

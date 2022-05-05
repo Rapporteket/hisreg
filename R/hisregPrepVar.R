@@ -102,6 +102,47 @@ hisregPrepVar <- function(RegData, valgtVar)
     retn <- 'H'
   }
 
+  if (valgtVar=='SATISFACTION') {
+    RegData$Variabel <- RegData[[valgtVar]]
+    tittel <- c('Hvor fornøyd var du med', 'behandlingen som ble gitt?')
+    gr <- c(1:5, 9)
+    grtxt <- c("Fornøyd", "Litt fornøyd", "Hverken fornøyd eller misfornøyd",
+               "Litt misfornøyd", "Misfornøyd", "Vet ikke")
+    RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    # subtxt <- 'Utdanningsnivå'
+    retn <- 'H'
+  }
+
+  if (valgtVar=='RETREATMENT') {
+    RegData$Variabel <- RegData[[valgtVar]]
+    tittel <- c('Ville du takket ja til', 'samme behandling på nytt?')
+    gr <- c(0, 1, 9)
+    grtxt <- c("Nei", "Ja", "Vet ikke")
+    RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    # subtxt <- 'Utdanningsnivå'
+    retn <- 'H'
+  }
+
+  if (valgtVar=='RECOMMENDATION') {
+    RegData$Variabel <- RegData[[valgtVar]]
+    tittel <- c('Ville du anbefalt behandlingen', 'til et familiemedlem eller en nær venn?')
+    gr <- c(0, 1, 9)
+    grtxt <- c("Nei", "Ja", "Vet ikke")
+    RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    # subtxt <- 'Utdanningsnivå'
+    retn <- 'H'
+  }
+
+  if (valgtVar=='IMPOSSIBLE_REASON') {
+    RegData$Variabel <- RegData[[valgtVar]]
+    tittel <- c('Hvorfor kan ikke', 'oppfølgingsskjemaet fylles ut?')
+    gr <- c(1, 2, 9)
+    grtxt <- c("Møtte ikke", "Død", "Vet ikke")
+    RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
+    # subtxt <- 'Utdanningsnivå'
+    retn <- 'H'
+  }
+
   if (valgtVar=='UtdanningSSB') {
     RegData$Variabel <- RegData[[valgtVar]]
     RegData <- RegData[order(RegData$HovedDato, decreasing = TRUE), ]

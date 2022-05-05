@@ -94,6 +94,7 @@ hisregIndikator <- function(indikatordata, tittel='', terskel=5, minstekrav = NA
   andeler$SykehusNavn[1] <- ' '
 
   vmarg <- max(0, strwidth(andeler$SykehusNavn, units='figure', cex=cexgr)*0.75)
+  # par('fig'=c(0.1, 1, 0, 1))
   # par('fig'=c(vmarg, 1, 0, 1))
   # x11()
   par('mar'=c(5.1, 8.1, 5.1, 9.1))

@@ -27,7 +27,7 @@ hisregUtvalg <- function(RegData, datoFra, datoTil, minald, maxald, erMann, forl
   RegData <- RegData[indMed,]
 
   if (dim(RegData)[1] > 0){
-    utvalgTxt <- c(paste('Registrert: ',
+    utvalgTxt <- c(paste('Hoveddato: ',
                          min(RegData$HovedDato, na.rm=T), ' til ', max(RegData$HovedDato, na.rm=T), sep='' ),
                    if ((minald>0) | (maxald<120)) {
                      paste('Pasienter fra ', min(RegData$PasientAlder, na.rm=T), ' til ', max(RegData$PasientAlder, na.rm=T), ' år', sep='')},
