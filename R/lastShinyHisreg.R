@@ -98,7 +98,8 @@ lastShinyHisreg <- function() {
                             "CONTROL_DATE_dokt_kir", "CONTROL_DATE_dokt_med", "SATISFACTION_kir", "SATISFACTION_med",
                             "RETREATMENT_kir", "RETREATMENT_med", "RECOMMENDATION_kir", "RECOMMENDATION_med",
                             "IMPOSSIBLE_REASON_med", "IMPOSSIBLE_REASON_kir", "HISCR_kir", "HISCR_med",
-                            "HISCR_CATEGORY_kir", "HISCR_CATEGORY_med", "TREATMENT_med", "SEPONERT_med", "CONTROL_POSSIBLE_pas_med")]
+                            "HISCR_CATEGORY_kir", "HISCR_CATEGORY_med", "TREATMENT_med", "SEPONERT_med", "CONTROL_POSSIBLE_pas_med",
+                            "SEPONERT_BIVIRKNING_med")]
 
   shus <- data.frame(AvdRESH = unique(RegData_ny$AvdRESH),
                      SykehusNavn = RegData_ny$SykehusNavn[match(unique(RegData_ny$AvdRESH), RegData_ny$AvdRESH)])
