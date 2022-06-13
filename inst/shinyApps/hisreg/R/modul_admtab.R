@@ -233,10 +233,10 @@ admtab <- function(input, output, session, skjemaoversikt){
     if (is.null(input$regstatus_tid)) {
       ant_skjema <- aux
     } else {
-      ant_skjema <- dplyr::bind_rows(ant_skjema1, ant_skjema2)
+      ant_skjema <- dplyr::bind_rows(ant_skjema1, ant_skjema2) %>%
+        dplyr::bind_rows(ant_skjema3)
     }
     ant_skjema <- ant_skjema %>%
-      dplyr::bind_rows(ant_skjema3) %>%
       dplyr::select(c('Sykehusnavn', 'mnd')) %>%
       table() %>%
       addmargins() %>%
