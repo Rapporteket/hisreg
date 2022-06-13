@@ -8,10 +8,11 @@ RegData <- hisregdata$RegData
 
 rapp_aar <- 2021
 RegData <- RegData[which(RegData$Aar <= rapp_aar), ]
-figfolder <- "~/.ssh/hisreg_ind_2021/"
+figfolder <- "~/.ssh/hisreg/hisreg_ind_2021/"
 if (!dir.exists(figfolder)) {
   dir.create(figfolder)
 }
+utformat <- "svg"
 
 ########### Indikator 1: Andel henvist til hudspesialist innen 1 år av første besøk hos allmennlege  ###########
 
@@ -47,9 +48,20 @@ outfile <- paste0(figfolder, "henvist_spes.pdf")
 hisregIndikator(indikatordata = indikator1, tittel=c("Andel henvist til hudspesialist innen", "1 år av første besøk hos allmennlege"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregIndikator(indikatordata = indikator1, tittel=c("Andel henvist til hudspesialist innen", "1 år av første besøk hos allmennlege"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
+                  lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+}
 outfile <- paste0(figfolder, "henvist_spes_v2.pdf")
 hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator1, tittel=c("Andel henvist til hudspesialist innen", "1 år av første besøk hos allmennlege"),
                                      minstekrav = 60, maal = 80, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator1, tittel=c("Andel henvist til hudspesialist innen", "1 år av første besøk hos allmennlege"),
+                                       minstekrav = 60, maal = 80, outfile = outfile)
+}
 
 tmp <- indikator1 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                andel = sum(Variabel)/n()*100,
@@ -77,9 +89,20 @@ outfile <- paste0(figfolder, "ihs4_red.pdf")
 hisregIndikator(indikatordata = indikator2, tittel=c("Reduksjon av iHS4 score ", "ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregIndikator(indikatordata = indikator2, tittel=c("Reduksjon av iHS4 score ", "ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
+                  lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+}
 outfile <- paste0(figfolder, "ihs4_red_v2.pdf")
 hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator2, tittel=c("Reduksjon av iHS4 score ", "ved kontroll"),
                                      minstekrav = 70, maal = 90, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator2, tittel=c("Reduksjon av iHS4 score ", "ved kontroll"),
+                                       minstekrav = 70, maal = 90, outfile = outfile)
+}
 
 
 ############## Indikator 3: HiSCR på >50 % ved kontroll
@@ -99,9 +122,20 @@ outfile <- paste0(figfolder, "full_responder.pdf")
 hisregIndikator(indikatordata = indikator3, tittel=c("HiSCR på >=50 % ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregIndikator(indikatordata = indikator3, tittel=c("HiSCR på >=50 % ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
+                  lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+}
 outfile <- paste0(figfolder, "full_responder_v2.pdf")
 hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator3, tittel=c("HiSCR på >=50 % ved kontroll"),
                                      minstekrav = 70, maal = 90, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator3, tittel=c("HiSCR på >=50 % ved kontroll"),
+                                       minstekrav = 70, maal = 90, outfile = outfile)
+}
 
 
 
@@ -122,9 +156,20 @@ outfile <- paste0(figfolder, "hurley_red.pdf")
 hisregIndikator(indikatordata = indikator4, tittel=c("Reduksjon i Hurley score ", "ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregIndikator(indikatordata = indikator4, tittel=c("Reduksjon i Hurley score ", "ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
+                  lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+}
 outfile <- paste0(figfolder, "hurley_red_v2.pdf")
 hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator4, tittel=c("Reduksjon i Hurley score ", "ved kontroll"),
                                      minstekrav = 70, maal = 90, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator4, tittel=c("Reduksjon i Hurley score ", "ved kontroll"),
+                                       minstekrav = 70, maal = 90, outfile = outfile)
+}
 
 tmp <- indikator4 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                andel = sum(Variabel)/n()*100,
@@ -149,9 +194,20 @@ outfile <- paste0(figfolder, "dlqi_red.pdf")
 hisregIndikator(indikatordata = indikator5, tittel=c("Endring i livskvalitet (DLQI)"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregIndikator(indikatordata = indikator5, tittel=c("Endring i livskvalitet (DLQI)"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
+                  lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+}
 outfile <- paste0(figfolder, "dlqi_red_v2.pdf")
 hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator5, tittel=c("Endring i livskvalitet (DLQI)"),
                                      minstekrav = 70, maal = 90, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator5, tittel=c("Endring i livskvalitet (DLQI)"),
+                                       minstekrav = 70, maal = 90, outfile = outfile)
+}
 
 tmp <- indikator5 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                andel = sum(Variabel)/n()*100,
@@ -177,9 +233,20 @@ outfile <- paste0(figfolder, "vas_red.pdf")
 hisregIndikator(indikatordata = indikator6, tittel=c("Endring i smerteskala (VAS)"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregIndikator(indikatordata = indikator6, tittel=c("Endring i smerteskala (VAS)"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
+                  lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+}
 outfile <- paste0(figfolder, "vas_red_v2.pdf")
 hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator6, tittel=c("Endring i smerteskala (VAS)"),
                                      minstekrav = 70, maal = 90, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator6, tittel=c("Endring i smerteskala (VAS)"),
+                                       minstekrav = 70, maal = 90, outfile = outfile)
+}
 
 tmp <- indikator6 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                andel = sum(Variabel)/n()*100,
@@ -210,9 +277,20 @@ outfile <- paste0(figfolder, "andel_oppf_med.pdf")
 hisregIndikator(indikatordata = Indikator7_med, tittel=c("Utført kontroll etter medisinsk behandling"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregIndikator(indikatordata = Indikator7_med, tittel=c("Utført kontroll etter medisinsk behandling"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
+                  lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+}
 outfile <- paste0(figfolder, "andel_oppf_med_v2.pdf")
 hisreg::hisregFigIndikator_aarsamlet(indikatordata = Indikator7_med, tittel=c("Utført kontroll etter medisinsk behandling"),
                                      minstekrav = 80, maal = 90, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = Indikator7_med, tittel=c("Utført kontroll etter medisinsk behandling"),
+                                       minstekrav = 80, maal = 90, outfile = outfile)
+}
 
 tmp <- Indikator7_med %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                    andel = sum(Variabel)/n()*100,
@@ -243,9 +321,20 @@ outfile <- paste0(figfolder, "andel_oppf_kir.pdf")
 hisregIndikator(indikatordata = Indikator8_kir, tittel=c("Utført kontroll etter kirurgisk behandling"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregIndikator(indikatordata = Indikator8_kir, tittel=c("Utført kontroll etter kirurgisk behandling"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
+                  lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+}
 outfile <- paste0(figfolder, "andel_oppf_kir_v2.pdf")
 hisreg::hisregFigIndikator_aarsamlet(indikatordata = Indikator8_kir, tittel=c("Utført kontroll etter kirurgisk behandling"),
                                      minstekrav = 80, maal = 90, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = Indikator8_kir, tittel=c("Utført kontroll etter kirurgisk behandling"),
+                                       minstekrav = 80, maal = 90, outfile = outfile)
+}
 
 tmp <- Indikator8_kir %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                    andel = sum(Variabel)/n()*100,
@@ -279,9 +368,20 @@ outfile <- paste0(figfolder, "kompl_kir.pdf")
 hisregIndikator(indikatordata = Indikator9, tittel=c("Komplikasjoner etter kirurgi"), terskel=10, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=T, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregIndikator(indikatordata = Indikator9, tittel=c("Komplikasjoner etter kirurgi"), terskel=10, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=T, outfile = outfile,
+                  lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+}
 outfile <- paste0(figfolder, "kompl_kir_v2.pdf")
 hisreg::hisregFigIndikator_aarsamlet(indikatordata = Indikator9, tittel=c("Komplikasjoner etter kirurgi"),
                                      minstekrav = 30, maal = 5, decreasing = T, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = Indikator9, tittel=c("Komplikasjoner etter kirurgi"),
+                                       minstekrav = 30, maal = 5, decreasing = T, outfile = outfile)
+}
 
 tmp <- Indikator9 %>% group_by(SykehusNavn, Aar) %>% summarise(antall = sum(Variabel),
                                                                andel = sum(Variabel)/n()*100,
@@ -307,11 +407,81 @@ outfile <- paste0(figfolder, "pasientfornoydhet.pdf")
 hisregIndikator(indikatordata = indikator11, tittel=c("Andel pasienter fornøyd", "med behandlingen"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregIndikator(indikatordata = indikator11, tittel=c("Andel pasienter fornøyd", "med behandlingen"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
+                  lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+}
 outfile <- paste0(figfolder, "pasientfornoydhet_v2.pdf")
 hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator11, tittel=c("Andel pasienter fornøyd", "med behandlingen"),
                                      minstekrav = 60, maal = 80, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator11, tittel=c("Andel pasienter fornøyd", "med behandlingen"),
+                                       minstekrav = 60, maal = 80, outfile = outfile)
+}
+
+########### Ny indikator, andel biologisk behandlede med tidligere antibiotisk behandling #############
+
+aux <- RegData[which(RegData$BIOLOGICAL_TREATMENT == 1), ]
+indikator_ny <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "MEDICATION_HISTORY_ANTIBIOTIC", "DLQISUM")]
+indikator_ny$Variabel <- 0
+indikator_ny$Variabel[indikator_ny$MEDICATION_HISTORY_ANTIBIOTIC %in% 1:3 ] <- 1
+indikator_ny$ind_id <- "tidl_antibiotisk"
+
+outfile <- paste0(figfolder, "tidl_antibiotisk.pdf")
+hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator_ny,
+                                     tittel=c("Andel biologisk behandlede ", "med tidligere antibiotisk behandling"),
+                                     minstekrav = NA, maal = NA, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator_ny,
+                                       tittel=c("Andel biologisk behandlede ", "med tidligere antibiotisk behandling"),
+                                       minstekrav = NA, maal = NA, outfile = outfile)
+}
 
 
+########### Ny indikator, andel biologisk behandlede med dlqisum over 10 #############
+
+## Alle inkludert
+aux <- RegData[which(RegData$BIOLOGICAL_TREATMENT == 1 & !is.na(RegData$DLQISUM)), ]
+
+indikator_ny <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "DLQISUM")]
+indikator_ny$Variabel <- 0
+indikator_ny$Variabel[indikator_ny$DLQISUM >= 11] <- 1
+indikator_ny$ind_id <- "dlqikrav_oppfylt"
+outfile <- paste0(figfolder, "dlqikrav_oppfylt.pdf")
+hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator_ny,
+                                     tittel=c("Andel biologisk behandlede med DLQI > 10", "før behandling"),
+                                     minstekrav = NA, maal = NA, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator_ny,
+                                       tittel=c("Andel biologisk behandlede med DLQI > 10", "før behandling"),
+                                       minstekrav = NA, maal = NA, outfile = outfile)
+}
+
+########### Ny indikator, andel biologisk behandlede med tidligere antibiotisk behandling og med dlqi preskår over 10 #############
+
+aux <- RegData[which(RegData$BIOLOGICAL_TREATMENT == 1 & !is.na(RegData$DLQISUM)), ]
+indikator_ny <- aux[, c("Aar", "SykehusNavn", "AvdRESH", "MEDICATION_HISTORY_ANTIBIOTIC", "DLQISUM")]
+indikator_ny$Variabel <- 0
+indikator_ny$Variabel[indikator_ny$MEDICATION_HISTORY_ANTIBIOTIC %in% 1:3 & indikator_ny$DLQISUM >= 11] <- 1
+indikator_ny$ind_id <- "tidl_antibiotisk_dlqikrav_oppfylt"
+
+outfile <- paste0(figfolder, "tidl_antibiotisk_dlqikrav_oppfylt.pdf")
+hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator_ny,
+                                     tittel=c("Andel biologisk behandlede med DLQI > 10 før",
+                                              "behandling og med tidligere antibiotisk behandling"),
+                                     minstekrav = NA, maal = NA, outfile = outfile)
+if (!is.na(utformat)) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator_ny,
+                                       tittel=c("Andel biologisk behandlede med DLQI > 10 før",
+                                                "behandling og med tidligere antibiotisk behandling"),
+                                       minstekrav = NA, maal = NA, outfile = outfile)
+}
 
 #####################################3
 

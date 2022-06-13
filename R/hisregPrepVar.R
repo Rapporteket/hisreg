@@ -109,7 +109,7 @@ hisregPrepVar <- function(RegData, valgtVar)
     grtxt <- c("Fornøyd", "Litt fornøyd", "Hverken fornøyd eller misfornøyd",
                "Litt misfornøyd", "Misfornøyd", "Vet ikke")
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
-    # subtxt <- 'Utdanningsnivå'
+
     retn <- 'H'
   }
 
@@ -119,7 +119,6 @@ hisregPrepVar <- function(RegData, valgtVar)
     gr <- c(0, 1, 9)
     grtxt <- c("Nei", "Ja", "Vet ikke")
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
-    # subtxt <- 'Utdanningsnivå'
     retn <- 'H'
   }
 
@@ -129,7 +128,6 @@ hisregPrepVar <- function(RegData, valgtVar)
     gr <- c(0, 1, 9)
     grtxt <- c("Nei", "Ja", "Vet ikke")
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
-    # subtxt <- 'Utdanningsnivå'
     retn <- 'H'
   }
 
@@ -139,7 +137,6 @@ hisregPrepVar <- function(RegData, valgtVar)
     gr <- c(1, 2, 9)
     grtxt <- c("Møtte ikke", "Død", "Vet ikke")
     RegData$VariabelGr <- factor(RegData$Variabel, levels = gr, labels = grtxt)
-    # subtxt <- 'Utdanningsnivå'
     retn <- 'H'
   }
 

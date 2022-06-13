@@ -61,8 +61,8 @@ enhetsUtvalg=0
 preprosess=F
 hentData=F
 # gr_var <- 'Intervensjon'
-annet_format_ut <- F
-utformat <- 'png'
+annet_format_ut <- T
+utformat <- 'svg'
 figfolder <- "~/.ssh/hisreg/fig_aarsrapp2021/"
 if (!dir.exists(figfolder)) {
   dir.create(figfolder)
@@ -789,6 +789,95 @@ if (annet_format_ut) {
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}TypeMedBeh_avd.pdf}
 \caption{Type medisinsk behandling, avdelingsvis}
 \end{figure}
+
+
+<<'Tabell:Kompletthet', results='asis', echo=FALSE, eval=T, warning=FALSE>>=
+
+aux <- RegData %>% filter(Aar == 2021) %>%
+  summarise(N = n(),
+            Alder = sum(!is.na(PasientAlder))/N*100,
+            Kjønn = sum(!is.na(ErMann))/N*100,
+            Røykestatus = sum(SMOKING %in% 1:3)/N*100,
+            Yrkesstatus = sum(WORK %in% 1:6)/N*100,
+            "Tidligere kirurgi" = sum(SURGERY %in% 0:1)/N*100,
+            "Medikamenthistorikk" = sum(MEDICATION_HISTORY_HS %in% 0:1)/N*100,
+            "Antall smertefulle byller" = sum(!is.na(ABSCESS))/N*100,
+            "DLQI" = sum(!is.na(DLQISUM))/N*100,
+            UtdanningSSB = sum(!is.na(UtdanningSSB))/N*100,
+            "Familie og sykdom" = sum(FAMILY_ILLNES %in% 0:1)/N*100,
+            BMI = sum(!is.na(BMI))/N*100,
+            IHS4SCORE = sum(!is.na(IHS4SCORE))/N*100
+            ) %>%
+  select(-N) %>%
+  t() %>%
+  as_tibble(rownames = "Variabel", .name_repair = "minimal")
+names(aux)[2] <- "Kompletthet (%)"
+
+print(xtable::xtable(aux, digits=1, align=c('l', 'l', rep('r', ncol(aux)-1)),
+                     caption=paste0('Kompletthet av utvalgte variabler. Ukjent regnes som manglende. Gjelder ', rapp_aar)),
+      include.rownames = F)
+
+aux <- RegData %>% filter(Aar == 2021) %>%
+  summarise(N = n(),
+            Alder = sum(!is.na(PasientAlder))/N*100,
+            Kjønn = sum(!is.na(ErMann))/N*100,
+            Røykestatus = sum(!is.na(SMOKING))/N*100,
+            Yrkesstatus = sum(!is.na(WORK))/N*100,
+            "Tidligere kirurgi" = sum(!is.na(SURGERY))/N*100,
+            "Medikamenthistorikk" = sum(!is.na(MEDICATION_HISTORY_HS))/N*100,
+            "Antall smertefulle byller" = sum(!is.na(ABSCESS))/N*100,
+            "DLQI" = sum(!is.na(DLQISUM))/N*100,
+            UtdanningSSB = sum(!is.na(UtdanningSSB))/N*100,
+            "Familie og sykdom" = sum(!is.na(FAMILY_ILLNES))/N*100,
+            BMI = sum(!is.na(BMI))/N*100,
+            IHS4SCORE = sum(!is.na(IHS4SCORE))/N*100
+            ) %>%
+  select(-N) %>%
+  t() %>%
+  as_tibble(rownames = "Variabel", .name_repair = "minimal")
+names(aux)[2] <- "Kompletthet (%)"
+
+print(xtable::xtable(aux, digits=1, align=c('l', 'l', rep('r', ncol(aux)-1)),
+                     caption=paste0('Kompletthet av utvalgte variabler. Ukjent regnes som utfylt. Gjelder ', rapp_aar)),
+      include.rownames = F)
+
+aux <- RegData %>% filter(Aar == 2021 & OppflgRegStatus %in% 1:2) %>%
+  summarise(N = n(),
+            Røykestatus = sum(!is.na(SMOKING_POST))/N*100,
+            Yrkesstatus = sum(!is.na(WORKSTATUS_POST))/N*100,
+            "Antall smertefulle byller" = sum(!is.na(ABSCESS_POST))/N*100,
+            "DLQI_POST" = sum(!is.na(DLQISUM_POST))/N*100,
+            Fornøydhet = sum(!is.na(SATISFACTION))/N*100,
+            ) %>%
+  select(-N) %>%
+  t() %>%
+  as_tibble(rownames = "Variabel", .name_repair = "minimal")
+names(aux)[2] <- "Kompletthet (%)"
+
+print(xtable::xtable(aux, digits=1, align=c('l', 'l', rep('r', ncol(aux)-1)),
+                     caption=paste0('Kompletthet av utvalgte variabler på oppfølging. Ukjent regnes som utfylt.
+                                    Gjelder forløp startet i ', rapp_aar, '. Utvalg: de med OppflgRegStatus lik 1 eller 2.')),
+      include.rownames = F)
+
+aux <- RegData %>% filter(Aar == 2021 & OppflgRegStatus %in% 1:2) %>%
+  summarise(N = n(),
+            Røykestatus = sum(SMOKING_POST %in% 1:3)/N*100,
+            Yrkesstatus = sum(WORKSTATUS_POST %in% 1:6)/N*100,
+            "Antall smertefulle byller" = sum(!is.na(ABSCESS_POST))/N*100,
+            "DLQI_POST" = sum(!is.na(DLQISUM_POST))/N*100,
+            Fornøydhet = sum(SATISFACTION %in% 1:5)/N*100,
+            ) %>%
+  select(-N) %>%
+  t() %>%
+  as_tibble(rownames = "Variabel", .name_repair = "minimal")
+names(aux)[2] <- "Kompletthet (%)"
+
+print(xtable::xtable(aux, digits=1, align=c('l', 'l', rep('r', ncol(aux)-1)),
+                     caption=paste0('Kompletthet av utvalgte variabler på oppfølging. Ukjent/Vet ikke regnes som manglende.
+                                    Gjelder forløp startet i ', rapp_aar, '. " Utvalg: de med OppflgRegStatus lik 1 eller 2.')),
+      include.rownames = F)
+
+@
 
 
 

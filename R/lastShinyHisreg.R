@@ -77,7 +77,8 @@ lastShinyHisreg <- function() {
   allevar$IMPOSSIBLE_REASON_kir <- pmax(allevar$IMPOSSIBLE_REASON_pas_kir, allevar$IMPOSSIBLE_REASON_dokt_kir, na.rm = T)
 
   RegData_ny <- allevar[, c("MCEID", "AGE_ABSCESS", "UtdanningSSB", "SURGERY", "MEDICATION_HISTORY_HS",
-                            "SMOKING", "WORK", "BMI", "DLQISUM", "VASSCORE", "HURLEY_SCORE", "TYPE_INTERVENTION",
+                            "SMOKING", "SMOKING_med", "SMOKING_kir", "WORK", "WORKSTATUS_med", "WORKSTATUS_kir",
+                            "BMI", "DLQISUM", "VASSCORE", "HURLEY_SCORE", "TYPE_INTERVENTION",
                             "SURGERY_TYPE_EXCISION_SUTUR", "SURGERY_TYPE_EXCISION_GRANUL", "SURGERY_TYPE_EXCISION_TRANSPLANT",
                             "SURGERY_TYPE_LASER", "SURGERY_TYPE_DEROOFING", "SURGERY_TYPE_OTHER", "BIOLOGICAL_TREATMENT",
                             "SYSTEMIC_ANTIBIOTIC_THERAPY", "ANTIINFLAMMATORY_TREATMENT", "ANALGESICS", "BASED_MEDICAL_TREATMENT",
@@ -99,7 +100,8 @@ lastShinyHisreg <- function() {
                             "RETREATMENT_kir", "RETREATMENT_med", "RECOMMENDATION_kir", "RECOMMENDATION_med",
                             "IMPOSSIBLE_REASON_med", "IMPOSSIBLE_REASON_kir", "HISCR_kir", "HISCR_med",
                             "HISCR_CATEGORY_kir", "HISCR_CATEGORY_med", "TREATMENT_med", "SEPONERT_med", "CONTROL_POSSIBLE_pas_med",
-                            "SEPONERT_BIVIRKNING_med")]
+                            "SEPONERT_BIVIRKNING_med", "ABSCESS", "ABSCESS_kir", "ABSCESS_med", "FAMILY_ILLNES",
+                            "MEDICATION_HISTORY_ANTIBIOTIC")]
 
   shus <- data.frame(AvdRESH = unique(RegData_ny$AvdRESH),
                      SykehusNavn = RegData_ny$SykehusNavn[match(unique(RegData_ny$AvdRESH), RegData_ny$AvdRESH)])
@@ -182,6 +184,25 @@ lastShinyHisreg <- function() {
     RegData$IHS4SCORE_kir[RegData$ForlopsType1Num %in% c(1,3)]
   RegData$IHS4SCORE_POST[which(RegData$ForlopsType1Num == 2)] <-
     RegData$IHS4SCORE_med[which(RegData$ForlopsType1Num == 2)]
+
+  RegData$SMOKING_POST <- NA;
+  RegData$SMOKING_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$SMOKING_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$SMOKING_POST[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$SMOKING_med[which(RegData$ForlopsType1Num == 2)]
+
+  RegData$ABSCESS_POST <- NA;
+  RegData$ABSCESS_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$ABSCESS_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$ABSCESS_POST[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$ABSCESS_med[which(RegData$ForlopsType1Num == 2)]
+
+  RegData$WORKSTATUS_POST <- NA;
+  RegData$WORKSTATUS_POST[RegData$ForlopsType1Num %in% c(1,3)] <-
+    RegData$WORKSTATUS_kir[RegData$ForlopsType1Num %in% c(1,3)]
+  RegData$WORKSTATUS_POST[which(RegData$ForlopsType1Num == 2)] <-
+    RegData$WORKSTATUS_med[which(RegData$ForlopsType1Num == 2)]
+
 
   rm(list = c("allevar", "centre", "doctorcontrol", "Followups", "ForlopsData",
               "ForlopsOversikt_ny", "intervention", "mce", "mcelist", "oppfolging",
