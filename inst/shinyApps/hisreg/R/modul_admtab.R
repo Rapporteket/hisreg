@@ -217,17 +217,17 @@ admtab <- function(input, output, session, skjemaoversikt){
     if ('1' %in% input$regstatus_tid) {
       ant_skjema1 <- aux[which(aux$statusbasis ==1 & aux$statusoppf==1) , ]
     } else {
-      ant_skjema1 <- RegData[NULL, ]
+      ant_skjema1 <- aux[NULL, ]
     }
     if ('2' %in% input$regstatus_tid) {
       ant_skjema2 <- aux[which(aux$statusbasis ==1 & aux$statusoppf==0) , ]
     } else {
-      ant_skjema2 <- RegData[NULL, ]
+      ant_skjema2 <- aux[NULL, ]
     }
     if ('3' %in% input$regstatus_tid) {
       ant_skjema3 <- aux[which(aux$statusbasis == 0) , ]
     } else {
-      ant_skjema3 <- RegData[NULL, ]
+      ant_skjema3 <- aux[NULL, ]
     }
 
     if (is.null(input$regstatus_tid)) {
