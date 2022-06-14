@@ -119,21 +119,21 @@ Indikatorer <- dplyr::bind_rows(Indikatorer[, c("Aar", "AvdRESH", "Variabel", "i
                                 indikator3[, c("Aar", "AvdRESH", "Variabel", "ind_id")])
 
 outfile <- paste0(figfolder, "full_responder.pdf")
-hisregIndikator(indikatordata = indikator3, tittel=c("HiSCR på >=50 % ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+hisregIndikator(indikatordata = indikator3, tittel=c("Oppnådd HiSCR ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                 legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
 if (!is.na(utformat)) {
   outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-  hisregIndikator(indikatordata = indikator3, tittel=c("HiSCR på >=50 % ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
+  hisregIndikator(indikatordata = indikator3, tittel=c("Oppnådd HiSCR ved kontroll"), terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                   legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = outfile,
                   lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
 }
 outfile <- paste0(figfolder, "full_responder_v2.pdf")
-hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator3, tittel=c("HiSCR på >=50 % ved kontroll"),
+hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator3, tittel=c("Oppnådd HiSCR ved kontroll"),
                                      minstekrav = 70, maal = 90, outfile = outfile)
 if (!is.na(utformat)) {
   outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
-  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator3, tittel=c("HiSCR på >=50 % ved kontroll"),
+  hisreg::hisregFigIndikator_aarsamlet(indikatordata = indikator3, tittel=c("Oppnådd HiSCR ved kontroll"),
                                        minstekrav = 70, maal = 90, outfile = outfile)
 }
 
