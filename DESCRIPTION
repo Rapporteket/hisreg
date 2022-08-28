@@ -23,7 +23,8 @@ Imports:
     shinyWidgets,
     lubridate,
     rapbase,
-    tidyverse
+    tidyverse,
+    plyr
 Suggests:
     knitr,
     rmarkdown

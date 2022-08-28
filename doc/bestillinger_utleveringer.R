@@ -2,6 +2,24 @@ library(tidyverse)
 library(hisreg)
 rm(list = ls())
 
+############ Dekningsgradsdata til NPR 29.08.2022 ################################
+
+hisregdata <- hisreg::lastShinyHisreg()
+RegData <- hisregdata$RegData
+
+nprdata <- RegData %>% filter((HovedDato >= "2021-01-01" & HovedDato < "2022-01-01") |
+                                (CONTROL_DATE_dokt_med >= "2021-01-01" & CONTROL_DATE_dokt_med < "2022-01-01") |
+                                (CONTROL_DATE_dokt_kir >= "2021-01-01" & CONTROL_DATE_dokt_kir < "2022-01-01")) %>%
+  select(HovedDato, ForlopsType1, ForlopsType1Num, PasientID, AvdRESH,
+         MCEID, CONTROL_DATE_dokt_med, CONTROL_DATE_dokt_kir, c_date)
+
+
+koblingsdata <- read.table('~/.ssh/hisreg/koblingsdata_npr17082022.csv',
+                           header=TRUE, sep=";", encoding = 'UTF-8',
+                           colClasses = c('integer', 'character'))
+koblingsdata_npr <- koblingsdata[koblingsdata$PID %in% unique(nprdata$pid), ]
+write.csv2(koblingsdata_npr, 'I:/hisreg/koblingsdata_npr30102020.csv', row.names = F)
+
 ############ Dekningsgradsdata til NPR 27.10.2020 ################################
 
 hisregdata <- read.table('I:/hisreg/AlleVarNum2020-08-21 13-19-34.txt', header=TRUE, sep=";", encoding = 'UTF-8')
