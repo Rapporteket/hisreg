@@ -10,15 +10,21 @@ RegData <- hisregdata$RegData
 nprdata <- RegData %>% filter((HovedDato >= "2021-01-01" & HovedDato < "2022-01-01") |
                                 (CONTROL_DATE_dokt_med >= "2021-01-01" & CONTROL_DATE_dokt_med < "2022-01-01") |
                                 (CONTROL_DATE_dokt_kir >= "2021-01-01" & CONTROL_DATE_dokt_kir < "2022-01-01")) %>%
-  select(HovedDato, ForlopsType1, ForlopsType1Num, PasientID, AvdRESH,
+  select(HovedDato, ForlopsType1, ForlopsType1Num, PasientID, PasientID_nyserie, AvdRESH,
          MCEID, CONTROL_DATE_dokt_med, CONTROL_DATE_dokt_kir, c_date)
 
+nprdata <- nprdata %>% group_by(PasientID_nyserie, AvdRESH) %>%
+  summarise(N = n())
+names(nprdata)[names(nprdata) == "PasientID_nyserie"] <- "PID"
+nprdata <- nprdata[, c("PID", "AvdRESH")]
 
-koblingsdata <- read.table('~/.ssh/hisreg/koblingsdata_npr17082022.csv',
+
+koblingsdata <- read.table('~/.ssh/hisreg/Hisreg_koblingstabell_datadump_17.08.2022.csv',
                            header=TRUE, sep=";", encoding = 'UTF-8',
                            colClasses = c('integer', 'character'))
-koblingsdata_npr <- koblingsdata[koblingsdata$PID %in% unique(nprdata$pid), ]
-write.csv2(koblingsdata_npr, 'I:/hisreg/koblingsdata_npr30102020.csv', row.names = F)
+koblingsdata_npr <- koblingsdata[koblingsdata$PID %in% unique(nprdata$PID), ]
+write.csv2(koblingsdata_npr, '~/.ssh/hisreg/koblingsdata_hisreg_29092021.csv', row.names = F)
+write.csv2(nprdata, '~/.ssh/hisreg/aktivitetsdata_hisreg_29092021.csv', row.names = F)
 
 ############ Dekningsgradsdata til NPR 27.10.2020 ################################
 

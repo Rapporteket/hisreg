@@ -66,6 +66,7 @@ lastShinyHisreg <- function() {
                    by.x = "MCEID", by.y = "ForlopsID")
   allevar$BMI <- allevar$WEIGHT/(allevar$HIGHT/100)^2
   allevar$MCEID <- allevar$MCEID + 10000
+  allevar$PasientID_nyserie <- as.numeric(allevar$PasientID) #
   allevar$PasientID <- as.numeric(allevar$PasientID) + 10000
   # Der det finnes et KryptertFnr i nytt datasett som matcher KryptertFnr i gammelt
   # datasett: Bruk PasientID fra gammelt
@@ -87,7 +88,7 @@ lastShinyHisreg <- function() {
                             "INTRALESIONAL_CORTICOSTEROID_INJECTION", "ACELACIC_ACID", "CLINDAMYCIN", "RESORCINOL",
                             "AvdRESH", "KryptertFnr", "BasisRegStatus", "HovedDato",
                             "PasientAlder", "OppflgRegStatus", "ForlopsType1", "ForlopsType1Num",
-                            "ForlopsType2", "ForlopsType2Num", "ErMann", "SykehusNavn", "PasientID",
+                            "ForlopsType2", "ForlopsType2Num", "ErMann", "SykehusNavn", "PasientID", "PasientID_nyserie",
                             "INFECTION_kir", "INFECTION_med", "DELAYED_WOUND_HEALING_kir", "DELAYED_WOUND_HEALING_med",
                             "STRIKTURER_kir", "STRIKTURER_med", "NERVEDAMAGE_kir", "NERVEDAMAGE_med",
                             "BLOODPOISEN_kir", "BLOODPOISEN_med", "BLEEDING_kir", "BLEEDING_med",
