@@ -1,0 +1,885 @@
+\documentclass[norsk,a4paper]{article} % ,twoside
+\usepackage[norsk]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{subfig}
+\usepackage{pdfpages}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{amssymb}
+\usepackage[a4paper]{geometry}
+
+\title{Figurer og tabeller for årsrapport Hisreg 2021}
+\author{Hisreg}
+
+\renewcommand\thempfootnote{\fnsymbol{mpfootnote}}
+\def\labelitemi{$\bullet$}
+\def\labelitemii{--}
+\def\labelitemiii{$\ast$}
+\def\labelitemiv{$\cdot$}
+
+%setter grå skrift fremfort sort
+\usepackage{xcolor}
+\usepackage{graphicx}
+\pagestyle{myheadings}
+\definecolor{lysblaa}{rgb}{0.27,0.51,0.71}
+\definecolor{moerkgraa}{rgb}{0.25,0.25,0.25}
+\color{moerkgraa}
+
+
+<<'initOpts',include=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')
+@
+
+\begin{document}
+
+<<LastData, include=FALSE, cache=FALSE>>=
+rm(list=ls())
+library(hisreg)
+library(tidyverse)
+options(dplyr.summarise.inform = FALSE)
+
+# Les inn data
+
+hisregdata <- hisreg::lastShinyHisreg()
+RegData <- hisregdata$RegData
+
+rapp_aar <- 2022
+
+datoFra=paste0(rapp_aar-4, '-01-01')
+datoTil=paste0(rapp_aar, '-12-31')
+datoFra_oppf=paste0(rapp_aar-1, '-07-01')
+datoTil_oppf=paste0(rapp_aar, '-06-30')
+reshID <- 601031
+minald=0
+maxald=120
+erMann=99
+forlop1 = 99
+forlop2 = 99
+enhetsUtvalg=0
+preprosess=F
+hentData=F
+# gr_var <- 'Intervensjon'
+annet_format_ut <- T
+utformat <- 'svg'
+figfolder <- "~/mydata/hisreg/fig_aarsrapp2022/"
+if (!dir.exists(figfolder)) {
+  dir.create(figfolder)
+}
+
+figstr <- 1
+tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
+@
+
+\maketitle
+\clearpage
+
+<<'Tabell:RegistrerendeAvd', results='asis', echo=FALSE, eval=T, warning=FALSE>>=
+# ant_aar <- 5
+tmp <- RegData[order(RegData$HovedDato, decreasing = FALSE), ]
+tmp <- tmp[tmp$HovedDato <= datoTil & tmp$HovedDato >= datoFra, ]
+Tabell1 <- addmargins(table(as.character(tmp$SykehusNavn), tmp$Aar, useNA = 'no'))
+
+# write.csv2(Tabell1, 'C:/GIT/hisreg/doc/tabell2.csv')
+
+print(xtable::xtable(Tabell1, digits=0, align=c('l', rep('r', ncol(Tabell1))),
+                     caption='Antall forløp startet siste 5 år'),
+      include.rownames=TRUE,
+      include.colnames=TRUE,
+      add.to.row = list(pos=list(nrow(Tabell1)-1),
+                        command=c('\\midrule\n')))
+
+# tmp <- tmp[match(unique(tmp$PasientID), tmp$PasientID), ]
+
+# Tabell2 <- addmargins(table(as.character(tmp$SykehusNavn), tmp$Aar, useNA = 'no'))
+Tabell2 <- tmp %>% group_by(SykehusNavn, Aar) %>% summarise(N = length(unique(PasientID))) %>%
+  spread(key = "Aar", value = "N", fill = 0) %>% mutate(SykehusNavn = as.character(SykehusNavn))
+total <- bind_rows(c("SykehusNavn"="Sum", colSums(Tabell2[,-1]))) %>% mutate_at(vars(2:6), as.numeric)
+Tabell2 <- bind_rows(Tabell2, total)
+
+# write.csv2(Tabell2, 'C:/GIT/hisreg/doc/tabell3.csv', row.names = F)
+
+print(xtable::xtable(Tabell2, digits=0, align=c('l', 'l', rep('r', ncol(Tabell2)-1)),
+                     caption='Antall unike pasienter per år'),
+      include.rownames=FALSE,
+      include.colnames=TRUE,
+      add.to.row = list(pos=list(nrow(Tabell2)-1),
+                        command=c('\\midrule\n')))
+@
+
+
+<<'Sykehusfig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
+datoFra <- paste0(rapp_aar, '-01-01')
+outfile <- 'RegAvd.pdf'
+outfile <- paste0(figfolder, outfile)
+hisregFigAndeler(RegData=RegData, valgtVar='SykehusNavn', datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregFigAndeler(RegData=RegData, valgtVar='SykehusNavn', datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+outfile <- 'UnikePasienter.pdf'
+outfile <- paste0(figfolder, outfile)
+hisregFigAndeler(RegData=RegData, valgtVar='UnikePasienter', datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregFigAndeler(RegData=RegData, valgtVar='UnikePasienter', datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+
+@
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}RegAvd.pdf}
+\caption{Registrerende avdelinger i Hisreg \Sexpr{rapp_aar}.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}UnikePasienter.pdf}
+\caption{Registrerende avdelinger i Hisreg \Sexpr{rapp_aar}.}
+\end{figure}
+
+
+
+<<'Andelsfig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
+
+# varname2 <- c('PasientAlder', 'pre_smoking', 'pre_work','i_type', 'i_surgery_type',
+#               'MedisinskBeh', 'i_biological_treatment')
+varname2 <- c('PasientAlder', 'SMOKING', 'WORK','TYPE_INTERVENTION', 'type_kirurgi',
+              'MedisinskBeh_v2', 'BiologiskBeh', 'AGE_ABSCESS', "ErMann")
+
+for (p in varname2) {
+  outfile <- paste0(p, '.pdf')
+  outfile <- paste0(figfolder, outfile)
+  hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+  if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+  }
+}
+
+@
+
+\clearpage
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname2[1], '.pdf')}}
+\caption{Pasientenes aldersfordeling ved intervensjon}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname2[2], '.pdf')}}
+\caption{Røykevaner preintervensjon}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname2[3], '.pdf')}}
+\caption{Arbeidsstatus før}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname2[4], '.pdf')}}
+\caption{Type intervensjon}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname2[5], '.pdf')}}
+\caption{Type kirurgi}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname2[6], '.pdf')}}
+\caption{Type medisinsk behandling}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname2[7], '.pdf')}}
+\caption{Type biologisk behandling}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname2[8], '.pdf')}}
+\caption{Alder ved første byll}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname2[9], '.pdf')}}
+\caption{Kjønnsfordeling}
+\end{figure}
+
+\clearpage
+
+<<'GjsnPrefig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
+# varname <- c('pre_bmi', 'pre_dlqisum', 'pre_vasscore', 'pre_hsscoresum')
+varname <- c('BMI', "DLQISUM", "VASSCORE", "IHS4SCORE")
+gr_var <- 'SykehusNavn'
+
+for (p in varname) {
+  outfile <- paste0(p, '_preShus.pdf')
+  outfile <- paste0(figfolder, outfile)
+  hisregFigGjsnGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     preprosess=preprosess, hentData=hentData, gr_var = gr_var, fjern_sjeldne = 1)
+  if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigGjsnGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                       minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                       preprosess=preprosess, hentData=hentData, gr_var = gr_var, fjern_sjeldne = 1)
+  }
+}
+
+
+gr_var <- 'Intervensjon'
+
+for (p in varname) {
+  outfile <- paste0(p, '_preBehandl.pdf')
+  outfile <- paste0(figfolder, outfile)
+  hisregFigGjsnGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     preprosess=preprosess, hentData=hentData, gr_var = gr_var, fjern_sjeldne = 0)
+  if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigGjsnGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                       minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                       preprosess=preprosess, hentData=hentData, gr_var = gr_var, fjern_sjeldne = 0)
+  }
+}
+
+
+
+@
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname[1], '_preShus.pdf')}}
+\caption{Gjennomsnittlig BMI ved preintervensjon}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname[2], '_preShus.pdf')}}
+\caption{Gjennomsnittlig DLQI-sum ved preintervensjon}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname[3], '_preShus.pdf')}}
+\caption{Gjennomsnittlig VAS-score ved preintervensjon}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname[4], '_preShus.pdf')}}
+\caption{Gjennomsnittlig IHS4-score ved preintervensjon}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname[1], '_preBehandl.pdf')}}
+\caption{Gjennomsnittlig BMI ved preintervensjon}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname[2], '_preBehandl.pdf')}}
+\caption{Gjennomsnittlig DLQI-sum ved preintervensjon}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname[3], '_preBehandl.pdf')}}
+\caption{Gjennomsnittlig VAS-score ved preintervensjon}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname[4], '_preBehandl.pdf')}}
+\caption{Gjennomsnittlig IHS4-score ved preintervensjon}
+\end{figure}
+
+
+\clearpage
+
+<<'PrePostfig', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
+varnameAndelPrePost <- c('DLQISUM_PrePost', 'HURLEY_SCORE_PrePost')
+
+for (p in varnameAndelPrePost) {
+  outfile <- paste0(p, '.pdf')
+  outfile <- paste0(figfolder, outfile)
+  hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                          minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                          enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+  if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                            enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+  }
+}
+
+for (p in varnameAndelPrePost) {
+  outfile <- paste0(p, '_Kirurgisk.pdf')
+  outfile <- paste0(figfolder, outfile)
+  hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                          minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
+                          enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+  if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
+                            enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+  }
+}
+
+for (p in varnameAndelPrePost) {
+  outfile <- paste0(p, '_Medisinsk.pdf')
+  outfile <- paste0(figfolder, outfile)
+  hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                          minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
+                          enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+  if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndelerPrePost(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
+                            enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+  }
+}
+
+# varnameGjSnittPrePost <- c('DLQI_PrePost', 'Vas_PrePost', 'HS_PrePost')
+varnameGjSnittPrePost <- c('DLQI_PrePost_ny', 'Vas_PrePost_ny', 'IHS4SCORE')
+gr_var <- 'SykehusNavn'
+
+for (p in varnameGjSnittPrePost) {
+  outfile <- paste0(p, '_gjsnSykehus.pdf')
+  outfile <- paste0(figfolder, outfile)
+  hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                            preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+  if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                              minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                              preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+  }
+}
+
+# for (p in varnameGjSnittPrePost) {
+#   outfile <- paste0(p, '_gjsnSykehus_Kirurgisk.pdf')
+#   hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+#                             minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
+#                             preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+#   if (annet_format_ut) {
+#     outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+#     hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+#                               minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 1, forlop2 = forlop2,
+#                               preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+#   }
+# }
+#
+# for (p in varnameGjSnittPrePost) {
+#   outfile <- paste0(p, '_gjsnSykehus_Medisinsk.pdf')
+#   hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+#                             minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
+#                             preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+#   if (annet_format_ut) {
+#     outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+#     hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+#                               minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = 2, forlop2 = forlop2,
+#                               preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+#   }
+# }
+
+
+gr_var <- 'Intervensjon'
+for (p in varnameGjSnittPrePost) {
+  outfile <- paste0(p, '_gjsnIntervensjon.pdf')
+  outfile <- paste0(figfolder, outfile)
+  hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                            minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                            preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+  if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigGjsnPrePostGrVar(RegData=RegData, valgtVar=p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                              minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                              preprosess=preprosess, hentData=hentData, gr_var = gr_var)
+  }
+}
+@
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameAndelPrePost[1], '.pdf')}}
+\caption{fordeling av DLQI, før og etter}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameAndelPrePost[2], '.pdf')}}
+\caption{fordeling av Hurleyscore, før og etter}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameAndelPrePost[1], '_Kirurgisk.pdf')}}
+\caption{fordeling av DLQI, før og etter}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameAndelPrePost[2], '_Kirurgisk.pdf')}}
+\caption{fordeling av Hurleyscore, før og etter}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameAndelPrePost[1], '_Medisinsk.pdf')}}
+\caption{fordeling av DLQI, før og etter}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameAndelPrePost[2], '_Medisinsk.pdf')}}
+\caption{fordeling av Hurleyscore, før og etter}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameGjSnittPrePost[1], '_gjsnSykehus.pdf')}}
+\caption{Gj. sn. DLQI før og etter fordelt på sykehus}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameGjSnittPrePost[2], '_gjsnSykehus.pdf')}}
+\caption{Gj. sn. VAS før og etter fordelt på sykehus}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameGjSnittPrePost[3], '_gjsnSykehus.pdf')}}
+\caption{Gj. sn. IHS4-score før og etter fordelt på sykehus}
+\end{figure}
+
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameGjSnittPrePost[1], '_gjsnSykehus_Kirurgisk.pdf')}}
+% \caption{Gj. sn. DLQI før og etter fordelt på sykehus}
+% \end{figure}
+%
+\clearpage
+%
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameGjSnittPrePost[2], '_gjsnSykehus_Kirurgisk.pdf')}}
+% \caption{Gj. sn. VAS før og etter fordelt på sykehus}
+% \end{figure}
+
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameGjSnittPrePost[3], '_gjsnSykehus_Kirurgisk.pdf')}}
+% \caption{Gj. sn. HS-score (Sartorius) før og etter fordelt på sykehus}
+% \end{figure}
+
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameGjSnittPrePost[1], '_gjsnSykehus_Medisinsk.pdf')}}
+% \caption{Gj. sn. DLQI før og etter fordelt på sykehus}
+% \end{figure}
+%
+%
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameGjSnittPrePost[2], '_gjsnSykehus_Medisinsk.pdf')}}
+% \caption{Gj. sn. VAS før og etter fordelt på sykehus}
+% \end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameGjSnittPrePost[1], '_gjsnIntervensjon')}}
+\caption{Gj. sn. DLQI før og etter fordelt på intervensjonstype}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varnameGjSnittPrePost[2], '_gjsnIntervensjon')}}
+\caption{Gj. sn. VAS før og etter fordelt på intervensjonstype}
+\end{figure}
+
+
+<<'PostOp', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
+# varname <- c('KirurgiLokalisering', 'KomplKir')
+varname <- c('KomplKir_v2')
+
+for (p in varname) {
+  outfile <- paste0(p, '_post.pdf')
+  outfile <- paste0(figfolder, outfile)
+  hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+  if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndeler(RegData=RegData, valgtVar= p, datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+  }
+}
+
+outfile <- "SATISFACTION.pdf"
+outfile <- paste0(figfolder, outfile)
+hisregFigAndeler(RegData=RegData, valgtVar= "SATISFACTION", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndeler(RegData=RegData, valgtVar= "SATISFACTION", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+outfile <- "RETREATMENT.pdf"
+outfile <- paste0(figfolder, outfile)
+hisregFigAndeler(RegData=RegData, valgtVar= "RETREATMENT", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndeler(RegData=RegData, valgtVar= "RETREATMENT", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+outfile <- "RECOMMENDATION.pdf"
+outfile <- paste0(figfolder, outfile)
+hisregFigAndeler(RegData=RegData, valgtVar= "RECOMMENDATION", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndeler(RegData=RegData, valgtVar= "RECOMMENDATION", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+outfile <- "IMPOSSIBLE_REASON.pdf"
+outfile <- paste0(figfolder, outfile)
+hisregFigAndeler(RegData=RegData, valgtVar= "IMPOSSIBLE_REASON", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+    outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+    hisregFigAndeler(RegData=RegData, valgtVar= "IMPOSSIBLE_REASON", datoFra=datoFra_oppf, datoTil=datoTil_oppf, reshID=reshID,
+                     minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                     enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+@
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname[1], '_post.pdf')}}
+% \caption{Lokalisering av kirurgisk behandling}
+% \end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{paste0(figfolder, varname[1], '_post.pdf')}}
+\caption{Komplikasjoner ved kirurgisk behandling}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}SATISFACTION.pdf}
+\caption{Pasienttilfredshet}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}RETREATMENT.pdf}
+\caption{Ville du takket ja til samme behandling på nytt?}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}RECOMMENDATION.pdf}
+\caption{Ville du anbefalt behandlingen til et familiemedlem eller en nær venn?}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}IMPOSSIBLE_REASON.pdf}
+\caption{Hvorfor kan ikke oppfølgingsskjemaet fylles ut?}
+\end{figure}
+
+\clearpage
+
+
+<<'NyeFig_pkt3', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
+# varname <- 'i_biological_treatment'
+varname <- "BiologiskBeh"
+outfile <- 'i_biological_treatment.pdf'
+outfile <- paste0(figfolder, outfile)
+hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+}
+
+varname <- 'Antibiotisk_v2'
+outfile <- 'Antibiotisk.pdf'
+outfile <- paste0(figfolder, outfile)
+hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+}
+
+# varname <- 'i_antiinflammatory_treatment'
+varname <- "AntiinflammatoriskBeh"
+outfile <- 'i_antiinflammatory_treatment.pdf'
+outfile <- paste0(figfolder, outfile)
+hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+}
+
+varname <- 'LokalisertMedisinsk_v2'
+outfile <- 'LokalisertMedisinsk.pdf'
+outfile <- paste0(figfolder, outfile)
+hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                 enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+  outfile <- paste0(substr(outfile, 1,nchar(outfile)-3), utformat)
+  hisregFigAndeler(RegData=RegData, valgtVar= varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                   minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1, forlop2 = forlop2,
+                   enhetsUtvalg=0, preprosess=preprosess, hentData=hentData)
+}
+@
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}i_biological_treatment.pdf}
+\caption{Type biologisk behandling}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}Antibiotisk.pdf}
+\caption{Type antibiotisk behandling}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}i_antiinflammatory_treatment.pdf}
+\caption{Type antiinflammatorisk behandling}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}LokalisertMedisinsk.pdf}
+\caption{Type lokalisert medisinsk behandling}
+\end{figure}
+
+<<'NyeFig_avdvis', include=FALSE, echo=FALSE, eval=T, cache=FALSE>>=
+# varname <- 'i_type'
+varname <- "TYPE_INTERVENTION"
+outfile <- 'i_type_avd.pdf'
+outfile <- paste0(figfolder, outfile)
+hisregFigAndelerGrVar(RegData=RegData, valgtVar=varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                      minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1,
+                      forlop2 = forlop2, enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+  outfile <- paste0(substr(outfile, 1, nchar(outfile)-3), utformat)
+  hisregFigAndelerGrVar(RegData=RegData, valgtVar=varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                        minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1,
+                        forlop2 = forlop2, enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+# varname <- 'i_surgery_type'
+varname <- "type_kirurgi_gr"
+outfile <- 'i_surgery_type_avd.pdf'
+outfile <- paste0(figfolder, outfile)
+hisregFigAndelerGrVar(RegData=RegData, valgtVar=varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                      minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1,
+                      forlop2 = forlop2, enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+  outfile <- paste0(substr(outfile, 1, nchar(outfile)-3), utformat)
+  hisregFigAndelerGrVar(RegData=RegData, valgtVar=varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                        minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1,
+                        forlop2 = forlop2, enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+# varname <- 'TypeMedBeh'
+varname <- "MedisinskBeh_gr"
+outfile <- 'TypeMedBeh_avd.pdf'
+outfile <- paste0(figfolder, outfile)
+hisregFigAndelerGrVar(RegData=RegData, valgtVar=varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                      minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1,
+                      forlop2 = forlop2, enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+if (annet_format_ut) {
+  outfile <- paste0(substr(outfile, 1, nchar(outfile)-3), utformat)
+  hisregFigAndelerGrVar(RegData=RegData, valgtVar=varname, datoFra=datoFra, datoTil=datoTil, reshID=reshID,
+                        minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, forlop1 = forlop1,
+                        forlop2 = forlop2, enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, hentData=hentData)
+}
+
+
+@
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}i_type_avd.pdf}
+\caption{Type behandling, avdelingsvis}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}i_surgery_type_avd.pdf}
+\caption{Type kirurgisk behandling, avdelingsvis}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}TypeMedBeh_avd.pdf}
+\caption{Type medisinsk behandling, avdelingsvis}
+\end{figure}
+
+
+<<'Tabell:Kompletthet', results='asis', echo=FALSE, eval=T, warning=FALSE>>=
+
+aux <- RegData %>% filter(Aar == 2021) %>%
+  summarise(N = n(),
+            Alder = sum(!is.na(PasientAlder))/N*100,
+            Kjønn = sum(!is.na(ErMann))/N*100,
+            Røykestatus = sum(SMOKING %in% 1:3)/N*100,
+            Yrkesstatus = sum(WORK %in% 1:6)/N*100,
+            "Tidligere kirurgi" = sum(SURGERY %in% 0:1)/N*100,
+            "Medikamenthistorikk" = sum(MEDICATION_HISTORY_HS %in% 0:1)/N*100,
+            "Antall smertefulle byller" = sum(!is.na(ABSCESS))/N*100,
+            "DLQI" = sum(!is.na(DLQISUM))/N*100,
+            UtdanningSSB = sum(!is.na(UtdanningSSB))/N*100,
+            "Familie og sykdom" = sum(FAMILY_ILLNES %in% 0:1)/N*100,
+            BMI = sum(!is.na(BMI))/N*100,
+            IHS4SCORE = sum(!is.na(IHS4SCORE))/N*100
+            ) %>%
+  select(-N) %>%
+  t() %>%
+  as_tibble(rownames = "Variabel", .name_repair = "minimal")
+names(aux)[2] <- "Kompletthet (%)"
+
+print(xtable::xtable(aux, digits=1, align=c('l', 'l', rep('r', ncol(aux)-1)),
+                     caption=paste0('Kompletthet av utvalgte variabler. Ukjent regnes som manglende. Gjelder ', rapp_aar)),
+      include.rownames = F)
+
+aux <- RegData %>% filter(Aar == 2021) %>%
+  summarise(N = n(),
+            Alder = sum(!is.na(PasientAlder))/N*100,
+            Kjønn = sum(!is.na(ErMann))/N*100,
+            Røykestatus = sum(!is.na(SMOKING))/N*100,
+            Yrkesstatus = sum(!is.na(WORK))/N*100,
+            "Tidligere kirurgi" = sum(!is.na(SURGERY))/N*100,
+            "Medikamenthistorikk" = sum(!is.na(MEDICATION_HISTORY_HS))/N*100,
+            "Antall smertefulle byller" = sum(!is.na(ABSCESS))/N*100,
+            "DLQI" = sum(!is.na(DLQISUM))/N*100,
+            UtdanningSSB = sum(!is.na(UtdanningSSB))/N*100,
+            "Familie og sykdom" = sum(!is.na(FAMILY_ILLNES))/N*100,
+            BMI = sum(!is.na(BMI))/N*100,
+            IHS4SCORE = sum(!is.na(IHS4SCORE))/N*100
+            ) %>%
+  select(-N) %>%
+  t() %>%
+  as_tibble(rownames = "Variabel", .name_repair = "minimal")
+names(aux)[2] <- "Kompletthet (%)"
+
+print(xtable::xtable(aux, digits=1, align=c('l', 'l', rep('r', ncol(aux)-1)),
+                     caption=paste0('Kompletthet av utvalgte variabler. Ukjent regnes som utfylt. Gjelder ', rapp_aar)),
+      include.rownames = F)
+
+aux <- RegData %>% filter(Aar == 2021 & OppflgRegStatus %in% 1:2) %>%
+  summarise(N = n(),
+            Røykestatus = sum(!is.na(SMOKING_POST))/N*100,
+            Yrkesstatus = sum(!is.na(WORKSTATUS_POST))/N*100,
+            "Antall smertefulle byller" = sum(!is.na(ABSCESS_POST))/N*100,
+            "DLQI_POST" = sum(!is.na(DLQISUM_POST))/N*100,
+            Fornøydhet = sum(!is.na(SATISFACTION))/N*100,
+            ) %>%
+  select(-N) %>%
+  t() %>%
+  as_tibble(rownames = "Variabel", .name_repair = "minimal")
+names(aux)[2] <- "Kompletthet (%)"
+
+print(xtable::xtable(aux, digits=1, align=c('l', 'l', rep('r', ncol(aux)-1)),
+                     caption=paste0('Kompletthet av utvalgte variabler på oppfølging. Ukjent regnes som utfylt.
+                                    Gjelder forløp startet i ', rapp_aar, '. Utvalg: de med OppflgRegStatus lik 1 eller 2.')),
+      include.rownames = F)
+
+aux <- RegData %>% filter(Aar == 2021 & OppflgRegStatus %in% 1:2) %>%
+  summarise(N = n(),
+            Røykestatus = sum(SMOKING_POST %in% 1:3)/N*100,
+            Yrkesstatus = sum(WORKSTATUS_POST %in% 1:6)/N*100,
+            "Antall smertefulle byller" = sum(!is.na(ABSCESS_POST))/N*100,
+            "DLQI_POST" = sum(!is.na(DLQISUM_POST))/N*100,
+            Fornøydhet = sum(SATISFACTION %in% 1:5)/N*100,
+            ) %>%
+  select(-N) %>%
+  t() %>%
+  as_tibble(rownames = "Variabel", .name_repair = "minimal")
+names(aux)[2] <- "Kompletthet (%)"
+
+print(xtable::xtable(aux, digits=1, align=c('l', 'l', rep('r', ncol(aux)-1)),
+                     caption=paste0('Kompletthet av utvalgte variabler på oppfølging. Ukjent/Vet ikke regnes som manglende.
+                                    Gjelder forløp startet i ', rapp_aar, '. " Utvalg: de med OppflgRegStatus lik 1 eller 2.')),
+      include.rownames = F)
+
+@
+
+
+
+
+
+\end{document}
