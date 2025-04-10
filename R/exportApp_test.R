@@ -19,7 +19,8 @@ exportApp_test <- function() {
              value = "Rapporteketadministrasjon",
              shiny::selectInput("registryName",
                                 label = "Velg register",
-                                choices = c("norgast", "rygg")),
+                                choices = c("norgast", "rygg", "nra", "nir",
+                                            "nger", "nakke")),
              shiny::tabsetPanel(
                shiny::tabPanel(
                  title = "Info",
@@ -27,7 +28,7 @@ exportApp_test <- function() {
                  shiny::sidebarLayout(
                    shiny::sidebarPanel(shiny::uiOutput("metaControl")),
                    shiny::mainPanel(
-                     shiny::uiOutput("n_lines"),
+                     # shiny::uiOutput("n_lines"),
                      shiny::htmlOutput("metaData"))
                  )
                ),
@@ -89,9 +90,9 @@ exportApp_test <- function() {
       rapbase::describeRegistryDb(registryName = shiny::req(input$registryName))
     })
 
-    meta2 <- shiny::reactive({
-      rapbase::nlinesRegistryDb(registryName = shiny::req(input$registryName))
-    })
+    # meta2 <- shiny::reactive({
+    #   rapbase::nlinesRegistryDb(registryName = shiny::req(input$registryName))
+    # })
 
     output$metaControl <- shiny::renderUI({
       tabs <- names(meta())
@@ -107,10 +108,10 @@ exportApp_test <- function() {
       DT::dataTableOutput("metaDataTable")
     })
 
-    output$n_lines <- shiny::renderUI({
-      h4(paste0(input$metaTab, " har ",
-                meta2()[[shiny::req(input$metaTab)]]$n_lines, " linjer"))
-    })
+    # output$n_lines <- shiny::renderUI({
+    #   h4(paste0(input$metaTab, " har ",
+    #             meta2()[[shiny::req(input$metaTab)]]$n_lines, " linjer"))
+    # })
 
   }
   shiny::shinyApp(ui, server)
