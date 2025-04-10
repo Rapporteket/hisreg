@@ -2,6 +2,7 @@
 
 export("%>%")
 export(binomkonf)
+export(exportApp_test)
 export(hisregFigAndeler)
 export(hisregFigAndelerGrVar)
 export(hisregFigAndelerPrePost)
